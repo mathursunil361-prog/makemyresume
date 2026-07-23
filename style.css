@@ -95,3 +95,79 @@ nav a:hover{
 .register-btn:hover{
     transform:translateY(-2px);
 }
+
+/* Hero Section */
+
+.hero{
+    width:100%;
+    min-height:90vh;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:80px;
+    gap:60px;
+}
+
+.hero-left{
+    flex:1;
+}
+
+.tag{
+    display:inline-block;
+    background:#ffe8e8;
+    color:#e53935;
+    padding:10px 20px;
+    border-radius:50px;
+    font-size:14px;
+    font-weight:600;
+}
+
+.hero-left h1{
+    font-size:64px;
+    line-height:1.2;
+    margin:25px 0;
+    font-weight:700;
+}
+
+.hero-left h1 span{
+    color:#e53935;
+}
+
+.hero-left p{
+    color:#666;
+    font-size:18px;
+    line-height:30px;
+    max-width:600px;
+}
+
+.hero-buttons{
+    margin-top:35px;
+    display:flex;
+    gap:20px;
+}
+
+.create-btn,
+.template-btn{
+    padding:15px 28px;
+    border-radius:10px;
+    border:none;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:600;
+}
+
+.create-btn{
+    background:#e53935;
+    color:#fff;
+}
+
+.template-btn{
+    background:#fff;
+    border:2px solid #ddd;
+}
+
+.hero-right{
+    flex:1;
+    display:flex;
+    justify-content:center;
+}
