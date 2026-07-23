@@ -171,3 +171,62 @@ nav a:hover{
     display:flex;
     justify-content:center;
 }
+
+/* Resume Card */
+
+.resume-card{
+    width:380px;
+    background:#fff;
+    border-radius:20px;
+    padding:30px;
+    box-shadow:0 20px 60px rgba(0,0,0,.15);
+    animation:floatCard 4s ease-in-out infinite;
+}
+
+@keyframes floatCard{
+    0%{transform:translateY(0);}
+    50%{transform:translateY(-10px);}
+    100%{transform:translateY(0);}
+}
+
+.resume-header{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.profile{
+    width:70px;
+    height:70px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#ff6b6b,#e53935);
+}
+
+.resume-header h2{
+    font-size:22px;
+}
+
+.resume-header p{
+    color:#777;
+    font-size:14px;
+}
+
+.resume-card hr{
+    margin:18px 0;
+    border:none;
+    border-top:1px solid #eee;
+}
+
+.resume-card h3{
+    margin:12px 0;
+}
+
+.resume-card ul{
+    padding-left:20px;
+}
+
+.resume-card li{
+    margin:8px 0;
+    color:#555;
+}
