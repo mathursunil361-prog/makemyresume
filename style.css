@@ -8,3 +8,71 @@
 body{
     background:#f8f9fc;
 }
+
+.header{
+    width:100%;
+    height:80px;
+    background:#fff;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 70px;
+    box-shadow:0 2px 15px rgba(0,0,0,.08);
+    position:sticky;
+    top:0;
+    z-index:1000;
+}
+
+.logo{
+    font-size:28px;
+    font-weight:700;
+}
+
+.black{
+    color:#111;
+}
+
+.red{
+    color:#e53935;
+}
+
+.nav{
+    display:flex;
+    gap:35px;
+}
+
+.nav a{
+    text-decoration:none;
+    color:#333;
+    font-weight:500;
+    transition:.3s;
+}
+
+.nav a:hover{
+    color:#e53935;
+}
+
+.header-btn{
+    display:flex;
+    gap:15px;
+}
+
+.login-btn,
+.register-btn{
+    padding:10px 22px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:600;
+}
+
+.login-btn{
+    background:white;
+    border:2px solid #e53935;
+    color:#e53935;
+}
+
+.register-btn{
+    background:#e53935;
+    color:white;
+    border:none;
+}
