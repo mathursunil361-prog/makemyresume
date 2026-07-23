@@ -255,3 +255,26 @@ nav a:hover{
     font-weight:500;
     color:#444;
 }
+
+@media(max-width:900px){
+
+.hero{
+    flex-direction:column;
+    text-align:center;
+    padding:40px 20px;
+}
+
+.hero-left h1{
+    font-size:48px;
+}
+
+.resume-card{
+    width:100%;
+    max-width:400px;
+}
+
+.features{
+    justify-content:center;
+}
+
+}
