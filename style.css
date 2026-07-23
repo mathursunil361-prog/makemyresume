@@ -230,3 +230,27 @@ nav a:hover{
     margin:8px 0;
     color:#555;
 }
+
+.features{
+    display:flex;
+    gap:35px;
+    margin-top:40px;
+    flex-wrap:wrap;
+}
+
+.features div{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.features i{
+    color:#e53935;
+    font-size:20px;
+}
+
+.features p{
+    font-size:16px;
+    font-weight:500;
+    color:#444;
+}
