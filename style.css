@@ -205,3 +205,47 @@ body{
     margin:6px 0;
 }
 
+.features{
+    max-width:1200px;
+    margin:60px auto;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
+    padding:0 20px;
+}
+
+.feature-card{
+    background:#fff;
+    padding:30px 20px;
+    border-radius:15px;
+    text-align:center;
+    box-shadow:0 10px 25px rgba(0,0,0,0.08);
+    transition:.3s;
+}
+
+.feature-card:hover{
+    transform:translateY(-8px);
+}
+
+.feature-card h3{
+    color:#e53935;
+    margin-bottom:10px;
+}
+
+.feature-card p{
+    color:#666;
+    font-size:15px;
+}
+
+@media(max-width:900px){
+    .features{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:600px){
+    .features{
+        grid-template-columns:1fr;
+    }
+}
+
