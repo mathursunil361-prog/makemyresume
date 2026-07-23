@@ -169,4 +169,49 @@ body{
     justify-content:center;
     align-items:center;
 }
+.resume-card{
+    width:380px;
+    background:#fff;
+    border-radius:20px;
+    padding:25px;
+    box-shadow:0 20px 40px rgba(0,0,0,.12);
+    transition:.4s;
+}
 
+.resume-card:hover{
+    transform:translateY(-10px);
+}
+
+.resume-header{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.profile{
+    width:70px;
+    height:70px;
+    border-radius:50%;
+    background:#e53935;
+}
+
+.resume-card h3{
+    margin:0;
+}
+
+.resume-card p{
+    color:#666;
+}
+
+.resume-card h4{
+    margin:15px 0 8px;
+}
+
+.resume-card ul{
+    padding-left:20px;
+}
+
+.resume-card li{
+    margin:6px 0;
+}
