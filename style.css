@@ -312,4 +312,88 @@ button{
 }
 
 .template-card button{
-    background:#e53935
+    background:#e53935;
+    color:#fff;
+    padding:12px 25px;
+    border:none;
+    border-radius:10px;
+    font-weight:600;
+}
+
+/* Footer */
+
+.footer{
+    background:#111;
+    color:#fff;
+    text-align:center;
+    padding:60px 20px;
+}
+
+.footer h2{
+    color:#e53935;
+    margin-bottom:15px;
+}
+
+.footer p{
+    color:#ccc;
+    margin:8px 0;
+}
+
+/* Responsive */
+
+@media (max-width:991px){
+
+    .header{
+        padding:20px;
+        flex-wrap:wrap;
+        height:auto;
+        gap:20px;
+    }
+
+    .hero{
+        flex-direction:column;
+        text-align:center;
+        padding:50px 20px;
+    }
+
+    .hero-text h1{
+        font-size:42px;
+    }
+
+    .resume-preview{
+        width:100%;
+        max-width:380px;
+    }
+
+    .stats{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .features{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .template-grid{
+        grid-template-columns:1fr;
+    }
+}
+
+@media (max-width:600px){
+
+    .navbar{
+        display:none;
+    }
+
+    .stats,
+    .features{
+        grid-template-columns:1fr;
+    }
+
+    .hero-text h1{
+        font-size:34px;
+    }
+
+    .section-title{
+        font-size:30px;
+    }
+}
