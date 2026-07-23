@@ -278,3 +278,39 @@ nav a:hover{
 }
 
 }
+
+/* Stats Section */
+
+.stats{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+    margin-top:60px;
+    flex-wrap:wrap;
+}
+
+.stat-box{
+    background:#fff;
+    padding:25px;
+    border-radius:15px;
+    text-align:center;
+    min-width:160px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.stat-box:hover{
+    transform:translateY(-8px);
+}
+
+.stat-box h2{
+    color:#e53935;
+    font-size:32px;
+    margin-bottom:10px;
+}
+
+.stat-box p{
+    color:#666;
+    font-size:15px;
+}
