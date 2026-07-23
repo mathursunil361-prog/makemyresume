@@ -118,22 +118,34 @@ button{
     }
 
     .hero{
-        flex-direction:column;
-        text-align:center;
-    }
+    max-width:1200px;
+    margin:auto;
+    padding:40px 40px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:40px;
+}
 
     .hero-text h1{
-        font-size:42px;
-    }
+    font-size:56px;
+    line-height:1.1;
+    margin:20px 0;
+}
 
-    .resume-preview{
-        width:100%;
-        max-width:400px;
-    }
+   .resume-preview{
+    width:380px;
+    padding:25px;
+}
 
     .stats{
-        grid-template-columns:repeat(2,1fr);
-    }
+    max-width:1200px;
+    margin:20px auto 40px;
+    padding:0 40px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
+}
 }
 
 @media (max-width:600px){
