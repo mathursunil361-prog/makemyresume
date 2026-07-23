@@ -97,6 +97,26 @@ body{
     font-size:14px;
     font-weight:600;
 }
+.hero{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:80px 70px;
+    min-height:85vh;
+}
+
+.hero-left{
+    width:50%;
+}
+
+.tag{
+    background:#ffecec;
+    color:#e53935;
+    padding:8px 16px;
+    border-radius:30px;
+    font-size:14px;
+    font-weight:600;
+}
 
 .hero-left h1{
     font-size:60px;
@@ -149,3 +169,4 @@ body{
     justify-content:center;
     align-items:center;
 }
+
