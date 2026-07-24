@@ -3,184 +3,341 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MakeMyResume - Pro Resume & Cover Letter Builder</title>
+    <title>MakeMyResume - Create. Impress. Succeed.</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .slider-track { display: flex; gap: 1.25rem; overflow-x: auto; scroll-behavior: smooth; padding: 1rem 0; }
-        .slider-track::-webkit-scrollbar { height: 6px; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #0f172a; }
+        .slider-track { display: flex; gap: 1rem; overflow-x: auto; scroll-behavior: smooth; padding: 0.5rem 0; }
+        .slider-track::-webkit-scrollbar { height: 4px; }
         .slider-track::-webkit-scrollbar-thumb { background: #dc2626; border-radius: 10px; }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 antialiased min-h-screen flex flex-col">
+<body class="antialiased min-h-screen flex flex-col">
 
-    <!-- PREMIUM HEADER -->
-    <header class="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800">
-        <div class="max-w-7xl mx-auto px-6 h-18 flex justify-between items-center py-3">
-            <div class="flex items-center gap-3 cursor-pointer" onclick="window.location.href='index.html'">
-                <div class="bg-gradient-to-tr from-red-600 to-rose-500 text-white p-2.5 rounded-xl shadow-lg shadow-red-600/30">
-                    <i class="fa-solid fa-file-invoice text-xl"></i>
+    <!-- TOP NAVBAR -->
+    <header class="sticky top-0 z-50 bg-white border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex justify-between items-center text-xs">
+            <!-- LOGO -->
+            <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
+                <div class="w-7 h-7 bg-red-600 rounded-lg flex items-center justify-center text-white font-black text-sm">
+                    <i class="fa-solid fa-file-invoice"></i>
                 </div>
-                <span class="text-2xl font-extrabold text-white tracking-tight">MakeMy<span class="text-red-500">Resume</span></span>
+                <div class="leading-none">
+                    <span class="text-base font-extrabold text-slate-900 tracking-tight">MakeMy<span class="text-red-600">Resume</span></span>
+                    <p class="text-[9px] text-slate-400 font-medium tracking-wider uppercase">Create. Impress. Succeed.</p>
+                </div>
             </div>
 
-            <nav class="hidden md:flex gap-8 text-sm font-semibold text-slate-300">
-                <a href="#templates" class="hover:text-red-500 transition">100+ Templates</a>
-                <a href="editor.html" class="hover:text-red-500 transition">Resume Builder</a>
-                <a href="admin.html" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 flex items-center gap-1.5"><i class="fa-solid fa-lock text-red-500"></i> Admin</a>
+            <!-- NAVIGATION LINKS -->
+            <nav class="hidden md:flex items-center gap-6 font-medium text-slate-600">
+                <a href="index.html" class="text-red-600 font-semibold border-b-2 border-red-600 pb-0.5">Home</a>
+                <a href="#templates" class="hover:text-red-600 transition">Templates</a>
+                <a href="#features" class="hover:text-red-600 transition">Features</a>
+                <a href="#how-it-works" class="hover:text-red-600 transition">How It Works</a>
+                <a href="#pricing" class="hover:text-red-600 transition">Pricing</a>
+                <a href="admin.html" class="text-slate-400 hover:text-slate-600">Admin</a>
             </nav>
 
+            <!-- RIGHT CTA & AUTH -->
             <div id="authNavArea" class="flex items-center gap-3">
-                <button onclick="openAuthModal('login')" class="text-sm font-bold text-slate-300 hover:text-white px-4 py-2">Log In</button>
-                <button onclick="openAuthModal('register')" class="bg-red-600 hover:bg-red-700 text-white font-bold text-sm px-5 py-2.5 rounded-xl shadow-lg shadow-red-600/30 transition">Create Account</button>
+                <span class="hidden lg:inline-flex items-center gap-1.5 text-slate-500 font-medium">
+                    <i class="fa-regular fa-heart text-red-500"></i> Trusted by <strong class="text-slate-800">50,000+</strong> Job Seekers
+                </span>
+                <button onclick="openAuthModal('login')" class="font-bold text-slate-700 hover:text-red-600 px-2 py-1">Log in</button>
+                <button onclick="openAuthModal('register')" class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-lg shadow-sm transition">Get Started</button>
             </div>
         </div>
     </header>
 
     <!-- HERO SECTION -->
-    <section class="relative max-w-7xl mx-auto px-6 py-16 md:py-24 text-center">
-        <div class="inline-flex items-center gap-2 bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-bold px-4 py-2 rounded-full mb-6">
-            <i class="fa-solid fa-sparkles"></i> Next-Gen Auto Resume Engine
-        </div>
-        <h1 class="text-4xl md:text-6xl font-black text-white leading-tight max-w-4xl mx-auto">
-            Build Outstanding Resumes in Seconds with <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-rose-400">Smart Auto-Fill</span>
-        </h1>
-        <p class="text-slate-400 max-w-2xl mx-auto mt-6 text-base md:text-lg">
-            Register once and generate resumes across 100+ ATS-friendly templates instantly along with auto-crafted cover letters.
-        </p>
-        <div class="mt-8 flex flex-wrap justify-center gap-4">
-            <a href="editor.html" class="bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-bold px-8 py-4 rounded-xl shadow-xl shadow-red-600/25 transition">Start Building Free</a>
-            <button onclick="openAuthModal('register')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold px-8 py-4 rounded-xl border border-slate-700 transition">Register Profile</button>
-        </div>
-    </section>
+    <section class="max-w-7xl mx-auto px-6 py-12 md:py-16 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <!-- LEFT HERO -->
+        <div class="lg:col-span-6 space-y-6">
+            <div class="inline-flex items-center gap-1.5 bg-red-50 border border-red-100 text-red-600 text-[11px] font-bold px-3 py-1 rounded-full">
+                <i class="fa-solid fa-sparkles text-xs"></i> AI POWERED RESUME BUILDER
+            </div>
 
-    <!-- 100 TEMPLATES CAROUSEL SLIDER -->
-    <section id="templates" class="bg-slate-900/50 py-16 border-y border-slate-800/80">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="flex justify-between items-end mb-8">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 leading-[1.15] tracking-tight">
+                Create Your Professional Resume <br>That Gets <span class="text-red-600">You Hired</span>
+            </h1>
+
+            <p class="text-slate-500 text-sm md:text-base font-normal leading-relaxed max-w-lg">
+                Choose from 20+ ATS-friendly templates, customize in minutes, and download your resume in PDF.
+            </p>
+
+            <div class="flex flex-wrap items-center gap-4 pt-2">
+                <a href="editor.html" class="bg-red-600 hover:bg-red-700 text-white font-bold text-sm px-6 py-3.5 rounded-xl shadow-lg shadow-red-600/20 inline-flex items-center gap-2 transition">
+                    Create My Resume <i class="fa-solid fa-arrow-right text-xs"></i>
+                </a>
+                <a href="#templates" class="bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm px-6 py-3.5 rounded-xl border border-slate-200 inline-flex items-center gap-2 transition">
+                    <i class="fa-regular fa-clone text-slate-400"></i> View Templates
+                </a>
+            </div>
+
+            <!-- RATING & SOCIAL PROOF -->
+            <div class="flex items-center gap-3 pt-4 border-t border-slate-100">
+                <div class="flex -space-x-2">
+                    <img class="w-8 h-8 rounded-full border-2 border-white object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop" alt="User">
+                    <img class="w-8 h-8 rounded-full border-2 border-white object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop" alt="User">
+                    <img class="w-8 h-8 rounded-full border-2 border-white object-cover" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop" alt="User">
+                    <img class="w-8 h-8 rounded-full border-2 border-white object-cover" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop" alt="User">
+                </div>
                 <div>
-                    <h2 class="text-2xl font-bold text-white">100+ Professional Resume Templates</h2>
-                    <p class="text-xs text-slate-400 mt-1">Select any template to auto-populate your registered details</p>
-                </div>
-                <div class="flex gap-2">
-                    <button onclick="scrollSlider(-350)" class="w-10 h-10 bg-slate-800 hover:bg-slate-700 rounded-xl text-white flex items-center justify-center border border-slate-700"><i class="fa-solid fa-chevron-left"></i></button>
-                    <button onclick="scrollSlider(350)" class="w-10 h-10 bg-slate-800 hover:bg-slate-700 rounded-xl text-white flex items-center justify-center border border-slate-700"><i class="fa-solid fa-chevron-right"></i></button>
+                    <div class="flex text-amber-400 text-xs gap-0.5">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-[11px] text-slate-500 font-semibold mt-0.5">Trusted by 50,000+ job seekers worldwide</p>
                 </div>
             </div>
+        </div>
 
-            <div id="sliderTrack" class="slider-track">
-                <!-- 100 Cards Dynamic Render -->
+        <!-- RIGHT HERO RESUME PREVIEW STACK -->
+        <div class="lg:col-span-6 relative flex justify-center items-center">
+            <div class="relative w-full max-w-lg bg-white rounded-xl p-4 shadow-2xl border border-slate-200 text-[10px] text-slate-700">
+                <!-- Stack Mockup -->
+                <div class="flex items-start gap-4 border-b pb-3 mb-3">
+                    <img class="w-12 h-12 rounded-full object-cover border" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop" alt="Rohan">
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-900">Rohan Kumar</h3>
+                        <p class="text-slate-500 font-medium">Software Engineer</p>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <h4 class="font-bold uppercase text-[9px] text-slate-400 tracking-wider">About Me</h4>
+                    <p class="text-slate-600 leading-normal">Software Engineer with 4+ years of experience in building scalable web applications. Passionate about clean code, problem-solving and creating impactful digital solutions.</p>
+                </div>
+                <div class="mt-3 space-y-1">
+                    <h4 class="font-bold uppercase text-[9px] text-slate-400 tracking-wider">Experience</h4>
+                    <p class="font-bold text-slate-800">Senior Software Engineer - Tech Solutions Pvt. Ltd.</p>
+                    <p class="text-slate-500">Jan 2022 - Present</p>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- USER DASHBOARD MODAL (ACTIVITIES & TEMPLATE HISTORY) -->
-    <div id="dashboardModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center z-50 p-4 overflow-y-auto">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-3xl w-full p-6 shadow-2xl relative text-slate-100">
-            <button onclick="closeDashboardModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+    <!-- FEATURE STRIP -->
+    <section id="features" class="max-w-7xl mx-auto px-6 py-6">
+        <div class="grid grid-cols-2 md:grid-cols-6 gap-3">
+            <div class="bg-white p-3 rounded-xl border border-slate-100 shadow-sm flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs"><i class="fa-solid fa-sliders"></i></div>
+                <div><h4 class="font-bold text-[11px] text-slate-800">ATS Friendly</h4><p class="text-[9px] text-slate-400">Passes scans</p></div>
+            </div>
+            <div class="bg-white p-3 rounded-xl border border-slate-100 shadow-sm flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs"><i class="fa-regular fa-file-code"></i></div>
+                <div><h4 class="font-bold text-[11px] text-slate-800">Professional Templates</h4><p class="text-[9px] text-slate-400">20+ Modern designs</p></div>
+            </div>
+            <div class="bg-white p-3 rounded-xl border border-slate-100 shadow-sm flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs"><i class="fa-solid fa-cloud-arrow-down"></i></div>
+                <div><h4 class="font-bold text-[11px] text-slate-800">Instant Download</h4><p class="text-[9px] text-slate-400">PDF Format</p></div>
+            </div>
+            <div class="bg-white p-3 rounded-xl border border-slate-100 shadow-sm flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-xs"><i class="fa-regular fa-thumbs-up"></i></div>
+                <div><h4 class="font-bold text-[11px] text-slate-800">Easy to Use</h4><p class="text-[9px] text-slate-400">Simple steps</p></div>
+            </div>
+            <div class="bg-white p-3 rounded-xl border border-slate-100 shadow-sm flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center text-xs"><i class="fa-solid fa-lock"></i></div>
+                <div><h4 class="font-bold text-[11px] text-slate-800">Secure & Private</h4><p class="text-[9px] text-slate-400">Data protected</p></div>
+            </div>
+            <div class="bg-white p-3 rounded-xl border border-slate-100 shadow-sm flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-xs"><i class="fa-solid fa-user-check"></i></div>
+                <div><h4 class="font-bold text-[11px] text-slate-800">Expert Approved</h4><p class="text-[9px] text-slate-400">HR Certified</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROFESSIONAL TEMPLATES CAROUSEL SLIDER -->
+    <section id="templates" class="max-w-7xl mx-auto px-6 py-10">
+        <div class="text-center mb-6">
+            <h2 class="text-2xl font-bold text-slate-900">Professional Resume Templates</h2>
+            <p class="text-xs text-slate-500 mt-1">Choose from our collection of ATS-friendly resume templates</p>
+        </div>
+
+        <div id="sliderTrack" class="slider-track pb-4">
+            <!-- 100 TEMPLATES DYNAMIC RENDER -->
+        </div>
+    </section>
+
+    <!-- BOTTOM INFO GRID: HOW IT WORKS + PRICING + REVIEWS -->
+    <section class="max-w-7xl mx-auto px-6 py-10 border-t border-slate-200">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
             
-            <div class="flex items-center gap-4 border-b border-slate-800 pb-4 mb-6">
-                <div class="w-14 h-14 bg-red-600/20 text-red-500 rounded-2xl flex items-center justify-center text-2xl font-bold border border-red-500/30">
-                    <i class="fa-solid fa-user-circle"></i>
+            <!-- HOW IT WORKS -->
+            <div id="how-it-works" class="md:col-span-4 space-y-4">
+                <h3 class="font-bold text-slate-900 text-sm uppercase tracking-wider">How It Works</h3>
+                <div class="space-y-3 text-xs">
+                    <div class="flex gap-3 bg-white p-3 rounded-xl border border-slate-100">
+                        <div class="w-6 h-6 rounded bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs">1</div>
+                        <div><h4 class="font-bold text-slate-800">Choose Template</h4><p class="text-slate-500">Select a template that suits your profession</p></div>
+                    </div>
+                    <div class="flex gap-3 bg-white p-3 rounded-xl border border-slate-100">
+                        <div class="w-6 h-6 rounded bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs">2</div>
+                        <div><h4 class="font-bold text-slate-800">Add Information</h4><p class="text-slate-500">Fill details and customize your content</p></div>
+                    </div>
+                    <div class="flex gap-3 bg-white p-3 rounded-xl border border-slate-100">
+                        <div class="w-6 h-6 rounded bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs">3</div>
+                        <div><h4 class="font-bold text-slate-800">Download Resume</h4><p class="text-slate-500">Download as PDF and apply for jobs</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PRICING -->
+            <div id="pricing" class="md:col-span-5 space-y-4">
+                <div class="text-center">
+                    <h3 class="font-bold text-slate-900 text-sm uppercase tracking-wider">Simple Pricing</h3>
+                    <p class="text-[11px] text-slate-500">Choose the plan that's right for you</p>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2 text-center text-xs">
+                    <!-- FREE -->
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 flex flex-col justify-between">
+                        <div>
+                            <h4 class="font-bold text-slate-700">Free</h4>
+                            <div class="text-lg font-black text-slate-900 my-1">₹0</div>
+                            <p class="text-[10px] text-slate-400">Basic Usage</p>
+                        </div>
+                        <a href="editor.html" class="mt-3 bg-slate-100 text-slate-700 font-bold py-1.5 rounded text-[10px]">Get Started</a>
+                    </div>
+                    <!-- PREMIUM -->
+                    <div class="bg-white p-3 rounded-xl border-2 border-red-600 flex flex-col justify-between relative">
+                        <span class="absolute -top-2 left-1/2 -translate-x-1/2 bg-red-600 text-white text-[8px] font-black uppercase px-2 py-0.5 rounded-full">POPULAR</span>
+                        <div>
+                            <h4 class="font-bold text-slate-900">Premium</h4>
+                            <div class="text-lg font-black text-red-600 my-1">₹5</div>
+                            <p class="text-[10px] text-slate-400">One-time payment</p>
+                        </div>
+                        <a href="editor.html" class="mt-3 bg-red-600 text-white font-bold py-1.5 rounded text-[10px]">Get Started</a>
+                    </div>
+                    <!-- PRO -->
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 flex flex-col justify-between">
+                        <div>
+                            <h4 class="font-bold text-slate-700">Pro</h4>
+                            <div class="text-lg font-black text-slate-900 my-1">₹49</div>
+                            <p class="text-[10px] text-slate-400">Advanced users</p>
+                        </div>
+                        <a href="editor.html" class="mt-3 bg-slate-100 text-slate-700 font-bold py-1.5 rounded text-[10px]">Get Started</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WHAT OUR USERS SAY -->
+            <div class="md:col-span-3 space-y-4">
+                <h3 class="font-bold text-slate-900 text-sm uppercase tracking-wider">What Our Users Say</h3>
+                <div class="space-y-3 text-[11px]">
+                    <div class="bg-white p-3 rounded-xl border border-slate-100">
+                        <div class="flex text-amber-400 text-[10px]"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                        <p class="font-bold text-slate-800 mt-1">Ankit Verma</p>
+                        <p class="text-slate-500 italic text-[10px]">"MakeMyResume helped me create a professional resume that landed my dream job!"</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- AUTHENTICATION MODAL (LOGIN & DUPLICATE BLOCK REGISTRATION) -->
+    <div id="authModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative text-slate-800">
+            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            
+            <div class="flex gap-4 border-b pb-3 mb-4">
+                <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="text-sm font-bold text-red-600 border-b-2 border-red-600 pb-1">Log In</button>
+                <button id="tabRegBtn" onclick="switchAuthTab('register')" class="text-sm font-bold text-slate-400 hover:text-slate-600 pb-1">Register Account</button>
+            </div>
+
+            <!-- LOGIN -->
+            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Email ID or Mobile Number *</label>
+                    <input type="text" id="loginIdentifier" required placeholder="Enter registered email or phone" class="w-full border p-2.5 rounded text-xs focus:outline-none focus:border-red-600">
                 </div>
                 <div>
-                    <h3 id="dashUserName" class="text-xl font-bold text-white">User Name</h3>
-                    <p id="dashUserEmail" class="text-xs text-slate-400">user@example.com</p>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Password *</label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full border p-2.5 rounded text-xs focus:outline-none focus:border-red-600">
+                </div>
+                <button type="submit" class="w-full bg-red-600 text-white font-bold py-2.5 rounded-lg text-xs hover:bg-red-700 shadow">Log In</button>
+            </form>
+
+            <!-- REGISTER WITH DUPLICATE CHECK -->
+            <form id="regForm" onsubmit="handleRegistration(event)" class="space-y-3 hidden">
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Full Name *</label>
+                        <input type="text" id="regName" required class="w-full border p-2 rounded text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Email ID *</label>
+                        <input type="email" id="regEmail" required class="w-full border p-2 rounded text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mobile Number *</label>
+                        <input type="tel" id="regPhone" required class="w-full border p-2 rounded text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Password *</label>
+                        <input type="password" id="regPassword" required class="w-full border p-2 rounded text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Country *</label>
+                        <input type="text" id="regCountry" required placeholder="India" class="w-full border p-2 rounded text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">District / State *</label>
+                        <input type="text" id="regDistrict" required placeholder="Bhopal, MP" class="w-full border p-2 rounded text-xs">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Local Address</label>
+                    <input type="text" id="regAddress" class="w-full border p-2 rounded text-xs">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Education Details</label>
+                    <textarea id="regEdu" rows="2" placeholder="e.g. B.Tech Computer Science, DTU" class="w-full border p-2 rounded text-xs"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Work Experience</label>
+                    <textarea id="regExp" rows="2" placeholder="e.g. Software Engineer at ABC Tech" class="w-full border p-2 rounded text-xs"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-red-600 text-white font-bold py-2.5 rounded-lg text-xs hover:bg-red-700 shadow">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- USER PROFILE DASHBOARD MODAL -->
+    <div id="dashboardModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl relative text-slate-800">
+            <button onclick="closeDashboardModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            
+            <div class="flex items-center gap-3 border-b pb-4 mb-4">
+                <div class="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-xl font-bold">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div>
+                    <h3 id="dashUserName" class="text-base font-bold text-slate-900">User Name</h3>
+                    <p id="dashUserEmail" class="text-xs text-slate-500">user@example.com</p>
                 </div>
             </div>
 
-            <!-- ACTIVITY STATS -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-                    <span class="text-xs text-slate-400 font-semibold uppercase">Total Templates Used</span>
-                    <h4 id="dashUsedCount" class="text-2xl font-bold text-red-500 mt-1">0</h4>
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <div class="bg-slate-50 p-3 rounded-lg border">
+                    <span class="text-[10px] text-slate-500 font-bold uppercase">Templates Used</span>
+                    <h4 id="dashUsedCount" class="text-xl font-bold text-red-600 mt-0.5">0</h4>
                 </div>
-                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-                    <span class="text-xs text-slate-400 font-semibold uppercase">PDF Downloads</span>
-                    <h4 id="dashDownloadCount" class="text-2xl font-bold text-emerald-400 mt-1">0</h4>
+                <div class="bg-slate-50 p-3 rounded-lg border">
+                    <span class="text-[10px] text-slate-500 font-bold uppercase">Pro Downloads</span>
+                    <h4 id="dashDownloadCount" class="text-xl font-bold text-emerald-600 mt-0.5">0</h4>
                 </div>
             </div>
 
-            <!-- RECENT ACTIVITY LOG & TEMPLATES USED LIST -->
-            <h4 class="font-bold text-sm text-slate-200 mb-3"><i class="fa-solid fa-clock-rotate-left text-red-500 mr-2"></i> Recent Activity & Templates History</h4>
-            <div id="activityHistoryList" class="bg-slate-950 border border-slate-800 rounded-xl p-4 max-h-48 overflow-y-auto text-xs space-y-2 text-slate-400">
+            <h4 class="font-bold text-xs text-slate-700 mb-2"><i class="fa-solid fa-clock-rotate-left text-red-600 mr-1"></i> Template Usage History</h4>
+            <div id="activityHistoryList" class="bg-slate-50 border rounded-lg p-3 max-h-40 overflow-y-auto text-xs space-y-2 text-slate-600">
                 <!-- Dynamic Logs -->
             </div>
         </div>
     </div>
 
-    <!-- AUTHENTICATION MODAL (LOGIN & REGISTRATION) -->
-    <div id="authModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center z-50 p-4 overflow-y-auto">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-xl w-full p-6 shadow-2xl relative text-slate-100 my-8">
-            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
-            
-            <!-- MODAL HEADER TOGGLE -->
-            <div class="flex gap-4 border-b border-slate-800 pb-3 mb-6">
-                <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="text-base font-bold text-red-500 border-b-2 border-red-500 pb-1">Log In</button>
-                <button id="tabRegBtn" onclick="switchAuthTab('register')" class="text-base font-bold text-slate-400 hover:text-slate-200 pb-1">Register Account</button>
-            </div>
-
-            <!-- LOGIN FORM -->
-            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Email ID or Mobile Number *</label>
-                    <input type="text" id="loginIdentifier" required placeholder="Enter Email or Phone Number" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:border-red-500 focus:outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Password *</label>
-                    <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:border-red-500 focus:outline-none">
-                </div>
-                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl text-xs transition">Log In to Account</button>
-            </form>
-
-            <!-- REGISTRATION FORM -->
-            <form id="regForm" onsubmit="handleRegistration(event)" class="space-y-4 hidden">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Full Name *</label>
-                        <input type="text" id="regName" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Email ID *</label>
-                        <input type="email" id="regEmail" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Mobile Number *</label>
-                        <input type="tel" id="regPhone" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Password *</label>
-                        <input type="password" id="regPassword" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Country *</label>
-                        <input type="text" id="regCountry" required placeholder="India" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 uppercase mb-1">District / State *</label>
-                        <input type="text" id="regDistrict" required placeholder="Bhopal, MP" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Local Address</label>
-                    <input type="text" id="regAddress" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Educational Background</label>
-                    <textarea id="regEdu" rows="2" placeholder="e.g. B.Tech Computer Science, DTU (2018-2022)" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white"></textarea>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Work Experience</label>
-                    <textarea id="regExp" rows="2" placeholder="e.g. Software Engineer at ABC Tech (2022 - Present)" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white"></textarea>
-                </div>
-                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl text-xs transition">Create Account & Register Profile</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- JAVASCRIPT FOR AUTH & USER ACTIVITIES -->
+    <!-- SCRIPT ENGINE -->
     <script>
         window.addEventListener('DOMContentLoaded', () => {
             renderTemplatesSlider();
@@ -189,58 +346,51 @@
 
         function renderTemplatesSlider() {
             const track = document.getElementById('sliderTrack');
-            const styles = ['Executive', 'Modern Split', 'Minimal Red', 'Tech Lead', 'Creative Sidebar', 'Corporate Slate'];
-            const colors = ['#dc2626', '#2563eb', '#059669', '#7c3aed', '#0d9488', '#d97706'];
+            const styles = [
+                { name: 'Modern Blue', color: 'bg-blue-600' },
+                { name: 'Clean Green', color: 'bg-emerald-600' },
+                { name: 'Executive Black', color: 'bg-slate-900' },
+                { name: 'Creative Purple', color: 'bg-purple-600' },
+                { name: 'Minimal Red', color: 'bg-red-600' },
+                { name: 'Professional Yellow', color: 'bg-amber-500' }
+            ];
 
             for (let i = 1; i <= 100; i++) {
-                const styleName = styles[i % styles.length];
-                const colorHex = colors[i % colors.length];
-
+                const styleObj = styles[i % styles.length];
                 const card = document.createElement('div');
-                card.className = "flex-shrink-0 w-48 bg-slate-900 border border-slate-800 rounded-2xl p-3.5 hover:border-red-500 cursor-pointer transition text-center shadow-lg hover:shadow-red-500/10";
-                card.onclick = () => selectTemplateAndLaunch(i, styleName);
+                card.className = "flex-shrink-0 w-44 bg-white border border-slate-200 rounded-xl p-3 hover:border-red-600 cursor-pointer transition text-center shadow-sm";
+                card.onclick = () => selectTemplateAndLaunch(i, styleObj.name);
                 card.innerHTML = `
-                    <div class="h-36 rounded-xl mb-3 flex flex-col justify-between p-3 text-white font-bold text-xs shadow-inner" style="background-color: ${colorHex}">
-                        <span class="text-[10px] bg-black/30 px-2 py-0.5 rounded self-start">Template #${i}</span>
-                        <p class="text-sm font-black uppercase">${styleName}</p>
+                    <div class="h-28 rounded-lg mb-2 bg-slate-100 flex items-center justify-center text-slate-400 font-bold text-xs">
+                        <i class="fa-regular fa-file-lines text-2xl"></i>
                     </div>
-                    <p class="text-xs font-bold text-slate-200">${styleName} #${i}</p>
-                    <span class="text-[10px] text-red-400 font-semibold">Auto-Fill Enabled</span>
+                    <div class="flex items-center justify-center gap-1.5 mt-1">
+                        <span class="w-2.5 h-2.5 rounded-full ${styleObj.color}"></span>
+                        <p class="text-xs font-bold text-slate-800">${styleObj.name}</p>
+                    </div>
                 `;
                 track.appendChild(card);
             }
-        }
-
-        function scrollSlider(amt) {
-            document.getElementById('sliderTrack').scrollBy({ left: amt, behavior: 'smooth' });
         }
 
         function switchAuthTab(type) {
             if(type === 'login') {
                 document.getElementById('loginForm').classList.remove('hidden');
                 document.getElementById('regForm').classList.add('hidden');
-                document.getElementById('tabLoginBtn').className = "text-base font-bold text-red-500 border-b-2 border-red-500 pb-1";
-                document.getElementById('tabRegBtn').className = "text-base font-bold text-slate-400 hover:text-slate-200 pb-1";
+                document.getElementById('tabLoginBtn').className = "text-sm font-bold text-red-600 border-b-2 border-red-600 pb-1";
+                document.getElementById('tabRegBtn').className = "text-sm font-bold text-slate-400 hover:text-slate-600 pb-1";
             } else {
                 document.getElementById('regForm').classList.remove('hidden');
                 document.getElementById('loginForm').classList.add('hidden');
-                document.getElementById('tabRegBtn').className = "text-base font-bold text-red-500 border-b-2 border-red-500 pb-1";
-                document.getElementById('tabLoginBtn').className = "text-base font-bold text-slate-400 hover:text-slate-200 pb-1";
+                document.getElementById('tabRegBtn').className = "text-sm font-bold text-red-600 border-b-2 border-red-600 pb-1";
+                document.getElementById('tabLoginBtn').className = "text-sm font-bold text-slate-400 hover:text-slate-600 pb-1";
             }
         }
 
-        function openAuthModal(mode) {
-            switchAuthTab(mode);
-            document.getElementById('authModal').classList.remove('hidden');
-            document.getElementById('authModal').classList.add('flex');
-        }
+        function openAuthModal(mode) { switchAuthTab(mode); document.getElementById('authModal').classList.remove('hidden'); document.getElementById('authModal').classList.add('flex'); }
+        function closeAuthModal() { document.getElementById('authModal').classList.add('hidden'); document.getElementById('authModal').classList.remove('flex'); }
 
-        function closeAuthModal() {
-            document.getElementById('authModal').classList.add('hidden');
-            document.getElementById('authModal').classList.remove('flex');
-        }
-
-        // REGISTRATION WITH DUPLICATE CHECK LOGIC
+        // STRICT DUPLICATE REGISTRATION BLOCK
         function handleRegistration(e) {
             e.preventDefault();
             const email = document.getElementById('regEmail').value.trim();
@@ -248,7 +398,6 @@
 
             let usersDb = JSON.parse(localStorage.getItem('registered_users_db')) || [];
 
-            // Duplicate Email or Phone Check
             const existingUser = usersDb.find(u => u.email === email || u.phone === phone);
             if(existingUser) {
                 alert("Error: Yeh Email ID ya Mobile Number pehle se registered hai! Kripya Login karein.");
@@ -275,19 +424,17 @@
             localStorage.setItem('registered_users_db', JSON.stringify(usersDb));
             localStorage.setItem('current_logged_user', JSON.stringify(newUser));
 
-            alert("Registration Successful! Logging in...");
+            alert("Registration Successful!");
             closeAuthModal();
             checkSession();
         }
 
-        // LOGIN ENGINE
         function handleLogin(e) {
             e.preventDefault();
             const identifier = document.getElementById('loginIdentifier').value.trim();
             const pass = document.getElementById('loginPassword').value;
 
             let usersDb = JSON.parse(localStorage.getItem('registered_users_db')) || [];
-            
             const matchedUser = usersDb.find(u => (u.email === identifier || u.phone === identifier) && u.password === pass);
 
             if(matchedUser) {
@@ -306,11 +453,11 @@
 
             if(user) {
                 navArea.innerHTML = `
-                    <button onclick="openUserDashboard()" class="flex items-center gap-2 bg-slate-800 border border-slate-700 px-4 py-2 rounded-xl text-white text-xs font-bold hover:border-red-500">
-                        <i class="fa-solid fa-circle-user text-red-500 text-sm"></i>
+                    <button onclick="openUserDashboard()" class="flex items-center gap-1.5 bg-slate-100 border px-3 py-1.5 rounded-lg text-slate-800 text-xs font-bold hover:border-red-600">
+                        <i class="fa-solid fa-circle-user text-red-600 text-sm"></i>
                         <span>${user.name}</span>
                     </button>
-                    <button onclick="logout()" class="text-xs text-red-400 font-bold hover:text-red-300">Logout</button>
+                    <button onclick="logout()" class="text-xs text-red-600 font-bold hover:underline">Logout</button>
                 `;
             }
         }
@@ -330,32 +477,27 @@
             if(user.history && user.history.length > 0) {
                 user.history.forEach(act => {
                     const item = document.createElement('div');
-                    item.className = "flex justify-between items-center border-b border-slate-800 pb-2";
-                    item.innerHTML = `<span><i class="fa-solid fa-file-lines text-red-500 mr-2"></i> ${act.templateName}</span> <span class="text-[10px] text-slate-500">${act.date}</span>`;
+                    item.className = "flex justify-between items-center border-b pb-1.5";
+                    item.innerHTML = `<span><i class="fa-solid fa-file-lines text-red-600 mr-1.5"></i> ${act.templateName}</span> <span class="text-[10px] text-slate-400">${act.date}</span>`;
                     list.appendChild(item);
                 });
             } else {
-                list.innerHTML = `<p class="text-slate-500 italic">Abhi tak koi template use nahi kiya gaya hai.</p>`;
+                list.innerHTML = `<p class="text-slate-400 italic">Abhi tak koi template use nahi kiya gaya hai.</p>`;
             }
 
             document.getElementById('dashboardModal').classList.remove('hidden');
             document.getElementById('dashboardModal').classList.add('flex');
         }
 
-        function closeDashboardModal() {
-            document.getElementById('dashboardModal').classList.add('hidden');
-            document.getElementById('dashboardModal').classList.remove('flex');
-        }
+        function closeDashboardModal() { document.getElementById('dashboardModal').classList.add('hidden'); document.getElementById('dashboardModal').classList.remove('flex'); }
 
         function selectTemplateAndLaunch(tplId, tplName) {
             let user = JSON.parse(localStorage.getItem('current_logged_user'));
             if(user) {
-                // Log history
                 let usersDb = JSON.parse(localStorage.getItem('registered_users_db')) || [];
                 user.history = user.history || [];
                 user.history.unshift({ templateName: `Template #${tplId} (${tplName})`, date: new Date().toLocaleString() });
                 
-                // Update Local Storage
                 localStorage.setItem('current_logged_user', JSON.stringify(user));
                 const index = usersDb.findIndex(u => u.id === user.id);
                 if(index !== -1) { usersDb[index] = user; localStorage.setItem('registered_users_db', JSON.stringify(usersDb)); }
@@ -363,10 +505,7 @@
             window.location.href = `editor.html?tpl=${tplId}`;
         }
 
-        function logout() {
-            localStorage.removeItem('current_logged_user');
-            location.reload();
-        }
+        function logout() { localStorage.removeItem('current_logged_user'); location.reload(); }
     </script>
 </body>
 </html>
