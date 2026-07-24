@@ -38,18 +38,17 @@
                     <span class="text-xl font-bold text-slate-900 tracking-tight">MakeMy<span class="text-primary">Resume</span></span>
                 </div>
 
-                <!-- Nav Links (Desktop) -->
+                <!-- Nav Links -->
                 <nav class="hidden md:flex gap-8 text-sm font-medium text-slate-600">
                     <a href="#home" class="hover:text-primary transition">Home</a>
                     <a href="#templates" class="hover:text-primary transition">Templates</a>
-                    <a href="#how-it-works" class="hover:text-primary transition">How It Works</a>
                     <a href="#pricing" class="hover:text-primary transition">Pricing</a>
                 </nav>
 
-                <!-- Action Buttons -->
-                <div class="flex items-center gap-4">
-                    <button onclick="toggleAuthModal('login')" class="text-sm font-semibold text-slate-700 hover:text-primary transition px-3 py-2">Log in</button>
-                    <a href="editor.html" class="bg-primary hover:bg-primary-hover text-white font-semibold text-sm px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition">Create Resume</a>
+                <!-- Auth Action Buttons / User Profile Badge -->
+                <div class="flex items-center gap-3" id="navAuthArea">
+                    <button onclick="openAuthModal('login')" class="text-sm font-semibold text-slate-700 hover:text-primary transition px-3 py-2">Log in</button>
+                    <button onclick="openAuthModal('register')" class="bg-primary hover:bg-primary-hover text-white font-semibold text-sm px-4 py-2 rounded-lg shadow transition">Register</button>
                 </div>
             </div>
         </div>
@@ -72,173 +71,148 @@
                     <a href="editor.html" class="bg-primary hover:bg-primary-hover text-white font-bold px-6 py-3.5 rounded-xl shadow-lg transition flex items-center gap-2">
                         Create My Resume <i class="fa-solid fa-arrow-right"></i>
                     </a>
-                    <a href="#templates" class="bg-white border border-slate-300 text-slate-700 font-semibold px-6 py-3.5 rounded-xl hover:bg-slate-50 transition">
-                        View Templates
-                    </a>
-                </div>
-                <div class="flex items-center gap-4">
-                    <div class="flex -space-x-2">
-                        <img class="w-8 h-8 rounded-full border-2 border-white" src="https://i.pravatar.cc/100?img=1" alt="user">
-                        <img class="w-8 h-8 rounded-full border-2 border-white" src="https://i.pravatar.cc/100?img=2" alt="user">
-                        <img class="w-8 h-8 rounded-full border-2 border-white" src="https://i.pravatar.cc/100?img=3" alt="user">
-                        <img class="w-8 h-8 rounded-full border-2 border-white" src="https://i.pravatar.cc/100?img=4" alt="user">
-                    </div>
-                    <div>
-                        <div class="text-amber-400 text-xs flex gap-1">
-                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                        </div>
-                        <p class="text-xs text-slate-500 font-medium">Trusted by 50,000+ job seekers</p>
-                    </div>
                 </div>
             </div>
 
-            <!-- Hero Graphic Preview -->
-            <div class="relative bg-gradient-to-tr from-slate-200 to-slate-100 p-6 rounded-2xl shadow-xl border border-slate-200/80">
+            <!-- Preview Graphics -->
+            <div class="relative bg-gradient-to-tr from-slate-200 to-slate-100 p-6 rounded-2xl shadow-xl border border-slate-200">
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
                     <div class="flex justify-between items-start border-b pb-4 mb-4">
                         <div>
                             <h3 class="text-xl font-bold text-slate-900">Rohan Kumar</h3>
                             <p class="text-sm font-semibold text-primary">Software Engineer</p>
                         </div>
-                        <span class="text-xs bg-slate-100 px-2.5 py-1 rounded-md text-slate-500 font-mono">Live Preview</span>
                     </div>
-                    <div class="space-y-3">
-                        <div class="h-2 bg-slate-200 rounded w-3/4"></div>
-                        <div class="h-2 bg-slate-100 rounded w-full"></div>
-                        <div class="h-2 bg-slate-100 rounded w-5/6"></div>
-                    </div>
-                    <div class="mt-6 pt-4 border-t border-slate-100 flex gap-2">
-                        <span class="bg-slate-100 text-slate-600 text-xs px-2.5 py-1 rounded">HTML/CSS</span>
-                        <span class="bg-slate-100 text-slate-600 text-xs px-2.5 py-1 rounded">JavaScript</span>
-                        <span class="bg-slate-100 text-slate-600 text-xs px-2.5 py-1 rounded">React</span>
-                    </div>
+                    <p class="text-xs text-slate-500">Live editor preview ready for registered users.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- TEMPLATES SECTION -->
-    <section id="templates" class="bg-white py-16 border-y border-slate-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-2xl mx-auto mb-12">
-                <h2 class="text-3xl font-bold text-slate-900">Professional Resume Templates</h2>
-                <p class="text-slate-600 mt-2">ATS-friendly designs ready to be customized.</p>
-            </div>
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-                <!-- Template Cards -->
-                <div onclick="window.location.href='editor.html?template=modern-blue'" class="cursor-pointer group border rounded-xl p-3 hover:border-primary transition bg-slate-50 hover:bg-white shadow-sm hover:shadow-md">
-                    <div class="h-40 bg-slate-200 rounded-lg mb-3 flex items-center justify-center text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-500 transition">
-                        <i class="fa-solid fa-file-lines text-3xl"></i>
-                    </div>
-                    <p class="text-xs font-bold text-center"><span class="text-blue-600">●</span> Modern Blue</p>
-                </div>
-                <div onclick="window.location.href='editor.html?template=clean-green'" class="cursor-pointer group border rounded-xl p-3 hover:border-primary transition bg-slate-50 hover:bg-white shadow-sm hover:shadow-md">
-                    <div class="h-40 bg-slate-200 rounded-lg mb-3 flex items-center justify-center text-slate-400 group-hover:bg-emerald-50 group-hover:text-emerald-500 transition">
-                        <i class="fa-solid fa-file-lines text-3xl"></i>
-                    </div>
-                    <p class="text-xs font-bold text-center"><span class="text-emerald-600">●</span> Clean Green</p>
-                </div>
-                <div onclick="window.location.href='editor.html?template=executive-black'" class="cursor-pointer group border rounded-xl p-3 hover:border-primary transition bg-slate-50 hover:bg-white shadow-sm hover:shadow-md">
-                    <div class="h-40 bg-slate-200 rounded-lg mb-3 flex items-center justify-center text-slate-400 group-hover:bg-slate-300 group-hover:text-slate-800 transition">
-                        <i class="fa-solid fa-file-lines text-3xl"></i>
-                    </div>
-                    <p class="text-xs font-bold text-center"><span class="text-slate-900">●</span> Executive Black</p>
-                </div>
-                <div onclick="window.location.href='editor.html?template=creative-purple'" class="cursor-pointer group border rounded-xl p-3 hover:border-primary transition bg-slate-50 hover:bg-white shadow-sm hover:shadow-md">
-                    <div class="h-40 bg-slate-200 rounded-lg mb-3 flex items-center justify-center text-slate-400 group-hover:bg-purple-50 group-hover:text-purple-500 transition">
-                        <i class="fa-solid fa-file-lines text-3xl"></i>
-                    </div>
-                    <p class="text-xs font-bold text-center"><span class="text-purple-600">●</span> Creative Purple</p>
-                </div>
-                <div onclick="window.location.href='editor.html?template=minimal-red'" class="cursor-pointer group border rounded-xl p-3 hover:border-primary transition bg-slate-50 hover:bg-white shadow-sm hover:shadow-md">
-                    <div class="h-40 bg-slate-200 rounded-lg mb-3 flex items-center justify-center text-slate-400 group-hover:bg-red-50 group-hover:text-primary transition">
-                        <i class="fa-solid fa-file-lines text-3xl"></i>
-                    </div>
-                    <p class="text-xs font-bold text-center"><span class="text-primary">●</span> Minimal Red</p>
-                </div>
-                <div onclick="window.location.href='editor.html?template=pro-yellow'" class="cursor-pointer group border rounded-xl p-3 hover:border-primary transition bg-slate-50 hover:bg-white shadow-sm hover:shadow-md">
-                    <div class="h-40 bg-slate-200 rounded-lg mb-3 flex items-center justify-center text-slate-400 group-hover:bg-amber-50 group-hover:text-amber-500 transition">
-                        <i class="fa-solid fa-file-lines text-3xl"></i>
-                    </div>
-                    <p class="text-xs font-bold text-center"><span class="text-amber-500">●</span> Pro Yellow</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- PRICING SECTION -->
-    <section id="pricing" class="py-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-xl mx-auto mb-12">
-                <h2 class="text-3xl font-bold text-slate-900">Affordable Pricing</h2>
-                <p class="text-slate-600 mt-2">Build for free. Pay only when you want clean PDF downloads without watermarks.</p>
-            </div>
-            <div class="grid md:grid-cols-2 max-w-2xl mx-auto gap-6">
-                <!-- Free Plan -->
-                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                    <h3 class="font-bold text-lg text-slate-800">Free Draft</h3>
-                    <p class="text-3xl font-extrabold text-slate-900 my-3">₹0</p>
-                    <ul class="text-sm text-slate-600 space-y-2 mb-6">
-                        <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Create & Edit Resume</li>
-                        <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Live Real-Time Preview</li>
-                        <li class="text-slate-400"><i class="fa-solid fa-xmark text-slate-300 mr-2"></i> Watermark Free PDF</li>
-                    </ul>
-                    <a href="editor.html" class="block text-center border border-slate-300 text-slate-700 font-semibold py-2.5 rounded-lg hover:bg-slate-50 transition text-sm">Start Editing</a>
-                </div>
-                <!-- Paid Plan (Custom ₹5) -->
-                <div class="bg-white border-2 border-primary rounded-2xl p-6 shadow-md relative">
-                    <span class="absolute -top-3 right-6 bg-primary text-white text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">Most Popular</span>
-                    <h3 class="font-bold text-lg text-slate-800">Premium Download</h3>
-                    <p class="text-3xl font-extrabold text-slate-900 my-3">₹5 <span class="text-xs text-slate-500 font-normal">/ single download</span></p>
-                    <ul class="text-sm text-slate-600 space-y-2 mb-6">
-                        <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Clean PDF (No Watermark)</li>
-                        <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> High Quality Print Ready</li>
-                        <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i> Full Access to All Templates</li>
-                    </ul>
-                    <a href="editor.html" class="block text-center bg-primary hover:bg-primary-hover text-white font-semibold py-2.5 rounded-lg transition text-sm">Create & Download</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- AUTHENTICATION MODAL (LOGIN / REGISTER) -->
+    <!-- AUTHENTICATION MODAL (REGISTRATION / LOGIN) -->
     <div id="authModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
-            <button onclick="toggleAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
-            <h3 id="modalTitle" class="text-xl font-bold text-slate-900 mb-4">Login to MakeMyResume</h3>
+            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
             
-            <form id="authForm" onsubmit="handleAuth(event)" class="space-y-4">
+            <h3 id="modalTitle" class="text-xl font-bold text-slate-900 mb-1">Create an Account</h3>
+            <p id="modalSub" class="text-xs text-slate-500 mb-4">Register to save your resume progress.</p>
+            
+            <form id="authForm" onsubmit="handleUserAuth(event)" class="space-y-4">
+                <div id="nameField">
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Full Name</label>
+                    <input type="text" id="regName" placeholder="Rahul Sharma" class="w-full border border-slate-300 px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary">
+                </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Email</label>
-                    <input type="email" required class="w-full border border-slate-300 px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary">
+                    <input type="email" id="regEmail" required placeholder="name@example.com" class="w-full border border-slate-300 px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Password</label>
-                    <input type="password" required class="w-full border border-slate-300 px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary">
+                    <input type="password" id="regPassword" required placeholder="••••••••" class="w-full border border-slate-300 px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary">
                 </div>
-                <button type="submit" class="w-full bg-primary hover:bg-primary-hover text-white font-bold py-2.5 rounded-lg text-sm transition">Continue</button>
+                
+                <button type="submit" id="submitBtn" class="w-full bg-primary hover:bg-primary-hover text-white font-bold py-2.5 rounded-lg text-sm transition">Register Now</button>
             </form>
+
+            <div class="mt-4 pt-4 border-t border-slate-100 text-center">
+                <p id="switchText" class="text-xs text-slate-600">
+                    Already have an account? 
+                    <a href="#" onclick="toggleAuthMode('login')" class="text-primary font-bold hover:underline">Log in</a>
+                </p>
+            </div>
         </div>
     </div>
 
-    <!-- JS LOGIC -->
+    <!-- SCRIPT FOR REGISTRATION & LOGIN LOGIC -->
     <script>
-        function toggleAuthModal(type = 'login') {
-            const modal = document.getElementById('authModal');
-            const title = document.getElementById('modalTitle');
-            if(type === 'login') {
-                title.innerText = 'Login to MakeMyResume';
-            } else {
-                title.innerText = 'Register New Account';
+        let currentMode = 'register';
+
+        // Check if user is already logged in
+        window.addEventListener('DOMContentLoaded', () => {
+            checkUserSession();
+        });
+
+        function checkUserSession() {
+            const user = JSON.parse(localStorage.getItem('registered_user'));
+            const navArea = document.getElementById('navAuthArea');
+
+            if(user && user.isLoggedIn) {
+                navArea.innerHTML = `
+                    <div class="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-lg">
+                        <i class="fa-solid fa-circle-user text-primary text-lg"></i>
+                        <span class="text-xs font-bold text-slate-800">${user.name || user.email}</span>
+                    </div>
+                    <button onclick="logoutUser()" class="text-xs font-bold text-slate-500 hover:text-red-600">Logout</button>
+                `;
             }
-            modal.classList.toggle('hidden');
-            modal.classList.toggle('flex');
         }
 
-        function handleAuth(e) {
+        function openAuthModal(mode = 'register') {
+            currentMode = mode;
+            const modal = document.getElementById('authModal');
+            const title = document.getElementById('modalTitle');
+            const sub = document.getElementById('modalSub');
+            const nameField = document.getElementById('nameField');
+            const submitBtn = document.getElementById('submitBtn');
+            const switchText = document.getElementById('switchText');
+
+            if(mode === 'register') {
+                title.innerText = 'Create an Account';
+                sub.innerText = 'Register to save your resume progress.';
+                nameField.style.display = 'block';
+                submitBtn.innerText = 'Register Now';
+                switchText.innerHTML = 'Already have an account? <a href="#" onclick="openAuthModal(\'login\')" class="text-primary font-bold hover:underline">Log in</a>';
+            } else {
+                title.innerText = 'Welcome Back';
+                sub.innerText = 'Log in to access your resumes.';
+                nameField.style.display = 'none';
+                submitBtn.innerText = 'Log In';
+                switchText.innerHTML = 'Don\'t have an account? <a href="#" onclick="openAuthModal(\'register\')" class="text-primary font-bold hover:underline">Register</a>';
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeAuthModal() {
+            const modal = document.getElementById('authModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function handleUserAuth(e) {
             e.preventDefault();
-            alert('Authentication setup successful! Redirecting to Editor...');
-            window.location.href = 'editor.html';
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const name = document.getElementById('regName').value;
+
+            if(currentMode === 'register') {
+                const userData = { name: name || email.split('@')[0], email, password, isLoggedIn: true };
+                localStorage.setItem('registered_user', JSON.stringify(userData));
+                alert('Registration Successful!');
+            } else {
+                const storedUser = JSON.parse(localStorage.getItem('registered_user'));
+                if(storedUser && storedUser.email === email && storedUser.password === password) {
+                    storedUser.isLoggedIn = true;
+                    localStorage.setItem('registered_user', JSON.stringify(storedUser));
+                    alert('Login Successful!');
+                } else {
+                    alert('Invalid email or password!');
+                    return;
+                }
+            }
+
+            closeAuthModal();
+            checkUserSession();
+        }
+
+        function logoutUser() {
+            const storedUser = JSON.parse(localStorage.getItem('registered_user'));
+            if(storedUser) {
+                storedUser.isLoggedIn = false;
+                localStorage.setItem('registered_user', JSON.stringify(storedUser));
+            }
+            location.reload();
         }
     </script>
 </body>
