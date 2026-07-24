@@ -1,255 +1,256 @@
 <!DOCTYPE html>
-<html lang="hi" class="scroll-smooth">
+<html lang="hi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MakeMyResume - Resume Editor</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #0f172a; }
-        .watermark-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-30deg);
-            font-size: 28px;
-            font-weight: 800;
-            color: rgba(220, 38, 38, 0.15);
-            white-space: nowrap;
-            pointer-events: none;
-            user-select: none;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MakeMyResume - Resume Editor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; }
+    
+    /* Dynamic Font Classes */
+    .font-inter { font-family: 'Inter', sans-serif; }
+    .font-roboto { font-family: 'Roboto', sans-serif; }
+    .font-serif { font-family: 'Merriweather', serif; }
+
+    /* Watermark Styling */
+    .watermark-layer {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-30deg);
+      font-size: 28px;
+      font-weight: 800;
+      color: rgba(220, 38, 38, 0.15);
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+      text-align: center;
+      z-index: 20;
+    }
+
+    .no-watermark .watermark-layer { display: none !important; }
+  </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col">
 
-    <!-- TOP NAVBAR (CLEAN WHITE) -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
-        <div class="max-w-7xl mx-auto px-6 h-16 flex justify-between items-center text-xs">
-            
-            <!-- LOGO -->
-            <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
-                <div class="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center text-white font-black text-base shadow-md shadow-red-600/30">
-                    <i class="fa-solid fa-file-invoice"></i>
-                </div>
-                <div class="leading-none">
-                    <span class="text-base font-extrabold text-slate-900 tracking-tight">MakeMy<span class="text-red-600">Resume</span></span>
-                </div>
-            </div>
-
-            <!-- CONTROLS & DOWNLOAD BUTTONS -->
-            <div class="flex items-center gap-4">
-                
-                <div class="hidden sm:flex items-center gap-2 border-r pr-4 border-slate-200">
-                    <label class="text-[11px] font-bold text-slate-600">Accent Color:</label>
-                    <input type="color" id="accentPicker" value="#dc2626" onchange="changeColor(this.value)" class="w-6 h-6 rounded cursor-pointer border">
-                </div>
-
-                <div class="hidden sm:flex items-center gap-2 border-r pr-4 border-slate-200">
-                    <label class="text-[11px] font-bold text-slate-600">Font Size:</label>
-                    <select id="fontSizeSelect" onchange="changeFontSize(this.value)" class="border bg-slate-50 p-1 rounded text-xs">
-                        <option value="12px">Small (12px)</option>
-                        <option value="14px" selected>Regular (14px)</option>
-                        <option value="16px">Large (16px)</option>
-                    </select>
-                </div>
-
-                <button onclick="downloadPDF(true)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3.5 py-2 rounded-lg transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-download text-slate-500"></i> Free (Watermark)
-                </button>
-
-                <button onclick="downloadPDF(false)" class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-lg shadow-md transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-crown text-amber-300"></i> Pro Download (₹20)
-                </button>
-            </div>
+  <!-- NAVBAR -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex justify-between items-center text-xs">
+      <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
+        <div class="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center text-white font-black text-base shadow-md shadow-red-600/30">
+          <i class="fa-solid fa-file-invoice"></i>
         </div>
-    </header>
+        <span class="text-base font-extrabold text-slate-900">MakeMy<span class="text-red-600">Resume</span></span>
+      </div>
 
-    <!-- EDITOR WORKSPACE -->
-    <div class="flex-1 max-w-7xl mx-auto w-full p-6 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
-        <!-- LEFT INPUT FORM CONTAINER (WHITE CARD) -->
-        <div class="lg:col-span-5 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
-            
-            <div class="border-b pb-3 mb-2 flex justify-between items-center">
-                <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-pen-to-square text-red-600"></i> Live Resume Details
-                </h3>
-            </div>
+      <!-- FORMATTING & DOWNLOAD CONTROLS -->
+      <div class="flex items-center gap-3">
+        <!-- Font Type -->
+        <select id="fontTypeSelect" onchange="applyFontType(this.value)" class="border bg-slate-50 p-1.5 rounded text-xs font-medium">
+          <option value="font-inter">Sans-Serif (Inter)</option>
+          <option value="font-roboto">Roboto</option>
+          <option value="font-serif">Serif (Classic)</option>
+        </select>
 
-            <!-- PHOTO UPLOAD -->
-            <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Profile Photo</label>
-                <input type="file" id="inPhoto" accept="image/*" onchange="loadPhoto(event)" class="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-600 hover:file:bg-red-100 cursor-pointer">
-            </div>
+        <!-- Font Size -->
+        <select id="fontSizeSelect" onchange="applyFontSize(this.value)" class="border bg-slate-50 p-1.5 rounded text-xs font-medium">
+          <option value="12px">Small (12px)</option>
+          <option value="14px" selected>Medium (14px)</option>
+          <option value="16px">Large (16px)</option>
+        </select>
 
-            <!-- NAME -->
-            <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Full Name *</label>
-                <input type="text" id="inName" value="Your Name" oninput="updatePreview()" class="w-full border border-slate-200 p-2.5 rounded-lg text-xs bg-slate-50 focus:bg-white focus:outline-none focus:border-red-600">
-            </div>
+        <!-- Color -->
+        <input type="color" id="accentColor" value="#dc2626" onchange="applyColor(this.value)" class="w-7 h-7 rounded cursor-pointer border">
 
-            <!-- EMAIL & MOBILE -->
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Email</label>
-                    <input type="email" id="inEmail" value="email@example.com" oninput="updatePreview()" class="w-full border border-slate-200 p-2.5 rounded-lg text-xs bg-slate-50 focus:bg-white focus:outline-none focus:border-red-600">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Mobile</label>
-                    <input type="text" id="inPhone" value="+91 9876543210" oninput="updatePreview()" class="w-full border border-slate-200 p-2.5 rounded-lg text-xs bg-slate-50 focus:bg-white focus:outline-none focus:border-red-600">
-                </div>
-            </div>
+        <!-- Styling Buttons -->
+        <button onclick="toggleBold()" class="border px-2.5 py-1.5 rounded font-bold hover:bg-slate-100">B</button>
+        <button onclick="toggleItalic()" class="border px-2.5 py-1.5 rounded italic hover:bg-slate-100">I</button>
 
-            <!-- LOCATION & ADDRESS -->
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Location</label>
-                    <input type="text" id="inLoc" value="New Delhi, India" oninput="updatePreview()" class="w-full border border-slate-200 p-2.5 rounded-lg text-xs bg-slate-50 focus:bg-white focus:outline-none focus:border-red-600">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Address</label>
-                    <input type="text" id="inAddr" value="Sector 62, Noida" oninput="updatePreview()" class="w-full border border-slate-200 p-2.5 rounded-lg text-xs bg-slate-50 focus:bg-white focus:outline-none focus:border-red-600">
-                </div>
-            </div>
+        <!-- Free & Pro Buttons -->
+        <button onclick="downloadPDF(false)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-2 rounded-lg transition">
+          <i class="fa-solid fa-download"></i> Free (Watermark)
+        </button>
 
-            <!-- EDUCATION -->
-            <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Education Details</label>
-                <textarea id="inEdu" rows="2" oninput="updatePreview()" class="w-full border border-slate-200 p-2.5 rounded-lg text-xs bg-slate-50 focus:bg-white focus:outline-none focus:border-red-600">Bachelor of Computer Applications (BCA) - 2021</textarea>
-            </div>
+        <button onclick="openPaymentModal()" class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-lg shadow transition flex items-center gap-1.5">
+          <i class="fa-solid fa-crown text-amber-300"></i> Pro Download (<span id="proPriceDisplay">₹20</span>)
+        </button>
+      </div>
+    </div>
+  </header>
 
-            <!-- WORK EXPERIENCE -->
-            <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Work Experience</label>
-                <textarea id="inExp" rows="3" oninput="updatePreview()" class="w-full border border-slate-200 p-2.5 rounded-lg text-xs bg-slate-50 focus:bg-white focus:outline-none focus:border-red-600">Frontend Developer - Tech Corp (2021 - Present)</textarea>
-            </div>
+  <!-- EDITOR WORKSPACE -->
+  <div class="flex-1 max-w-7xl mx-auto w-full p-6 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    
+    <!-- LEFT INPUT FORM -->
+    <div class="lg:col-span-5 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
+      <h3 class="font-bold text-slate-900 text-sm border-b pb-2 flex items-center gap-2">
+        <i class="fa-solid fa-pen-to-square text-red-600"></i> Live Resume Details
+      </h3>
 
-            <!-- AUTO REQUEST LETTER -->
-            <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Auto Job Request Application Letter</label>
-                <textarea id="inLetter" rows="3" oninput="updatePreview()" class="w-full border border-slate-200 p-2.5 rounded-lg text-xs bg-slate-50 focus:bg-white focus:outline-none focus:border-red-600">Respected Sir/Madam, I am writing to express my strong interest in the software role at your company...</textarea>
-            </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Full Name</label>
+        <input type="text" id="inName" value="Sunil Kumar Mathur" oninput="updatePreview()" class="w-full border p-2.5 rounded-lg text-xs bg-slate-50">
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Email</label>
+          <input type="email" id="inEmail" value="mathursunil361@gmail.com" oninput="updatePreview()" class="w-full border p-2.5 rounded-lg text-xs bg-slate-50">
         </div>
-
-        <!-- RIGHT LIVE PREVIEW CARD -->
-        <div class="lg:col-span-7 flex justify-center sticky top-20">
-            <div class="bg-white border border-slate-200 rounded-2xl p-2 shadow-xl w-full max-w-xl">
-                
-                <div id="resumePreview" class="relative bg-white p-8 rounded-xl min-h-[650px] text-slate-800 text-xs overflow-hidden">
-                    
-                    <!-- WATERMARK LAYER -->
-                    <div id="watermarkLayer" class="watermark-text">
-                        FREE WATERMARK - MAKEMYRESUME
-                    </div>
-
-                    <!-- RESUME HEADER -->
-                    <div class="flex items-start justify-between border-b-2 pb-4 mb-4" id="headerBorder" style="border-color: #dc2626;">
-                        <div>
-                            <h1 id="pvName" class="text-2xl font-black text-red-600" style="color: #dc2626;">Your Name</h1>
-                            <p id="pvContact" class="text-slate-500 text-[11px] mt-1">email@example.com | +91 9876543210</p>
-                            <p id="pvLocation" class="text-slate-400 text-[10px]">New Delhi, India - Sector 62, Noida</p>
-                        </div>
-                        <img id="pvPhoto" src="" class="w-16 h-16 rounded-lg object-cover border hidden">
-                    </div>
-
-                    <!-- RESUME BODY SECTIONS -->
-                    <div class="space-y-4" id="resumeBodyText" style="font-size: 14px;">
-                        <div>
-                            <h4 class="font-bold text-red-600 uppercase tracking-wider text-[11px] mb-1 section-title" style="color: #dc2626;">EDUCATION</h4>
-                            <p id="pvEdu" class="text-slate-700 whitespace-pre-line leading-relaxed">Bachelor of Computer Applications (BCA) - 2021</p>
-                        </div>
-
-                        <div>
-                            <h4 class="font-bold text-red-600 uppercase tracking-wider text-[11px] mb-1 section-title" style="color: #dc2626;">WORK EXPERIENCE</h4>
-                            <p id="pvExp" class="text-slate-700 whitespace-pre-line leading-relaxed">Frontend Developer - Tech Corp (2021 - Present)</p>
-                        </div>
-
-                        <div>
-                            <h4 class="font-bold text-red-600 uppercase tracking-wider text-[11px] mb-1 section-title" style="color: #dc2626;">APPLICATION / REQUEST LETTER</h4>
-                            <p id="pvLetter" class="text-slate-700 whitespace-pre-line leading-relaxed">Respected Sir/Madam, I am writing to express my strong interest in the software role at your company...</p>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Mobile</label>
+          <input type="text" id="inPhone" value="7000164080" oninput="updatePreview()" class="w-full border p-2.5 rounded-lg text-xs bg-slate-50">
         </div>
+      </div>
 
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Education</label>
+        <textarea id="inEdu" rows="3" oninput="updatePreview()" class="w-full border p-2.5 rounded-lg text-xs bg-slate-50">10th Class Cg Board 2016
+12th Class Cg Board 2019
+Bachelor of Computer Applications (BCA) - 2022</textarea>
+      </div>
+
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Experience</label>
+        <textarea id="inExp" rows="3" oninput="updatePreview()" class="w-full border p-2.5 rounded-lg text-xs bg-slate-50">Frontend Developer - Tech Corp (2021 - Present)</textarea>
+      </div>
     </div>
 
-    <!-- JAVASCRIPT ENGINE -->
-    <script>
-        function updatePreview() {
-            document.getElementById('pvName').innerText = document.getElementById('inName').value || 'Your Name';
-            document.getElementById('pvContact').innerText = `${document.getElementById('inEmail').value} | ${document.getElementById('inPhone').value}`;
-            document.getElementById('pvLocation').innerText = `${document.getElementById('inLoc').value} - ${document.getElementById('inAddr').value}`;
-            document.getElementById('pvEdu').innerText = document.getElementById('inEdu').value;
-            document.getElementById('pvExp').innerText = document.getElementById('inExp').value;
-            document.getElementById('pvLetter').innerText = document.getElementById('inLetter').value;
-        }
+    <!-- RIGHT LIVE PREVIEW -->
+    <div class="lg:col-span-7 flex justify-center sticky top-20">
+      <div id="resumePreview" class="relative bg-white border border-slate-200 rounded-2xl p-8 shadow-xl w-full max-w-xl min-h-[600px] text-xs font-inter">
+        
+        <!-- WATERMARK LAYER -->
+        <div id="watermarkLayer" class="watermark-layer">
+          FREE WATERMARK - MAKEMYRESUME
+        </div>
 
-        function loadPhoto(e) {
-            const file = e.target.files[0];
-            if(file) {
-                const reader = new FileReader();
-                reader.onload = function(evt) {
-                    const photoImg = document.getElementById('pvPhoto');
-                    photoImg.src = evt.target.result;
-                    photoImg.classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            }
-        }
+        <!-- PREVIEW HEADER -->
+        <div class="border-b-2 pb-4 mb-4" id="headerBorder" style="border-color: #dc2626;">
+          <h1 id="pvName" class="text-2xl font-black text-red-600" style="color: #dc2626;">Sunil Kumar Mathur</h1>
+          <p id="pvContact" class="text-slate-500 text-[11px] mt-1">mathursunil361@gmail.com | 7000164080</p>
+        </div>
 
-        function changeColor(hexColor) {
-            document.getElementById('pvName').style.color = hexColor;
-            document.getElementById('headerBorder').style.borderColor = hexColor;
-            const titles = document.querySelectorAll('.section-title');
-            titles.forEach(el => el.style.color = hexColor);
-        }
+        <!-- PREVIEW CONTENT -->
+        <div id="previewBody" class="space-y-4" style="font-size: 14px;">
+          <div>
+            <h4 class="font-bold text-red-600 uppercase text-[11px] mb-1 section-title" style="color: #dc2626;">EDUCATION</h4>
+            <p id="pvEdu" class="text-slate-700 whitespace-pre-line leading-relaxed">Bachelor of Computer Applications (BCA) - 2022</p>
+          </div>
+          <div>
+            <h4 class="font-bold text-red-600 uppercase text-[11px] mb-1 section-title" style="color: #dc2626;">WORK EXPERIENCE</h4>
+            <p id="pvExp" class="text-slate-700 whitespace-pre-line leading-relaxed">Frontend Developer - Tech Corp (2021 - Present)</p>
+          </div>
+        </div>
 
-        function changeFontSize(size) {
-            document.getElementById('resumeBodyText').style.fontSize = size;
-        }
+      </div>
+    </div>
 
-        function downloadPDF(isFree) {
-            const watermark = document.getElementById('watermarkLayer');
-            
-            if(isFree) {
-                watermark.style.display = 'block';
-            } else {
-                watermark.style.display = 'none';
-            }
+  </div>
 
-            const element = document.getElementById('resumePreview');
-            
-            const opt = {
-                margin:       0.2,
-                filename:     'My_Resume.pdf',
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2 },
-                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-            };
+  <!-- PAYMENT GATEWAY MODAL (POPUP) -->
+  <div id="paymentModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl text-center relative">
+      <button onclick="closePaymentModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+      
+      <div class="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-xl mx-auto mb-3">
+        <i class="fa-solid fa-crown"></i>
+      </div>
+      <h3 class="text-lg font-bold text-slate-900">Unlock Pro Resume</h3>
+      <p class="text-xs text-slate-500 mt-1">Download high-quality PDF without watermark</p>
 
-            html2pdf().set(opt).from(element).save().then(() => {
-                watermark.style.display = 'block'; // Reset back
-                
-                // Track Download Count
-                let user = JSON.parse(localStorage.getItem('current_logged_user'));
-                if(user) {
-                    let usersDb = JSON.parse(localStorage.getItem('registered_users_db')) || [];
-                    user.downloadsCount = (user.downloadsCount || 0) + 1;
-                    localStorage.setItem('current_logged_user', JSON.stringify(user));
+      <div class="my-4 p-3 bg-red-50 border border-red-100 rounded-xl">
+        <span class="text-2xl font-black text-red-600" id="modalPriceTag">₹20</span>
+      </div>
 
-                    const idx = usersDb.findIndex(u => u.id === user.id);
-                    if(idx !== -1) { usersDb[idx] = user; localStorage.setItem('registered_users_db', JSON.stringify(usersDb)); }
-                }
-            });
-        }
-    </script>
+      <button onclick="processProPayment()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl shadow transition text-xs">
+        Pay & Download Clean PDF
+      </button>
+      <p class="text-[10px] text-slate-400 mt-2"><i class="fa-solid fa-lock"></i> Secure Gateway Placeholder Ready</p>
+    </div>
+  </div>
+
+  <script>
+    // Load Custom Pricing from Admin Settings (or Default ₹20)
+    const currentPrice = localStorage.getItem('app_pro_price') || '20';
+    document.getElementById('proPriceDisplay').innerText = `₹${currentPrice}`;
+    document.getElementById('modalPriceTag').innerText = `₹${currentPrice}`;
+
+    function updatePreview() {
+      document.getElementById('pvName').innerText = document.getElementById('inName').value || 'Your Name';
+      document.getElementById('pvContact').innerText = `${document.getElementById('inEmail').value} | ${document.getElementById('inPhone').value}`;
+      document.getElementById('pvEdu').innerText = document.getElementById('inEdu').value;
+      document.getElementById('pvExp').innerText = document.getElementById('inExp').value;
+    }
+
+    // Formatting Functions
+    function applyFontType(cls) {
+      const box = document.getElementById('resumePreview');
+      box.classList.remove('font-inter', 'font-roboto', 'font-serif');
+      box.classList.add(cls);
+    }
+
+    function applyFontSize(size) {
+      document.getElementById('previewBody').style.fontSize = size;
+    }
+
+    function applyColor(hex) {
+      document.getElementById('pvName').style.color = hex;
+      document.getElementById('headerBorder').style.borderColor = hex;
+      document.querySelectorAll('.section-title').forEach(el => el.style.color = hex);
+    }
+
+    function toggleBold() {
+      document.getElementById('previewBody').classList.toggle('font-bold');
+    }
+
+    function toggleItalic() {
+      document.getElementById('previewBody').classList.toggle('italic');
+    }
+
+    // Payment & Download Logic
+    function openPaymentModal() {
+      document.getElementById('paymentModal').classList.remove('hidden');
+      document.getElementById('paymentModal').classList.add('flex');
+    }
+
+    function closePaymentModal() {
+      document.getElementById('paymentModal').classList.add('hidden');
+      document.getElementById('paymentModal').classList.remove('flex');
+    }
+
+    function processProPayment() {
+      // Future Real Payment Gateway Hook (Razorpay SDK Call Here)
+      alert('Payment Successful! Downloading Pro Resume Without Watermark...');
+      closePaymentModal();
+      downloadPDF(true); // true = WITHOUT Watermark
+    }
+
+    function downloadPDF(isPro) {
+      const element = document.getElementById('resumePreview');
+      if (isPro) {
+        element.classList.add('no-watermark');
+      } else {
+        element.classList.remove('no-watermark');
+      }
+
+      const opt = {
+        margin: 0.2,
+        filename: isPro ? 'Pro_Resume.pdf' : 'Free_Watermark_Resume.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+      };
+
+      html2pdf().set(opt).from(element).save().then(() => {
+        element.classList.remove('no-watermark');
+      });
+    }
+  </script>
 </body>
 </html>
