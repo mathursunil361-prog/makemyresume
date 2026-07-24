@@ -8,83 +8,83 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0f172a; color: #f8fafc; }
-        .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .template-editor { min-height: 250px; background: #ffffff; color: #0f172a; border-radius: 8px; padding: 16px; outline: none; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #0f172a; }
+        .white-card { background: #ffffff; border: 1px solid #e2e8f0; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); }
+        .template-editor { min-height: 250px; background: #ffffff; color: #0f172a; border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px; outline: none; }
     </style>
 </head>
 <body class="min-h-screen">
 
-    <!-- AUTHENTICATION CONTAINER (LOGIN / REGISTER) -->
-    <div id="authSection" class="min-h-screen flex items-center justify-center p-4">
-        <div class="glass-card max-w-md w-full p-8 rounded-3xl shadow-2xl space-y-6">
+    <!-- AUTHENTICATION CONTAINER (LOGIN / REGISTER) - WHITE THEME -->
+    <div id="authSection" class="min-h-screen flex items-center justify-center p-4 bg-slate-100">
+        <div class="white-card max-w-md w-full p-8 rounded-3xl space-y-6">
             <div class="text-center">
-                <div class="w-12 h-12 bg-red-600 rounded-2xl flex items-center justify-center mx-auto text-white text-xl font-black mb-3">
+                <div class="w-12 h-12 bg-red-600 rounded-2xl flex items-center justify-center mx-auto text-white text-xl font-black mb-3 shadow-md shadow-red-200">
                     <i class="fa-solid fa-user-shield"></i>
                 </div>
-                <h2 id="authTitle" class="text-2xl font-extrabold">Admin Access Portal</h2>
-                <p class="text-xs text-slate-400 mt-1">MakeMyResume Ownership & Control Panel</p>
+                <h2 id="authTitle" class="text-2xl font-extrabold text-slate-900">Admin Access Portal</h2>
+                <p class="text-xs text-slate-500 mt-1">MakeMyResume Ownership & Control Panel</p>
             </div>
 
             <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Admin Email</label>
-                    <input type="email" id="authEmail" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-red-500">
+                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Admin Email</label>
+                    <input type="email" id="authEmail" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-red-500 focus:bg-white transition">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Password</label>
-                    <input type="password" id="authPassword" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-red-500">
+                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Password</label>
+                    <input type="password" id="authPassword" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-red-500 focus:bg-white transition">
                 </div>
-                <button type="submit" id="authBtn" class="w-full bg-red-600 hover:bg-red-700 font-extrabold py-3 rounded-xl transition text-sm">
+                <button type="submit" id="authBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-extrabold py-3 rounded-xl transition text-sm shadow-md shadow-red-200">
                     Login to Control Panel
                 </button>
             </form>
 
             <div class="text-center pt-2">
-                <button onclick="toggleAuthMode()" id="authToggleBtn" class="text-xs text-slate-400 hover:text-white underline">
+                <button onclick="toggleAuthMode()" id="authToggleBtn" class="text-xs text-slate-600 hover:text-red-600 underline font-semibold">
                     First time Owner? Register Admin Account
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- MAIN ADMIN DASHBOARD -->
+    <!-- MAIN ADMIN DASHBOARD - WHITE THEME -->
     <div id="dashboardSection" class="hidden min-h-screen flex">
 
         <!-- SIDEBAR NAVIGATION -->
-        <aside class="w-64 bg-slate-900 border-r border-slate-800 p-6 flex flex-col justify-between hidden md:flex">
+        <aside class="w-64 bg-white border-r border-slate-200 p-6 flex flex-col justify-between hidden md:flex">
             <div class="space-y-8">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center font-black text-xl">M</div>
+                    <div class="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center font-black text-xl text-white shadow-md shadow-red-200">M</div>
                     <div>
-                        <h1 class="font-bold text-sm">MakeMyResume</h1>
-                        <span class="text-[10px] text-red-500 font-extrabold tracking-wider uppercase">Super Admin</span>
+                        <h1 class="font-bold text-sm text-slate-900">MakeMyResume</h1>
+                        <span class="text-[10px] text-red-600 font-extrabold tracking-wider uppercase">Super Admin</span>
                     </div>
                 </div>
 
                 <nav class="space-y-2 text-sm font-semibold">
-                    <button onclick="switchTab('tabAnalytics')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-800 text-white"><i class="fa-solid fa-chart-pie text-red-500"></i> Dashboard</button>
-                    <button onclick="switchTab('tabUsers')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-white"><i class="fa-solid fa-users text-blue-500"></i> User Control</button>
-                    <button onclick="switchTab('tabTemplates')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-white"><i class="fa-solid fa-file-code text-amber-500"></i> Template Designer</button>
-                    <button onclick="switchTab('tabPricing')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-white"><i class="fa-solid fa-tags text-emerald-500"></i> Pricing Control</button>
-                    <button onclick="switchTab('tabSettings')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-white"><i class="fa-solid fa-gears text-purple-500"></i> Owner Settings</button>
+                    <button onclick="switchTab('tabAnalytics')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-100 text-slate-900"><i class="fa-solid fa-chart-pie text-red-600"></i> Dashboard</button>
+                    <button onclick="switchTab('tabUsers')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-100 text-slate-600 hover:text-slate-900"><i class="fa-solid fa-users text-blue-600"></i> User Control</button>
+                    <button onclick="switchTab('tabTemplates')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-100 text-slate-600 hover:text-slate-900"><i class="fa-solid fa-file-code text-amber-600"></i> Template Designer</button>
+                    <button onclick="switchTab('tabPricing')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-100 text-slate-600 hover:text-slate-900"><i class="fa-solid fa-tags text-emerald-600"></i> Pricing Control</button>
+                    <button onclick="switchTab('tabSettings')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-100 text-slate-600 hover:text-slate-900"><i class="fa-solid fa-gears text-purple-600"></i> Owner Settings</button>
                 </nav>
             </div>
 
-            <button onclick="logoutAdmin()" class="flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-red-500"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+            <button onclick="logoutAdmin()" class="flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-red-600"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
         </aside>
 
         <!-- CONTENT AREA -->
         <main class="flex-1 p-6 md:p-10 overflow-y-auto">
             
             <!-- HEADER -->
-            <div class="flex justify-between items-center mb-8 border-b border-slate-800 pb-4">
+            <div class="flex justify-between items-center mb-8 border-b border-slate-200 pb-4">
                 <div>
-                    <h1 class="text-2xl font-black">Owner Control Center</h1>
-                    <p class="text-xs text-slate-400">System Monitoring & Customization Panel</p>
+                    <h1 class="text-2xl font-black text-slate-900">Owner Control Center</h1>
+                    <p class="text-xs text-slate-500">System Monitoring & Customization Panel</p>
                 </div>
                 <div class="text-right">
-                    <span id="adminProfileEmail" class="text-xs font-bold text-red-500">admin@makemyresume.com</span>
+                    <span id="adminProfileEmail" class="text-xs font-bold text-red-600">admin@makemyresume.com</span>
                     <p id="adminProfilePhone" class="text-[10px] text-slate-500">+91 00000 00000</p>
                 </div>
             </div>
@@ -92,27 +92,27 @@
             <!-- TAB 1: ANALYTICS & OVERVIEW -->
             <div id="tabAnalytics" class="tab-content space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="glass-card p-6 rounded-2xl border-l-4 border-blue-500">
-                        <p class="text-xs font-bold text-slate-400 uppercase">Registered Users</p>
-                        <h3 id="statTotalUsers" class="text-3xl font-black mt-2">0</h3>
+                    <div class="white-card p-6 rounded-2xl border-l-4 border-blue-600">
+                        <p class="text-xs font-bold text-slate-500 uppercase">Registered Users</p>
+                        <h3 id="statTotalUsers" class="text-3xl font-black mt-2 text-slate-900">0</h3>
                     </div>
-                    <div class="glass-card p-6 rounded-2xl border-l-4 border-amber-500">
-                        <p class="text-xs font-bold text-slate-400 uppercase">Total Pro Downloads</p>
-                        <h3 id="statProDownloads" class="text-3xl font-black mt-2">0</h3>
+                    <div class="white-card p-6 rounded-2xl border-l-4 border-amber-500">
+                        <p class="text-xs font-bold text-slate-500 uppercase">Total Pro Downloads</p>
+                        <h3 id="statProDownloads" class="text-3xl font-black mt-2 text-slate-900">0</h3>
                     </div>
-                    <div class="glass-card p-6 rounded-2xl border-l-4 border-emerald-500">
-                        <p class="text-xs font-bold text-slate-400 uppercase">Total Earned Revenue</p>
-                        <h3 id="statRevenue" class="text-3xl font-black mt-2">₹0</h3>
+                    <div class="white-card p-6 rounded-2xl border-l-4 border-emerald-600">
+                        <p class="text-xs font-bold text-slate-500 uppercase">Total Earned Revenue</p>
+                        <h3 id="statRevenue" class="text-3xl font-black mt-2 text-slate-900">₹0</h3>
                     </div>
                 </div>
             </div>
 
             <!-- TAB 2: USER MANAGEMENT (EDIT/DELETE & SEE PASSWORDS) -->
             <div id="tabUsers" class="tab-content hidden space-y-4">
-                <h2 class="text-lg font-bold">Registered User Database</h2>
-                <div class="glass-card rounded-2xl overflow-hidden">
+                <h2 class="text-lg font-bold text-slate-900">Registered User Database</h2>
+                <div class="white-card rounded-2xl overflow-hidden">
                     <table class="w-full text-left text-xs">
-                        <thead class="bg-slate-800 text-slate-400 uppercase">
+                        <thead class="bg-slate-100 text-slate-600 uppercase border-b border-slate-200">
                             <tr>
                                 <th class="p-4">Email</th>
                                 <th class="p-4">Phone</th>
@@ -120,7 +120,7 @@
                                 <th class="p-4">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="userTableBody" class="divide-y divide-slate-800">
+                        <tbody id="userTableBody" class="divide-y divide-slate-100 text-slate-700">
                             <!-- Populated Dynamically -->
                         </tbody>
                     </table>
@@ -130,8 +130,8 @@
             <!-- TAB 3: CUSTOM TEMPLATE DESIGNER & WORD EDITOR -->
             <div id="tabTemplates" class="tab-content hidden space-y-6">
                 <div class="flex justify-between items-center">
-                    <h2 class="text-lg font-bold">Word-Style Resume Template Designer</h2>
-                    <button onclick="saveCustomTemplate()" class="bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2">
+                    <h2 class="text-lg font-bold text-slate-900">Word-Style Resume Template Designer</h2>
+                    <button onclick="saveCustomTemplate()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2">
                         <i class="fa-solid fa-cloud-arrow-up"></i> Publish Template
                     </button>
                 </div>
@@ -139,15 +139,15 @@
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     <div class="lg:col-span-4 space-y-4">
                         <div>
-                            <label class="block text-xs font-bold text-slate-400 mb-1">Template Title</label>
-                            <input type="text" id="tplTitle" placeholder="e.g. Modern Developer Resume" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs">
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Template Title</label>
+                            <input type="text" id="tplTitle" placeholder="e.g. Modern Developer Resume" class="w-full bg-white border border-slate-300 rounded-xl p-3 text-xs text-slate-900">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-400 mb-1">Category / Tag</label>
-                            <input type="text" id="tplCategory" placeholder="e.g. Technology / IT" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs">
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Category / Tag</label>
+                            <input type="text" id="tplCategory" placeholder="e.g. Technology / IT" class="w-full bg-white border border-slate-300 rounded-xl p-3 text-xs text-slate-900">
                         </div>
-                        <div class="p-4 bg-slate-900 rounded-2xl text-[11px] text-slate-400 space-y-2">
-                            <p class="font-bold text-white">Dynamic Placeholders:</p>
+                        <div class="p-4 bg-slate-100 border border-slate-200 rounded-2xl text-[11px] text-slate-600 space-y-2">
+                            <p class="font-bold text-slate-900">Dynamic Placeholders:</p>
                             <p>`{{NAME}}` - User Full Name</p>
                             <p>`{{EMAIL}}` - User Email</p>
                             <p>`{{PHONE}}` - Phone Number</p>
@@ -158,12 +158,12 @@
 
                     <!-- WORD EDITOR CONTROLS -->
                     <div class="lg:col-span-8 space-y-2">
-                        <div class="flex gap-2 bg-slate-800 p-2 rounded-xl text-xs">
-                            <button onclick="execCmd('bold')" class="p-2 bg-slate-700 rounded font-bold">B</button>
-                            <button onclick="execCmd('italic')" class="p-2 bg-slate-700 rounded italic">I</button>
-                            <button onclick="execCmd('underline')" class="p-2 bg-slate-700 rounded underline">U</button>
-                            <button onclick="execCmd('justifyLeft')" class="p-2 bg-slate-700 rounded"><i class="fa-solid fa-align-left"></i></button>
-                            <button onclick="execCmd('justifyCenter')" class="p-2 bg-slate-700 rounded"><i class="fa-solid fa-align-center"></i></button>
+                        <div class="flex gap-2 bg-slate-100 p-2 rounded-xl text-xs border border-slate-200">
+                            <button onclick="execCmd('bold')" class="p-2 bg-white border rounded font-bold text-slate-800">B</button>
+                            <button onclick="execCmd('italic')" class="p-2 bg-white border rounded italic text-slate-800">I</button>
+                            <button onclick="execCmd('underline')" class="p-2 bg-white border rounded underline text-slate-800">U</button>
+                            <button onclick="execCmd('justifyLeft')" class="p-2 bg-white border rounded text-slate-800"><i class="fa-solid fa-align-left"></i></button>
+                            <button onclick="execCmd('justifyCenter')" class="p-2 bg-white border rounded text-slate-800"><i class="fa-solid fa-align-center"></i></button>
                         </div>
                         <div id="wordTemplateEditor" class="template-editor" contenteditable="true">
                             <h2><b>{{NAME}}</b></h2>
@@ -180,7 +180,7 @@
 
                 <!-- PUBLISHED TEMPLATES LIST -->
                 <div class="mt-8">
-                    <h3 class="text-sm font-bold mb-4">Published Templates On Website</h3>
+                    <h3 class="text-sm font-bold mb-4 text-slate-900">Published Templates On Website</h3>
                     <div id="publishedTemplatesList" class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <!-- Dynamic Templates -->
                     </div>
@@ -189,13 +189,13 @@
 
             <!-- TAB 4: PRICING CONTROLLER -->
             <div id="tabPricing" class="tab-content hidden space-y-4 max-w-lg">
-                <h2 class="text-lg font-bold">Custom Pro Price Controller</h2>
-                <div class="glass-card p-6 rounded-2xl space-y-4">
+                <h2 class="text-lg font-bold text-slate-900">Custom Pro Price Controller</h2>
+                <div class="white-card p-6 rounded-2xl space-y-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 mb-1">Set Pro Download Price (₹)</label>
-                        <input type="number" id="customPriceInput" value="20" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-lg font-bold text-emerald-400">
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Set Pro Download Price (₹)</label>
+                        <input type="number" id="customPriceInput" value="20" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-lg font-bold text-emerald-600">
                     </div>
-                    <button onclick="saveCustomPrice()" class="w-full bg-red-600 hover:bg-red-700 py-3 rounded-xl font-bold text-xs">
+                    <button onclick="saveCustomPrice()" class="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl font-bold text-xs shadow-md shadow-red-200">
                         Update Live Website Price
                     </button>
                 </div>
@@ -204,43 +204,43 @@
             <!-- TAB 5: OWNER PROFILE & SYSTEM PAYMENT SETTINGS -->
             <div id="tabSettings" class="tab-content hidden space-y-6 max-w-2xl">
                 <!-- OWNER PROFILE SETTINGS -->
-                <div class="glass-card p-6 rounded-2xl space-y-4">
-                    <h3 class="text-sm font-bold text-red-500 uppercase tracking-wider">Owner Admin Profile</h3>
+                <div class="white-card p-6 rounded-2xl space-y-4">
+                    <h3 class="text-sm font-bold text-red-600 uppercase tracking-wider">Owner Admin Profile</h3>
                     <div class="grid grid-cols-2 gap-4 text-xs">
                         <div>
-                            <label class="block text-slate-400 mb-1">Admin Email</label>
-                            <input type="email" id="setAdminEmail" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3">
+                            <label class="block text-slate-600 mb-1">Admin Email</label>
+                            <input type="email" id="setAdminEmail" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-slate-900">
                         </div>
                         <div>
-                            <label class="block text-slate-400 mb-1">Admin Phone Number</label>
-                            <input type="text" id="setAdminPhone" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3">
+                            <label class="block text-slate-600 mb-1">Admin Phone Number</label>
+                            <input type="text" id="setAdminPhone" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-slate-900">
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1">Owner Address</label>
-                        <input type="text" id="setAdminAddress" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs">
+                        <label class="block text-xs text-slate-600 mb-1">Owner Address</label>
+                        <input type="text" id="setAdminAddress" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-xs text-slate-900">
                     </div>
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1">Update Admin Password</label>
-                        <input type="password" id="setAdminPass" placeholder="Leave empty to keep same" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs">
+                        <label class="block text-xs text-slate-600 mb-1">Update Admin Password</label>
+                        <input type="password" id="setAdminPass" placeholder="Leave empty to keep same" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-xs text-slate-900">
                     </div>
-                    <button onclick="updateOwnerProfile()" class="bg-red-600 hover:bg-red-700 px-6 py-2.5 rounded-xl font-bold text-xs">
+                    <button onclick="updateOwnerProfile()" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded-xl font-bold text-xs shadow-md shadow-red-200">
                         Save Owner Profile
                     </button>
                 </div>
 
                 <!-- PAYMENT GATEWAY READY SETTINGS -->
-                <div class="glass-card p-6 rounded-2xl space-y-4">
-                    <h3 class="text-sm font-bold text-purple-400 uppercase tracking-wider">Razorpay Gateway Integration</h3>
+                <div class="white-card p-6 rounded-2xl space-y-4">
+                    <h3 class="text-sm font-bold text-purple-600 uppercase tracking-wider">Razorpay Gateway Integration</h3>
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1">Razorpay Key ID</label>
-                        <input type="text" id="setRzpKey" placeholder="rzp_live_xxxxxxxxxxxx" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs">
+                        <label class="block text-xs text-slate-600 mb-1">Razorpay Key ID</label>
+                        <input type="text" id="setRzpKey" placeholder="rzp_live_xxxxxxxxxxxx" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-xs text-slate-900">
                     </div>
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1">Razorpay Key Secret</label>
-                        <input type="password" id="setRzpSecret" placeholder="••••••••••••••••" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs">
+                        <label class="block text-xs text-slate-600 mb-1">Razorpay Key Secret</label>
+                        <input type="password" id="setRzpSecret" placeholder="••••••••••••••••" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-xs text-slate-900">
                     </div>
-                    <button onclick="saveGatewayKeys()" class="bg-purple-600 hover:bg-purple-700 px-6 py-2.5 rounded-xl font-bold text-xs">
+                    <button onclick="saveGatewayKeys()" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2.5 rounded-xl font-bold text-xs">
                         Save API Keys
                     </button>
                 </div>
@@ -258,7 +258,6 @@
             initDemoData();
         });
 
-        // 1. AUTHENTICATION HANDLERS
         function toggleAuthMode() {
             isRegisterMode = !isRegisterMode;
             document.getElementById('authTitle').innerText = isRegisterMode ? "Register Owner Account" : "Admin Access Portal";
@@ -304,7 +303,6 @@
             checkAuthStatus();
         }
 
-        // 2. DASHBOARD DATA LOADER
         function loadDashboardData() {
             const admin = JSON.parse(localStorage.getItem("app_admin_account") || '{"email":"admin@makemyresume.com","phone":"+91 9876543210","address":"Bhopal, India"}');
             document.getElementById('adminProfileEmail').innerText = admin.email;
@@ -313,7 +311,6 @@
             document.getElementById('setAdminPhone').value = admin.phone;
             document.getElementById('setAdminAddress').value = admin.address;
 
-            // Price & Gateway
             document.getElementById('customPriceInput').value = localStorage.getItem('app_pro_price') || '20';
             document.getElementById('setRzpKey').value = localStorage.getItem('rzp_key_id') || '';
             document.getElementById('setRzpSecret').value = localStorage.getItem('rzp_key_secret') || '';
@@ -323,7 +320,6 @@
             updateStats();
         }
 
-        // 3. USER MANAGEMENT (VIEW/EDIT/DELETE PASSWORDS)
         function initDemoData() {
             if (!localStorage.getItem('app_users_db')) {
                 const users = [
@@ -341,13 +337,13 @@
 
             users.forEach((u, index) => {
                 tbody.innerHTML += `
-                    <tr>
-                        <td class="p-4 font-bold text-white">${u.email}</td>
-                        <td class="p-4 text-slate-400">${u.phone}</td>
-                        <td class="p-4"><span class="bg-slate-900 border border-slate-700 px-2 py-1 rounded text-red-400 font-mono">${u.pass}</span></td>
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-4 font-bold text-slate-900">${u.email}</td>
+                        <td class="p-4 text-slate-600">${u.phone}</td>
+                        <td class="p-4"><span class="bg-amber-50 border border-amber-200 px-2 py-1 rounded text-amber-700 font-mono text-xs font-bold">${u.pass}</span></td>
                         <td class="p-4 space-x-2">
-                            <button onclick="editUser(${index})" class="text-blue-400 hover:underline">Edit</button>
-                            <button onclick="deleteUser(${index})" class="text-red-400 hover:underline">Delete</button>
+                            <button onclick="editUser(${index})" class="text-blue-600 hover:underline font-bold">Edit</button>
+                            <button onclick="deleteUser(${index})" class="text-red-600 hover:underline font-bold">Delete</button>
                         </td>
                     </tr>
                 `;
@@ -377,7 +373,6 @@
             }
         }
 
-        // 4. TEMPLATE DESIGNER & WORD EDITOR
         function execCmd(command) {
             document.execCommand(command, false, null);
         }
@@ -403,12 +398,12 @@
 
             templates.forEach((t, index) => {
                 container.innerHTML += `
-                    <div class="glass-card p-4 rounded-xl border border-slate-700 flex justify-between items-center">
+                    <div class="white-card p-4 rounded-xl flex justify-between items-center">
                         <div>
-                            <h4 class="font-bold text-xs text-white">${t.title}</h4>
-                            <span class="text-[10px] text-slate-400">${t.category}</span>
+                            <h4 class="font-bold text-xs text-slate-900">${t.title}</h4>
+                            <span class="text-[10px] text-slate-500">${t.category}</span>
                         </div>
-                        <button onclick="deleteTemplate(${index})" class="text-xs text-red-500 hover:underline">Remove</button>
+                        <button onclick="deleteTemplate(${index})" class="text-xs text-red-600 hover:underline font-bold">Remove</button>
                     </div>
                 `;
             });
@@ -421,7 +416,6 @@
             renderTemplates();
         }
 
-        // 5. PRICING & PROFILE SETTINGS
         function saveCustomPrice() {
             const val = document.getElementById('customPriceInput').value;
             localStorage.setItem('app_pro_price', val);
@@ -455,7 +449,7 @@
         function updateStats() {
             const users = JSON.parse(localStorage.getItem('app_users_db') || '[]');
             const price = parseInt(localStorage.getItem('app_pro_price') || '20');
-            const downloads = 12; // Static counter example
+            const downloads = 12;
 
             document.getElementById('statTotalUsers').innerText = users.length;
             document.getElementById('statProDownloads').innerText = downloads;
