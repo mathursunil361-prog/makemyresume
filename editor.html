@@ -1,1 +1,351 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Resume Builder - MakeMyResume</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:wght@300;400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- HTML2PDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
+    <style>
+        /* Anti-Screenshot / Blur Logic */
+        .blur-protection {
+            filter: blur(14px) !important;
+            user-select: none !important;
+            pointer-events: none !important;
+        }
+
+        /* Watermark Overlay */
+        .watermark-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            z-index: 20;
+            opacity: 0.12;
+            font-size: 36px;
+            font-weight: 900;
+            color: #dc2626;
+            transform: rotate(-30deg);
+            white-space: nowrap;
+        }
+
+        /* Dynamic Color Themes for Resume Canvas */
+        .theme-blue { --accent-color: #2563eb; --accent-bg: #eff6ff; --text-color: #1e3a8a; }
+        .theme-green { --accent-color: #059669; --accent-bg: #ecfdf5; --text-color: #064e3b; }
+        .theme-purple { --accent-color: #7c3aed; --accent-bg: #f5f3ff; --text-color: #4c1d95; }
+        .theme-red { --accent-color: #dc2626; --accent-bg: #fef2f2; --text-color: #7f1d1d; }
+        .theme-dark { --accent-color: #0f172a; --accent-bg: #f8fafc; --text-color: #020617; }
+        .theme-teal { --accent-color: #0d9488; --accent-bg: #f0fdfa; --text-color: #134e4a; }
+        .theme-amber { --accent-color: #d97706; --accent-bg: #fffbeb; --text-color: #78350f; }
+        .theme-rose { --accent-color: #e11d48; --accent-bg: #fff1f2; --text-color: #881337; }
+        .theme-indigo { --accent-color: #4f46e5; --accent-bg: #eef2ff; --text-color: #312e81; }
+
+        /* Applied Styles on Dynamic Canvas */
+        #previewContainer .cv-header-title { color: var(--accent-color); }
+        #previewContainer .cv-badge { background-color: var(--accent-bg); color: var(--accent-color); border: 1px solid var(--accent-color); }
+        #previewContainer .cv-border { border-color: var(--accent-color); }
+        #previewContainer .cv-section-heading { color: var(--accent-color); border-bottom: 2px solid var(--accent-color); }
+
+        /* Layout Variations */
+        .layout-serif { font-family: 'Merriweather', serif; }
+        .layout-sans { font-family: 'Inter', sans-serif; }
+        .layout-poppins { font-family: 'Poppins', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-100 font-sans antialiased h-screen flex flex-col">
+
+    <!-- HEADER BAR -->
+    <header class="bg-white border-b border-slate-200 px-6 py-3 flex flex-wrap justify-between items-center shadow-sm gap-3">
+        <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
+            <span class="bg-red-600 text-white p-1.5 rounded"><i class="fa-solid fa-file-invoice"></i></span>
+            <span class="font-bold text-slate-900">MakeMy<span class="text-red-600">Resume</span></span>
+        </div>
+
+        <!-- TEMPLATE & COLOR SELECTOR (100+ Combinations) -->
+        <div class="flex flex-wrap items-center gap-3">
+            <div class="flex items-center gap-1.5">
+                <i class="fa-solid fa-palette text-red-600 text-xs"></i>
+                <label class="text-xs font-bold text-slate-600">Template Presets:</label>
+                <select id="presetSelect" onchange="applyPreset(this.value)" class="bg-slate-50 border border-slate-300 text-slate-800 text-xs rounded-lg p-2 font-semibold focus:outline-none focus:border-red-600">
+                    <option value="blue-sans">Modern Blue (ATS Compatible)</option>
+                    <option value="green-sans">Clean Emerald Green</option>
+                    <option value="purple-poppins">Creative Purple Pro</option>
+                    <option value="dark-serif">Executive Serif Classic</option>
+                    <option value="red-sans">Minimal Crimson Red</option>
+                    <option value="teal-poppins">Teal Corporate Specialist</option>
+                    <option value="amber-serif">Gold Luxury Standard</option>
+                    <option value="rose-sans">Elegant Rose Designer</option>
+                    <option value="indigo-poppins">Tech Lead Indigo</option>
+                </select>
+            </div>
+
+            <!-- CUSTOM THEME & FONT SELECTORS -->
+            <div class="flex items-center gap-2 border-l border-slate-200 pl-3">
+                <select id="colorSelect" onchange="changeColorTheme(this.value)" class="bg-slate-50 border border-slate-300 text-slate-700 text-xs rounded-lg p-1.5 font-medium">
+                    <option value="theme-blue">Blue Color</option>
+                    <option value="theme-green">Green Color</option>
+                    <option value="theme-purple">Purple Color</option>
+                    <option value="theme-red">Red Color</option>
+                    <option value="theme-dark">Dark Slate</option>
+                    <option value="theme-teal">Teal Color</option>
+                    <option value="theme-amber">Amber Gold</option>
+                    <option value="theme-rose">Rose Color</option>
+                    <option value="theme-indigo">Indigo Color</option>
+                </select>
+
+                <select id="fontSelect" onchange="changeFontLayout(this.value)" class="bg-slate-50 border border-slate-300 text-slate-700 text-xs rounded-lg p-1.5 font-medium">
+                    <option value="layout-sans">Inter Font (Modern)</option>
+                    <option value="layout-poppins">Poppins Font (Creative)</option>
+                    <option value="layout-serif">Merriweather (Executive)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="flex gap-2">
+            <button onclick="downloadPDF()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-lg shadow flex items-center gap-2">
+                <i class="fa-solid fa-download"></i> Download PDF (₹5)
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN BUILDER WORKSPACE -->
+    <div class="flex-1 flex overflow-hidden">
+        
+        <!-- LEFT PANEL: FORM INPUTS -->
+        <div class="w-full md:w-1/2 bg-white p-6 overflow-y-auto border-r border-slate-200 space-y-6">
+            <h2 class="text-base font-bold text-slate-800 border-b pb-2 flex items-center gap-2">
+                <i class="fa-solid fa-pen-to-square text-red-600"></i> Enter Resume Details
+            </h2>
+
+            <!-- Personal Details -->
+            <div class="space-y-3">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">1. Personal Information</h3>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Full Name</label>
+                    <input type="text" id="inputName" value="Rahul Sharma" oninput="updatePreview()" class="w-full border border-slate-300 p-2 rounded text-sm focus:border-red-600 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Job Title / Designation</label>
+                    <input type="text" id="inputRole" value="Senior Software Developer" oninput="updatePreview()" class="w-full border border-slate-300 p-2 rounded text-sm focus:border-red-600 focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Email</label>
+                        <input type="email" id="inputEmail" value="rahul.sharma@example.com" oninput="updatePreview()" class="w-full border border-slate-300 p-2 rounded text-sm focus:border-red-600 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Phone Number</label>
+                        <input type="text" id="inputPhone" value="+91 9876543210" oninput="updatePreview()" class="w-full border border-slate-300 p-2 rounded text-sm focus:border-red-600 focus:outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Professional Summary</label>
+                    <textarea id="inputAbout" rows="3" oninput="updatePreview()" class="w-full border border-slate-300 p-2 rounded text-sm focus:border-red-600 focus:outline-none">Results-driven software engineer with 4+ years of experience in full-stack web development. Experienced in building scalable web apps and leading agile dev teams.</textarea>
+                </div>
+            </div>
+
+            <!-- Skills & Work Experience -->
+            <div class="space-y-3 pt-4 border-t">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">2. Skills & Work Experience</h3>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Key Skills (Comma Separated)</label>
+                    <input type="text" id="inputSkills" value="JavaScript, React.js, Node.js, Python, Tailwind CSS, SQL, Git" oninput="updatePreview()" class="w-full border border-slate-300 p-2 rounded text-sm focus:border-red-600 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Work Experience Details</label>
+                    <textarea id="inputExperience" rows="4" oninput="updatePreview()" class="w-full border border-slate-300 p-2 rounded text-sm focus:border-red-600 focus:outline-none">Senior Developer | Tech Innovators Inc. (2022 - Present)
+• Built scalable REST APIs serving 100k+ daily active users.
+• Improved application performance by 35% through query optimization.
+
+Web Developer | CodeCraft Solutions (2020 - 2022)
+• Developed responsive user interfaces using React and Tailwind CSS.</textarea>
+                </div>
+            </div>
+
+            <!-- Education -->
+            <div class="space-y-3 pt-4 border-t">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">3. Education</h3>
+                <div>
+                    <textarea id="inputEducation" rows="2" oninput="updatePreview()" class="w-full border border-slate-300 p-2 rounded text-sm focus:border-red-600 focus:outline-none">B.Tech in Computer Science | Delhi Technological University (2016 - 2020)
+GPA: 8.5/10</textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL: LIVE PREVIEW CANVAS -->
+        <div class="hidden md:flex flex-1 bg-slate-200 p-8 overflow-y-auto justify-center items-start">
+            <div id="previewContainer" class="bg-white w-[210mm] min-h-[297mm] p-10 shadow-2xl rounded relative transition-all duration-300 theme-blue layout-sans">
+                
+                <!-- UNPAID WATERMARK LAYER -->
+                <div id="watermark" class="watermark-overlay">
+                    UNPAID DRAFT - MAKEMYRESUME
+                </div>
+
+                <!-- RESUME CONTENT DISPLAY CANVAS -->
+                <div id="resumeCanvas" class="space-y-6">
+                    
+                    <!-- Header -->
+                    <div class="cv-header border-b-2 pb-4 cv-border">
+                        <h1 id="prevName" class="text-3xl font-extrabold tracking-tight cv-header-title">Rahul Sharma</h1>
+                        <p id="prevRole" class="text-base font-semibold text-slate-600 mt-1">Senior Software Developer</p>
+                        <div class="text-xs text-slate-600 flex flex-wrap gap-4 mt-3">
+                            <span id="prevEmail"><i class="fa-solid fa-envelope mr-1"></i> rahul.sharma@example.com</span>
+                            <span id="prevPhone"><i class="fa-solid fa-phone mr-1"></i> +91 9876543210</span>
+                        </div>
+                    </div>
+
+                    <!-- Summary -->
+                    <div>
+                        <h3 class="cv-section-heading text-xs font-bold uppercase tracking-wider mb-2">Professional Profile</h3>
+                        <p id="prevAbout" class="text-xs text-slate-700 leading-relaxed">Results-driven software engineer with 4+ years of experience in full-stack web development.</p>
+                    </div>
+
+                    <!-- Technical Skills Badges -->
+                    <div>
+                        <h3 class="cv-section-heading text-xs font-bold uppercase tracking-wider mb-2">Key Skills</h3>
+                        <div id="prevSkills" class="flex flex-wrap gap-1.5">
+                            <!-- Dynamic Badges -->
+                        </div>
+                    </div>
+
+                    <!-- Work Experience -->
+                    <div>
+                        <h3 class="cv-section-heading text-xs font-bold uppercase tracking-wider mb-2">Work Experience</h3>
+                        <p id="prevExperience" class="text-xs text-slate-700 leading-relaxed whitespace-pre-line">Senior Developer | Tech Innovators Inc.</p>
+                    </div>
+
+                    <!-- Education -->
+                    <div>
+                        <h3 class="cv-section-heading text-xs font-bold uppercase tracking-wider mb-2">Education</h3>
+                        <p id="prevEducation" class="text-xs text-slate-700 leading-relaxed whitespace-pre-line">B.Tech in Computer Science</p>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT FOR DYNAMIC STYLES, LIVE PREVIEW & DOWNLOAD -->
+    <script>
+        let isPaid = false;
+
+        // 1. Template Presets Changing Logic
+        function applyPreset(presetKey) {
+            const container = document.getElementById('previewContainer');
+            const [color, font] = presetKey.split('-');
+            
+            // Set Color Dropdown
+            const themeClass = `theme-${color}`;
+            document.getElementById('colorSelect').value = themeClass;
+            changeColorTheme(themeClass);
+
+            // Set Font Dropdown
+            const fontClass = `layout-${font}`;
+            document.getElementById('fontSelect').value = fontClass;
+            changeFontLayout(fontClass);
+        }
+
+        function changeColorTheme(colorClass) {
+            const container = document.getElementById('previewContainer');
+            // Remove old theme classes
+            container.className = container.className.replace(/theme-\w+/g, '');
+            container.classList.add(colorClass);
+        }
+
+        function changeFontLayout(fontClass) {
+            const container = document.getElementById('previewContainer');
+            // Remove old layout classes
+            container.className = container.className.replace(/layout-\w+/g, '');
+            container.classList.add(fontClass);
+        }
+
+        // 2. Real-time Live Preview Engine
+        function updatePreview() {
+            document.getElementById('prevName').innerText = document.getElementById('inputName').value || 'Your Name';
+            document.getElementById('prevRole').innerText = document.getElementById('inputRole').value || 'Your Job Title';
+            document.getElementById('prevEmail').innerHTML = '<i class="fa-solid fa-envelope mr-1"></i> ' + (document.getElementById('inputEmail').value || 'email@example.com');
+            document.getElementById('prevPhone').innerHTML = '<i class="fa-solid fa-phone mr-1"></i> ' + (document.getElementById('inputPhone').value || '+91 0000000000');
+            document.getElementById('prevAbout').innerText = document.getElementById('inputAbout').value;
+            document.getElementById('prevExperience').innerText = document.getElementById('inputExperience').value;
+            document.getElementById('prevEducation').innerText = document.getElementById('inputEducation').value;
+
+            // Skills Badges Formatting
+            const skillsArray = document.getElementById('inputSkills').value.split(',');
+            const skillsContainer = document.getElementById('prevSkills');
+            skillsContainer.innerHTML = '';
+            skillsArray.forEach(skill => {
+                if(skill.trim()) {
+                    const span = document.createElement('span');
+                    span.className = 'cv-badge text-[11px] font-medium px-2 py-0.5 rounded';
+                    span.innerText = skill.trim();
+                    skillsContainer.appendChild(span);
+                }
+            });
+        }
+
+        // Initialize On Load
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tplParam = urlParams.get('template');
+            if (tplParam) {
+                const select = document.getElementById('presetSelect');
+                const matchedOption = Array.from(select.options).find(opt => opt.value.includes(tplParam));
+                if (matchedOption) {
+                    select.value = matchedOption.value;
+                    applyPreset(matchedOption.value);
+                }
+            }
+            updatePreview();
+        });
+
+        // 3. Security & Anti-Screenshot Protection
+        window.addEventListener('blur', () => {
+            if(!isPaid) {
+                document.getElementById('previewContainer').classList.add('blur-protection');
+            }
+        });
+
+        window.addEventListener('focus', () => {
+            document.getElementById('previewContainer').classList.remove('blur-protection');
+        });
+
+        document.getElementById('previewContainer').addEventListener('contextmenu', (e) => e.preventDefault());
+
+        // 4. Download PDF Engine with ₹5 Payment Simulation
+        function downloadPDF() {
+            if(!isPaid) {
+                let pay = confirm("Fee: ₹5 for clean PDF without watermark. Click OK to complete payment.");
+                if(pay) {
+                    isPaid = true;
+                    document.getElementById('watermark').style.display = 'none';
+                    alert("Payment Successful! Downloading PDF...");
+                    generatePDF();
+                }
+            } else {
+                generatePDF();
+            }
+        }
+
+        function generatePDF() {
+            const element = document.getElementById('previewContainer');
+            const opt = {
+                margin:       0,
+                filename:     'my_resume.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+    </script>
+</body>
+</html>
