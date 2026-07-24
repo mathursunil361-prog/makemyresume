@@ -1,1 +1,172 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Builder - MakeMyResume</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- HTML2PDF Library (For PDF Generation) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
+    <style>
+        /* Anti-Screenshot / Blur Logic on Blur */
+        .blur-protection {
+            filter: blur(12px) !important;
+            user-select: none !important;
+            pointer-events: none !important;
+        }
+
+        /* Watermark Pattern */
+        .watermark-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            z-index: 20;
+            opacity: 0.15;
+            font-size: 42px;
+            font-weight: 900;
+            color: #dc2626;
+            transform: rotate(-30deg);
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 font-sans antialiased h-screen flex flex-col">
+
+    <!-- HEADER BAR -->
+    <header class="bg-white border-b border-slate-200 px-6 py-3 flex justify-between items-center shadow-sm">
+        <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
+            <span class="bg-red-600 text-white p-1.5 rounded"><i class="fa-solid fa-file-invoice"></i></span>
+            <span class="font-bold text-slate-900">MakeMy<span class="text-red-600">Resume</span></span>
+        </div>
+        <div class="flex gap-3">
+            <button onclick="downloadPDF()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold px-4 py-2 rounded-lg shadow flex items-center gap-2">
+                <i class="fa-solid fa-download"></i> Download PDF (₹5)
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN BUILDER WORKSPACE -->
+    <div class="flex-1 flex overflow-hidden">
+        
+        <!-- LEFT PANEL: FORM INPUTS -->
+        <div class="w-full md:w-1/2 bg-white p-6 overflow-y-auto border-r border-slate-200">
+            <h2 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2">Enter Your Details</h2>
+
+            <form class="space-y-4" oninput="updatePreview()">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Full Name</label>
+                    <input type="text" id="inputName" value="Rahul Sharma" class="w-full border border-slate-300 p-2 rounded text-sm focus:border-red-600 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Job Title</label>
+                    <input type="text" id="inputRole" value="Full Stack Developer" class="w-full border border-slate-300 p-2 rounded text-sm focus:border-red-600 focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Email</label>
+                        <input type="email" id="inputEmail" value="rahul@example.com" class="w-full border border-slate-300 p-2 rounded text-sm focus:border-red-600 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Phone</label>
+                        <input type="text" id="inputPhone" value="+91 9876543210" class="w-full border border-slate-300 p-2 rounded text-sm focus:border-red-600 focus:outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">About / Summary</label>
+                    <textarea id="inputAbout" rows="3" class="w-full border border-slate-300 p-2 rounded text-sm focus:border-red-600 focus:outline-none">Passionate developer with 3+ years experience building web apps.</textarea>
+                </div>
+            </form>
+        </div>
+
+        <!-- RIGHT PANEL: LIVE PREVIEW & ANTI-SCREENSHOT ENGINE -->
+        <div class="hidden md:flex flex-1 bg-slate-200 p-8 overflow-y-auto justify-center items-start">
+            <div id="previewContainer" class="bg-white w-[210mm] min-h-[297mm] p-10 shadow-2xl rounded relative transition-all duration-300">
+                
+                <!-- UNPAID WATERMARK LAYER -->
+                <div id="watermark" class="watermark-overlay">
+                    UNPAID DRAFT - MAKEMYRESUME
+                </div>
+
+                <!-- RESUME CONTENT DISPLAY -->
+                <div id="resumeCanvas" class="space-y-4">
+                    <div class="border-b-2 border-red-600 pb-4">
+                        <h1 id="prevName" class="text-3xl font-extrabold text-slate-900">Rahul Sharma</h1>
+                        <p id="prevRole" class="text-lg font-semibold text-red-600">Full Stack Developer</p>
+                        <div class="text-xs text-slate-500 flex gap-4 mt-2">
+                            <span id="prevEmail"><i class="fa-solid fa-envelope"></i> rahul@example.com</span>
+                            <span id="prevPhone"><i class="fa-solid fa-phone"></i> +91 9876543210</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Professional Summary</h3>
+                        <p id="prevAbout" class="text-sm text-slate-700 leading-relaxed">Passionate developer with 3+ years experience building web apps.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT FOR REAL-TIME PREVIEW & SECURITY -->
+    <script>
+        let isPaid = false; // User has not paid yet
+
+        // 1. Live Input Update
+        function updatePreview() {
+            document.getElementById('prevName').innerText = document.getElementById('inputName').value || 'Your Name';
+            document.getElementById('prevRole').innerText = document.getElementById('inputRole').value || 'Your Role';
+            document.getElementById('prevEmail').innerHTML = '<i class="fa-solid fa-envelope"></i> ' + document.getElementById('inputEmail').value;
+            document.getElementById('prevPhone').innerHTML = '<i class="fa-solid fa-phone"></i> ' + document.getElementById('inputPhone').value;
+            document.getElementById('prevAbout').innerText = document.getElementById('inputAbout').value;
+        }
+
+        // 2. Anti-Screenshot Protection Logic
+        window.addEventListener('blur', () => {
+            if(!isPaid) {
+                document.getElementById('previewContainer').classList.add('blur-protection');
+            }
+        });
+
+        window.addEventListener('focus', () => {
+            document.getElementById('previewContainer').classList.remove('blur-protection');
+        });
+
+        // Disable Right Click on Preview
+        document.getElementById('previewContainer').addEventListener('contextmenu', (e) => e.preventDefault());
+
+        // 3. Fake Payment & Download Logic (₹5 Payment Simulation)
+        function downloadPDF() {
+            if(!isPaid) {
+                let pay = confirm("Paid PDF Download Fee: ₹5. Proceed to Pay & Remove Watermark?");
+                if(pay) {
+                    isPaid = true;
+                    document.getElementById('watermark').style.display = 'none'; // Watermark hide kar do
+                    alert("Payment Successful! Generating PDF...");
+                    generatePDF();
+                }
+            } else {
+                generatePDF();
+            }
+        }
+
+        function generatePDF() {
+            const element = document.getElementById('previewContainer');
+            const opt = {
+                margin:       0,
+                filename:     'my_resume.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+    </script>
+</body>
+</html>
