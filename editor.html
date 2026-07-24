@@ -27,14 +27,9 @@
             text-align: center;
         }
 
-        /* CRITICAL PRINT FIX: Only print the A4 Resume Sheet and hide everything else */
         @media print {
-            body * {
-                visibility: hidden;
-            }
-            #resumePreviewSheet, #resumePreviewSheet * {
-                visibility: visible;
-            }
+            body * { visibility: hidden; }
+            #resumePreviewSheet, #resumePreviewSheet * { visibility: visible; }
             #resumePreviewSheet {
                 position: absolute;
                 left: 0;
@@ -61,9 +56,9 @@
 
         <!-- 100 TEMPLATE SELECTOR -->
         <div class="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-lg border">
-            <span class="text-xs font-bold text-slate-600"><i class="fa-solid fa-layer-group text-red-600 mr-1"></i> Templates (1-100):</span>
-            <select id="templateSelector" onchange="updatePreview()" class="bg-transparent text-xs font-extrabold text-red-600 focus:outline-none cursor-pointer max-w-[185px]">
-                <!-- Dynamically Populated 100 Templates -->
+            <span class="text-xs font-bold text-slate-600"><i class="fa-solid fa-layer-group text-red-600 mr-1"></i> Template:</span>
+            <select id="templateSelector" onchange="updatePreview()" class="bg-transparent text-xs font-extrabold text-red-600 focus:outline-none cursor-pointer max-w-[210px]">
+                <!-- 100 Templates Dynamically Generated -->
             </select>
         </div>
 
@@ -85,15 +80,15 @@
     <div class="flex-1 flex overflow-hidden">
         
         <!-- LEFT PANEL: FORMATTING TOOLS & DATA CONTROLS -->
-        <aside class="w-[440px] bg-white border-r border-slate-200 flex flex-col shrink-0 overflow-y-auto p-5 space-y-4">
+        <aside class="w-[450px] bg-white border-r border-slate-200 flex flex-col shrink-0 overflow-y-auto p-5 space-y-4">
             <div class="flex items-center justify-between border-b pb-2">
-                <h2 class="font-extrabold text-xs text-slate-900 uppercase tracking-wider"><i class="fa-solid fa-wand-magic-sparkles text-red-600 mr-1"></i> Advanced Styling & Editor</h2>
+                <h2 class="font-extrabold text-xs text-slate-900 uppercase tracking-wider"><i class="fa-solid fa-wand-magic-sparkles text-red-600 mr-1"></i> Full Customization Editor</h2>
                 <button onclick="loadDefaultData()" class="text-[10px] bg-red-50 text-red-600 font-bold px-2 py-1 rounded hover:bg-red-100">Reset All</button>
             </div>
 
-            <!-- FORMATTING TOOLBAR (Bold, Italic, Underline, Size, Color, Alignment, Font Family) -->
+            <!-- COMPREHENSIVE STYLING TOOLBAR -->
             <div class="bg-slate-50 p-3 rounded-xl border space-y-2.5">
-                <h3 class="text-[11px] font-bold text-slate-700 uppercase"><i class="fa-solid fa-text-height text-red-600 mr-1"></i> Text Formatting Controls</h3>
+                <h3 class="text-[11px] font-bold text-slate-700 uppercase"><i class="fa-solid fa-text-height text-red-600 mr-1"></i> Typography & Styling</h3>
                 
                 <div class="grid grid-cols-2 gap-2">
                     <div>
@@ -117,21 +112,21 @@
                 </div>
 
                 <div class="flex items-center justify-between pt-1">
-                    <!-- Style Toggles (Bold, Italic, Underline) -->
+                    <!-- Bold, Italic, Underline Toggles -->
                     <div class="flex items-center gap-1 bg-white border p-1 rounded-lg shadow-sm">
                         <button type="button" onclick="toggleStyle('bold')" id="btnBold" class="w-7 h-7 rounded hover:bg-slate-100 text-xs font-bold text-slate-700 transition" title="Bold"><i class="fa-solid fa-bold"></i></button>
                         <button type="button" onclick="toggleStyle('italic')" id="btnItalic" class="w-7 h-7 rounded hover:bg-slate-100 text-xs font-bold text-slate-700 transition" title="Italic"><i class="fa-solid fa-italic"></i></button>
                         <button type="button" onclick="toggleStyle('underline')" id="btnUnderline" class="w-7 h-7 rounded hover:bg-slate-100 text-xs font-bold text-slate-700 transition" title="Underline"><i class="fa-solid fa-underline"></i></button>
                     </div>
 
-                    <!-- Alignment Buttons -->
+                    <!-- Alignment -->
                     <div class="flex items-center gap-1 bg-white border p-1 rounded-lg shadow-sm">
                         <button type="button" onclick="setAlignment('left')" id="alignLeft" class="w-7 h-7 rounded bg-red-50 text-red-600 text-xs transition" title="Align Left"><i class="fa-solid fa-align-left"></i></button>
                         <button type="button" onclick="setAlignment('center')" id="alignCenter" class="w-7 h-7 rounded hover:bg-slate-100 text-xs text-slate-700 transition" title="Align Center"><i class="fa-solid fa-align-center"></i></button>
                         <button type="button" onclick="setAlignment('right')" id="alignRight" class="w-7 h-7 rounded hover:bg-slate-100 text-xs text-slate-700 transition" title="Align Right"><i class="fa-solid fa-align-right"></i></button>
                     </div>
 
-                    <!-- Theme Color Picker -->
+                    <!-- Color Picker -->
                     <div class="flex items-center gap-1.5 bg-white border px-2 py-1 rounded-lg shadow-sm">
                         <label for="styleColor" class="text-[10px] font-bold text-slate-500">Color</label>
                         <input type="color" id="styleColor" value="#0f172a" onchange="updatePreview()" class="w-6 h-6 border-0 rounded cursor-pointer bg-transparent">
@@ -139,7 +134,7 @@
                 </div>
             </div>
 
-            <!-- Personal Info & Photo Upload -->
+            <!-- Personal Info & Photo -->
             <div class="space-y-3">
                 <h3 class="text-[11px] font-bold text-slate-700 uppercase">1. Personal Details & Photo</h3>
                 
@@ -161,22 +156,23 @@
                 <input type="text" id="inputAddress" placeholder="Address" oninput="updatePreview()" class="w-full border p-2 rounded text-xs">
             </div>
 
-            <!-- Objective / Profile Summary -->
+            <!-- Objective -->
             <div class="space-y-2">
                 <h3 class="text-[11px] font-bold text-slate-700 uppercase">2. Professional Objective</h3>
                 <textarea id="inputObjective" rows="2" oninput="updatePreview()" class="w-full border p-2 rounded text-xs"></textarea>
             </div>
 
-            <!-- Education Qualification Table Data & Row/Col Controls -->
+            <!-- Qualification Table Data & Insert Row / Add Column / Delete Controls -->
             <div class="space-y-2">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-[11px] font-bold text-slate-700 uppercase">3. Qualification Table (Cut/Delete)</h3>
+                    <h3 class="text-[11px] font-bold text-slate-700 uppercase">3. Qualification Table Manager</h3>
                     <div class="flex gap-1">
-                        <button onclick="addTableRow()" class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-[10px] font-bold px-2 py-0.5 rounded border"><i class="fa-solid fa-plus mr-0.5"></i> Add Row</button>
+                        <button onclick="addTableColumn()" class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-[10px] font-bold px-2 py-0.5 rounded border"><i class="fa-solid fa-columns mr-0.5"></i> +Col</button>
+                        <button onclick="addTableRow()" class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-[10px] font-bold px-2 py-0.5 rounded border"><i class="fa-solid fa-plus mr-0.5"></i> +Row</button>
                     </div>
                 </div>
-                <div id="tableRowsContainer" class="space-y-2 bg-slate-50 p-2.5 rounded border">
-                    <!-- Dynamic Table Rows populated via JS for easy cut/delete -->
+                <div id="tableManagerContainer" class="space-y-2 bg-slate-50 p-2.5 rounded border max-h-48 overflow-y-auto">
+                    <!-- Dynamic Table Manager UI -->
                 </div>
             </div>
 
@@ -195,7 +191,7 @@
         </main>
     </div>
 
-    <!-- PRO PAYMENT MODAL POPUP (GATEWAY SIMULATION) -->
+    <!-- PRO PAYMENT MODAL POPUP -->
     <div id="proModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-slate-100">
             <div class="flex items-center justify-between">
@@ -220,7 +216,7 @@
         </div>
     </div>
 
-    <!-- ENGINE SCRIPT -->
+    <!-- SCRIPT ENGINE -->
     <script>
         let isProUnlocked = false;
         let uploadedPhotoData = "";
@@ -229,17 +225,18 @@
         let isUnderlineActive = false;
         let currentAlignment = 'left';
 
-        // Table Data Dynamic Array for Cut/Delete feature
-        let tableData = [
-            { deg: "10th", yr: "2016", inst: "CG Board" },
-            { deg: "12th", yr: "2018", inst: "CG Board" },
-            { deg: "BCA", yr: "2022", inst: "Durg Univ" }
+        // Table dynamic columns and rows state
+        let tableColumns = ["Examination / Degree", "Passing Year", "Board / University"];
+        let tableRows = [
+            ["10th", "2016", "CG Board"],
+            ["12th", "2018", "CG Board"],
+            ["BCA", "2022", "Durg Univ"]
         ];
 
         window.addEventListener('DOMContentLoaded', () => {
             const selector = document.getElementById('templateSelector');
             
-            // Generate 100 Unique Dynamic Templates in Dropdown
+            // 100 Templates Generator
             for(let i=1; i<=100; i++) {
                 let layoutName = "Govt & Formal Table Layout";
                 if(i % 5 === 0) layoutName = "Executive Two-Column Sidebar";
@@ -259,41 +256,66 @@
             loadDefaultData();
         });
 
-        function renderTableInputs() {
-            const container = document.getElementById('tableRowsContainer');
-            container.innerHTML = `
-                <div class="grid grid-cols-12 gap-1 text-[10px] font-bold text-slate-500 uppercase pb-1 border-b">
-                    <span class="col-span-4">Degree</span><span class="col-span-2">Year</span><span class="col-span-5">Board/Univ</span><span class="col-span-1">Action</span>
-                </div>
-            `;
+        function renderTableManager() {
+            const container = document.getElementById('tableManagerContainer');
+            let html = `<div class="text-[10px] font-bold text-slate-500 uppercase pb-1 border-b mb-2">Columns Setup</div><div class="flex flex-wrap gap-1 mb-3">`;
             
-            tableData.forEach((row, index) => {
-                const rowDiv = document.createElement('div');
-                rowDiv.className = "grid grid-cols-12 gap-1 items-center pt-1";
-                rowDiv.innerHTML = `
-                    <input type="text" value="${row.deg}" oninput="updateTableRowData(${index}, 'deg', this.value)" class="col-span-4 border p-1 rounded text-xs" placeholder="Degree">
-                    <input type="text" value="${row.yr}" oninput="updateTableRowData(${index}, 'yr', this.value)" class="col-span-2 border p-1 rounded text-xs" placeholder="Year">
-                    <input type="text" value="${row.inst}" oninput="updateTableRowData(${index}, 'inst', this.value)" class="col-span-5 border p-1 rounded text-xs" placeholder="University">
-                    <button onclick="deleteTableRow(${index})" class="col-span-1 bg-red-100 hover:bg-red-200 text-red-600 rounded p-1 text-center text-xs" title="Cut/Delete Row"><i class="fa-solid fa-trash-can"></i></button>
+            tableColumns.forEach((col, cIdx) => {
+                html += `
+                    <div class="flex items-center gap-1 bg-white border p-1 rounded">
+                        <input type="text" value="${col}" oninput="updateColumnName(${cIdx}, this.value)" class="w-24 text-[11px] font-bold border-0 focus:outline-none">
+                        ${tableColumns.length > 1 ? `<button onclick="deleteColumn(${cIdx})" class="text-red-500 hover:text-red-700 text-xs px-1" title="Delete Column">&times;</button>` : ''}
+                    </div>
                 `;
-                container.appendChild(rowDiv);
             });
+            html += `</div><div class="text-[10px] font-bold text-slate-500 uppercase pb-1 border-b mb-2">Rows Setup</div>`;
+
+            tableRows.forEach((row, rIdx) => {
+                html += `<div class="flex items-center gap-1 mb-1.5 bg-white p-1 border rounded">`;
+                row.forEach((cell, cIdx) => {
+                    html += `<input type="text" value="${cell}" oninput="updateTableCell(${rIdx}, ${cIdx}, this.value)" class="flex-1 border p-1 rounded text-xs" placeholder="Cell">`;
+                });
+                html += `<button onclick="deleteTableRow(${rIdx})" class="bg-red-100 hover:bg-red-200 text-red-600 rounded p-1 text-xs px-2" title="Delete Row"><i class="fa-solid fa-trash-can"></i></button></div>`;
+            });
+
+            container.innerHTML = html;
         }
 
-        function updateTableRowData(index, field, value) {
-            tableData[index][field] = value;
+        function updateColumnName(cIdx, val) {
+            tableColumns[cIdx] = val;
+            updatePreview();
+        }
+
+        function addTableColumn() {
+            tableColumns.push(`Column ${tableColumns.length + 1}`);
+            tableRows.forEach(row => row.push("Data"));
+            renderTableManager();
+            updatePreview();
+        }
+
+        function deleteColumn(cIdx) {
+            if(tableColumns.length <= 1) return;
+            tableColumns.splice(cIdx, 1);
+            tableRows.forEach(row => row.splice(cIdx, 1));
+            renderTableManager();
             updatePreview();
         }
 
         function addTableRow() {
-            tableData.push({ deg: "New Degree", yr: "2024", inst: "University" });
-            renderTableInputs();
+            let newRow = new Array(tableColumns.length).fill("New Data");
+            tableRows.push(newRow);
+            renderTableManager();
             updatePreview();
         }
 
-        function deleteTableRow(index) {
-            tableData.splice(index, 1);
-            renderTableInputs();
+        function deleteTableRow(rIdx) {
+            tableRows.splice(rIdx, 1);
+            renderTableManager();
+            updatePreview();
+        }
+
+        function updateTableCell(rIdx, cIdx, val) {
+            tableRows[rIdx][cIdx] = val;
             updatePreview();
         }
 
@@ -350,16 +372,17 @@
             document.getElementById('inputObjective').value = "Graduate with BCA from Samadhan Mahavidyalaya Bemetara. Experienced in formal documentation, data entry, and technical support roles.";
             document.getElementById('inputExperience').value = "• Computer Operator at District Office (2022 - Present)\n• Frontend Developer Intern at Tech Solutions (2021 - 2022)";
             
-            tableData = [
-                { deg: "10th", yr: "2016", inst: "CG Board" },
-                { deg: "12th", yr: "2018", inst: "CG Board" },
-                { deg: "BCA", yr: "2022", inst: "Durg Univ" }
+            tableColumns = ["Examination / Degree", "Passing Year", "Board / University"];
+            tableRows = [
+                ["10th", "2016", "CG Board"],
+                ["12th", "2018", "CG Board"],
+                ["BCA", "2022", "Durg Univ"]
             ];
 
             uploadedPhotoData = "";
             document.getElementById('thumbContainer').innerHTML = "No Photo";
             document.getElementById('inputPhoto').value = "";
-            renderTableInputs();
+            renderTableManager();
             updatePreview();
         }
 
@@ -372,13 +395,11 @@
             const objective = document.getElementById('inputObjective').value;
             const experience = document.getElementById('inputExperience').value;
 
-            // Styling Controls Variables
             const fontFamily = document.getElementById('styleFontFamily').value;
             const fontSize = document.getElementById('styleFontSize').value;
             const customColor = document.getElementById('styleColor').value;
 
             const sheet = document.getElementById('resumePreviewSheet');
-            
             sheet.style.fontFamily = fontFamily;
             sheet.style.fontSize = fontSize;
             sheet.style.color = customColor;
@@ -394,94 +415,49 @@
                 ? `<img src="${uploadedPhotoData}" class="w-full h-full object-cover">` 
                 : `<span class="text-[10px] text-slate-400 font-bold">PHOTO</span>`;
 
-            // Build dynamic table HTML from array (supports row cut/delete)
-            let tableRowsHtml = "";
-            tableData.forEach(row => {
-                tableRowsHtml += `<tr><td class="border p-1.5">${row.deg}</td><td class="border p-1.5">${row.yr}</td><td class="border p-1.5">${row.inst}</td></tr>`;
+            // Build Table Headers & Rows dynamically
+            let thHtml = "";
+            tableColumns.forEach(col => { thHtml += `<th class="border p-1.5">${col}</th>`; });
+
+            let tbHtml = "";
+            tableRows.forEach(row => {
+                tbHtml += `<tr>`;
+                row.forEach(cell => { tbHtml += `<td class="border p-1.5">${cell}</td>`; });
+                tbHtml += `</tr>`;
             });
 
-            let tableRowsHtmlCenterGrid = "";
-            tableData.forEach(row => {
-                tableRowsHtmlCenterGrid += `<tr class="border-b border-slate-300"><td class="border-r border-slate-300 p-1.5 font-medium">${row.deg}</td><td class="border-r border-slate-300 p-1.5">${row.yr}</td><td class="p-1.5">${row.inst}</td></tr>`;
-            });
-
-            let innerHTMLContent = "";
-
-            if(tplId % 5 === 0) {
-                innerHTMLContent = `
-                    <div class="grid grid-cols-12 gap-6 h-full" style="text-align: left;">
-                        <div class="col-span-4 bg-slate-900 text-white p-6 -m-[15mm] mr-0 flex flex-col justify-between">
-                            <div>
-                                <div class="w-24 h-28 bg-slate-700 border-2 border-white mb-6 flex items-center justify-center overflow-hidden">${photoHtml}</div>
-                                <h3 class="font-bold text-xs uppercase text-red-400 tracking-wider mb-2">Contact Info</h3>
-                                <p class="text-[11px] text-slate-300 mb-1"><i class="fa-solid fa-envelope mr-1"></i> ${email}</p>
-                                <p class="text-[11px] text-slate-300 mb-1"><i class="fa-solid fa-phone mr-1"></i> ${phone}</p>
-                                <p class="text-[11px] text-slate-300"><i class="fa-solid fa-location-dot mr-1"></i> ${address}</p>
-                            </div>
-                            <div class="text-[10px] text-slate-400">Template ID: #${tplId}</div>
+            let innerHTMLContent = `
+                <div class="space-y-4" style="${dynamicStyleString}">
+                    <div class="flex items-start justify-between border-b-2 pb-4" style="border-color: ${customColor};">
+                        <div>
+                            <h1 class="text-2xl font-black uppercase tracking-tight" style="color: ${customColor};">${name}</h1>
+                            <p class="text-xs text-slate-600 mt-1"><i class="fa-solid fa-location-dot mr-1"></i> ${address}</p>
+                            <p class="text-xs text-slate-600 mt-0.5"><i class="fa-solid fa-envelope mr-1"></i> ${email} | <i class="fa-solid fa-phone mr-1"></i> ${phone}</p>
                         </div>
-                        <div class="col-span-8 space-y-4" style="${dynamicStyleString}">
-                            <div>
-                                <h1 class="text-2xl font-black uppercase" style="color: ${customColor};">${name}</h1>
-                                <p class="text-xs text-red-600 font-bold uppercase tracking-widest mt-0.5">Executive Professional Profile</p>
-                            </div>
-                            <div class="border-t pt-3">
-                                <h4 class="font-bold text-xs uppercase mb-1" style="color: ${customColor};">Career Objective</h4>
-                                <p class="text-xs leading-relaxed text-slate-700">${objective}</p>
-                            </div>
-                            <div class="border-t pt-3">
-                                <h4 class="font-bold text-xs uppercase mb-2" style="color: ${customColor};">Educational Qualification</h4>
-                                <table class="w-full text-left text-xs border-collapse border border-slate-300">
-                                    <tr class="bg-slate-100 font-bold"><th class="border p-1.5">Degree</th><th class="border p-1.5">Year</th><th class="border p-1.5">Institution</th></tr>
-                                    ${tableRowsHtml}
-                                </table>
-                            </div>
-                            <div class="border-t pt-3">
-                                <h4 class="font-bold text-xs uppercase mb-1" style="color: ${customColor};">Work Experience</h4>
-                                <p class="text-xs text-slate-700 whitespace-pre-line">${experience}</p>
-                            </div>
-                        </div>
+                        <div class="w-20 h-24 border-2 border-slate-400 bg-slate-50 flex items-center justify-center overflow-hidden">${photoHtml}</div>
                     </div>
-                `;
-            } else {
-                innerHTMLContent = `
-                    <div class="space-y-4" style="${dynamicStyleString}">
-                        <div class="flex items-start justify-between border-b-2 pb-4" style="border-color: ${customColor};">
-                            <div>
-                                <h1 class="text-2xl font-black uppercase tracking-tight" style="color: ${customColor};">${name}</h1>
-                                <p class="text-xs text-slate-600 mt-1"><i class="fa-solid fa-location-dot mr-1"></i> ${address}</p>
-                                <p class="text-xs text-slate-600 mt-0.5"><i class="fa-solid fa-envelope mr-1"></i> ${email} | <i class="fa-solid fa-phone mr-1"></i> ${phone}</p>
-                            </div>
-                            <div class="w-20 h-24 border-2 border-slate-400 bg-slate-50 flex items-center justify-center overflow-hidden">${photoHtml}</div>
-                        </div>
-                        <div>
-                            <h4 class="font-extrabold uppercase text-xs tracking-wider border-b border-slate-200 pb-0.5 mb-1" style="color: ${customColor};">Professional Summary</h4>
-                            <p class="text-xs text-slate-700 leading-relaxed">${objective}</p>
-                        </div>
-                        <div>
-                            <h4 class="font-extrabold uppercase text-xs tracking-wider border-b border-slate-200 pb-0.5 mb-2" style="color: ${customColor};">Educational Qualification Table (Template #${tplId})</h4>
-                            <table class="w-full text-center text-xs border-collapse border border-slate-800">
-                                <tr class="bg-slate-100 font-bold border-b border-slate-800">
-                                    <th class="border-r border-slate-800 p-1.5">Examination / Degree</th>
-                                    <th class="border-r border-slate-800 p-1.5">Passing Year</th>
-                                    <th class="p-1.5">Board / University</th>
-                                </tr>
-                                ${tableRowsHtmlCenterGrid}
-                            </table>
-                        </div>
-                        <div>
-                            <h4 class="font-extrabold uppercase text-xs tracking-wider border-b border-slate-200 pb-0.5 mb-1" style="color: ${customColor};">Work Experience & Skills</h4>
-                            <p class="text-xs text-slate-700 whitespace-pre-line leading-relaxed">${experience}</p>
-                        </div>
-                        <div class="pt-8 flex justify-between text-xs text-slate-500 border-t mt-12">
-                            <span>Date: ____________________</span>
-                            <span class="font-bold uppercase" style="color: ${customColor};">Signature (${name})</span>
-                        </div>
+                    <div>
+                        <h4 class="font-extrabold uppercase text-xs tracking-wider border-b border-slate-200 pb-0.5 mb-1" style="color: ${customColor};">Professional Summary</h4>
+                        <p class="text-xs text-slate-700 leading-relaxed">${objective}</p>
                     </div>
-                `;
-            }
+                    <div>
+                        <h4 class="font-extrabold uppercase text-xs tracking-wider border-b border-slate-200 pb-0.5 mb-2" style="color: ${customColor};">Educational Qualification Table (Template #${tplId})</h4>
+                        <table class="w-full text-center text-xs border-collapse border border-slate-800">
+                            <tr class="bg-slate-100 font-bold border-b border-slate-800">${thHtml}</tr>
+                            ${tbHtml}
+                        </table>
+                    </div>
+                    <div>
+                        <h4 class="font-extrabold uppercase text-xs tracking-wider border-b border-slate-200 pb-0.5 mb-1" style="color: ${customColor};">Work Experience & Skills</h4>
+                        <p class="text-xs text-slate-700 whitespace-pre-line leading-relaxed">${experience}</p>
+                    </div>
+                    <div class="pt-8 flex justify-between text-xs text-slate-500 border-t mt-12">
+                        <span>Date: ____________________</span>
+                        <span class="font-bold uppercase" style="color: ${customColor};">Signature (${name})</span>
+                    </div>
+                </div>
+            `;
 
-            // Append Watermark if NOT Pro Unlocked
             if (!isProUnlocked) {
                 innerHTMLContent += `<div class="watermark-layer">MAKEMYRESUME FREE EDITION</div>`;
             }
