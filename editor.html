@@ -73,50 +73,75 @@
         <!-- LEFT PANEL: CONTROLS -->
         <aside class="w-[450px] bg-white border-r border-slate-200 flex flex-col shrink-0 overflow-y-auto p-5 space-y-4">
             <div class="flex items-center justify-between border-b pb-2">
-                <h2 class="font-extrabold text-xs text-slate-900 uppercase tracking-wider"><i class="fa-solid fa-wand-magic-sparkles text-red-600 mr-1"></i> Live Selection Text Editor</h2>
+                <h2 class="font-extrabold text-xs text-slate-900 uppercase tracking-wider"><i class="fa-solid fa-wand-magic-sparkles text-red-600 mr-1"></i> Selection Text Customizer</h2>
                 <button onclick="loadDefaultData()" class="text-[10px] bg-red-50 text-red-600 font-bold px-2 py-1 rounded hover:bg-red-100">Reset All</button>
             </div>
 
-            <!-- SELECTION FORMATTING TOOLBAR (Works on highlighted text) -->
-            <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl space-y-2.5">
-                <h3 class="text-[11px] font-extrabold text-amber-800 uppercase"><i class="fa-solid fa-highlighter mr-1"></i> Select Text in Preview & Format Here:</h3>
+            <!-- COMPREHENSIVE SELECTION FORMATTING TOOLBAR -->
+            <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl space-y-2.5 shadow-sm">
+                <h3 class="text-[11px] font-extrabold text-amber-900 uppercase"><i class="fa-solid fa-highlighter mr-1"></i> 1. Select Text in Preview & Format:</h3>
                 
-                <div class="flex flex-wrap items-center gap-1.5">
-                    <!-- Bold, Italic, Underline -->
+                <div class="grid grid-cols-2 gap-2">
+                    <!-- Font Type / Family Selection -->
+                    <div>
+                        <label class="block text-[10px] font-bold text-amber-800 mb-0.5">Font Type</label>
+                        <select onchange="formatSelectionFontFamily(this.value)" class="w-full border bg-white p-1.5 rounded text-xs font-bold text-slate-700">
+                            <option value="">Default Font</option>
+                            <option value="'Plus Jakarta Sans', sans-serif">Jakarta Sans</option>
+                            <option value="'Roboto', sans-serif">Roboto</option>
+                            <option value="'Poppins', sans-serif">Poppins</option>
+                            <option value="'Inter', sans-serif">Inter</option>
+                            <option value="'Merriweather', serif">Merriweather Serif</option>
+                        </select>
+                    </div>
+
+                    <!-- Font Size Selection -->
+                    <div>
+                        <label class="block text-[10px] font-bold text-amber-800 mb-0.5">Font Size</label>
+                        <select onchange="formatSelectionSize(this.value)" class="w-full border bg-white p-1.5 rounded text-xs font-bold text-slate-700">
+                            <option value="">Select Size</option>
+                            <option value="11px">11px (Small)</option>
+                            <option value="13.5px">13.5px (Normal)</option>
+                            <option value="16px">16px (Medium)</option>
+                            <option value="20px">20px (Large)</option>
+                            <option value="24px">24px (Title)</option>
+                            <option value="28px">28px (Heading)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap items-center justify-between pt-1 gap-1">
+                    <!-- Bold, Italic, Underline Toggles -->
                     <div class="flex items-center gap-1 bg-white border p-1 rounded-lg shadow-sm">
                         <button type="button" onclick="formatSelection('bold')" class="w-7 h-7 rounded hover:bg-slate-100 text-xs font-bold text-slate-700" title="Bold"><i class="fa-solid fa-bold"></i></button>
                         <button type="button" onclick="formatSelection('italic')" class="w-7 h-7 rounded hover:bg-slate-100 text-xs font-bold text-slate-700" title="Italic"><i class="fa-solid fa-italic"></i></button>
                         <button type="button" onclick="formatSelection('underline')" class="w-7 h-7 rounded hover:bg-slate-100 text-xs font-bold text-slate-700" title="Underline"><i class="fa-solid fa-underline"></i></button>
                     </div>
 
-                    <!-- Font Size -->
-                    <select onchange="formatSelectionSize(this.value)" class="border bg-white p-1 rounded text-xs font-bold text-slate-700">
-                        <option value="">Size</option>
-                        <option value="12px">12px</option>
-                        <option value="14px">14px</option>
-                        <option value="16px">16px</option>
-                        <option value="18px">18px</option>
-                        <option value="22px">22px</option>
-                    </select>
+                    <!-- Alignment -->
+                    <div class="flex items-center gap-1 bg-white border p-1 rounded-lg shadow-sm">
+                        <button type="button" onclick="formatSelectionAlign('left')" class="w-7 h-7 rounded hover:bg-slate-100 text-xs text-slate-700" title="Align Left"><i class="fa-solid fa-align-left"></i></button>
+                        <button type="button" onclick="formatSelectionAlign('center')" class="w-7 h-7 rounded hover:bg-slate-100 text-xs text-slate-700" title="Align Center"><i class="fa-solid fa-align-center"></i></button>
+                        <button type="button" onclick="formatSelectionAlign('right')" class="w-7 h-7 rounded hover:bg-slate-100 text-xs text-slate-700" title="Align Right"><i class="fa-solid fa-align-right"></i></button>
+                    </div>
 
-                    <!-- Text Color -->
+                    <!-- Text Color Picker -->
                     <div class="flex items-center gap-1 bg-white border px-2 py-1 rounded-lg shadow-sm">
                         <label class="text-[10px] font-bold text-slate-500">Color</label>
                         <input type="color" onchange="formatSelectionColor(this.value)" class="w-5 h-5 border-0 rounded cursor-pointer bg-transparent">
                     </div>
                 </div>
 
-                <div class="flex items-center gap-1 pt-1">
-                    <span class="text-[10px] font-bold text-slate-500 mr-1">Align:</span>
-                    <button type="button" onclick="formatSelectionAlign('left')" class="px-2 py-1 bg-white border rounded text-xs" title="Align Left"><i class="fa-solid fa-align-left"></i></button>
-                    <button type="button" onclick="formatSelectionAlign('center')" class="px-2 py-1 bg-white border rounded text-xs" title="Align Center"><i class="fa-solid fa-align-center"></i></button>
-                    <button type="button" onclick="formatSelectionAlign('right')" class="px-2 py-1 bg-white border rounded text-xs" title="Align Right"><i class="fa-solid fa-align-right"></i></button>
+                <div class="pt-1">
+                    <button type="button" onclick="formatSelection('removeFormat')" class="w-full bg-white border border-amber-300 hover:bg-amber-100 text-amber-900 font-bold text-[10px] py-1 rounded transition">
+                        <i class="fa-solid fa-rotate-left mr-1"></i> Reset / Default Selected Text Format
+                    </button>
                 </div>
             </div>
 
             <!-- Personal Info -->
             <div class="space-y-3">
-                <h3 class="text-[11px] font-bold text-slate-700 uppercase">1. Personal Details & Photo</h3>
+                <h3 class="text-[11px] font-bold text-slate-700 uppercase">2. Personal Details & Photo</h3>
                 <div class="bg-slate-50 p-2.5 rounded border flex items-center gap-3">
                     <div id="thumbContainer" class="w-12 h-14 bg-slate-200 border rounded flex items-center justify-center text-[9px] text-slate-500 overflow-hidden font-bold">No Photo</div>
                     <div class="flex-1">
@@ -133,14 +158,14 @@
 
             <!-- Objective -->
             <div class="space-y-2">
-                <h3 class="text-[11px] font-bold text-slate-700 uppercase">2. Professional Objective</h3>
+                <h3 class="text-[11px] font-bold text-slate-700 uppercase">3. Professional Objective</h3>
                 <textarea id="inputObjective" rows="2" oninput="updatePreviewText()" class="w-full border p-2 rounded text-xs"></textarea>
             </div>
 
             <!-- Qualification Table Manager (+Col, +Row, Delete) -->
             <div class="space-y-2">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-[11px] font-bold text-slate-700 uppercase">3. Table Row & Column Manager</h3>
+                    <h3 class="text-[11px] font-bold text-slate-700 uppercase">4. Table Row & Column Manager</h3>
                     <div class="flex gap-1">
                         <button onclick="addTableColumn()" class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-[10px] font-bold px-2 py-0.5 rounded border"><i class="fa-solid fa-columns mr-0.5"></i> +Col</button>
                         <button onclick="addTableRow()" class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-[10px] font-bold px-2 py-0.5 rounded border"><i class="fa-solid fa-plus mr-0.5"></i> +Row</button>
@@ -151,7 +176,7 @@
 
             <!-- Experience -->
             <div class="space-y-2">
-                <h3 class="text-[11px] font-bold text-slate-700 uppercase">4. Work Experience</h3>
+                <h3 class="text-[11px] font-bold text-slate-700 uppercase">5. Work Experience</h3>
                 <textarea id="inputExperience" rows="2" oninput="updatePreviewText()" class="w-full border p-2 rounded text-xs"></textarea>
             </div>
         </aside>
@@ -210,7 +235,7 @@
             loadDefaultData();
         });
 
-        // ExecCommand for Selection Styling (Bold, Italic, Underline)
+        // Advanced Selection Formatting Functions
         function formatSelection(command) {
             document.execCommand(command, false, null);
         }
@@ -221,6 +246,16 @@
             if (!selection.rangeCount) return;
             const span = document.createElement("span");
             span.style.fontSize = size;
+            span.appendChild(selection.getRangeAt(0).extractContents());
+            selection.getRangeAt(0).insertNode(span);
+        }
+
+        function formatSelectionFontFamily(fontFamily) {
+            if(!fontFamily) return;
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+            const span = document.createElement("span");
+            span.style.fontFamily = fontFamily;
             span.appendChild(selection.getRangeAt(0).extractContents());
             selection.getRangeAt(0).insertNode(span);
         }
