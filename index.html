@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MakeMyResume - 100+ Professional Resume Templates</title>
+    <title>MakeMyResume - Create, Impress. Succeed.</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -11,115 +11,417 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #0f172a; }
     </style>
 </head>
-<body class="flex flex-col min-h-screen">
+<body class="bg-slate-50">
 
-    <!-- TOP NAVBAR -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 h-16 flex items-center justify-between px-8 shadow-sm">
-        <div class="flex items-center gap-3 cursor-pointer" onclick="window.location.reload()">
-            <div class="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center text-white font-black text-lg shadow-md shadow-red-200">
-                <i class="fa-solid fa-file-invoice"></i>
+    <!-- TOP NAVIGATION BAR -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center gap-3 cursor-pointer" onclick="window.location.href='index.html'">
+                <div class="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-md shadow-red-200">
+                    <i class="fa-solid fa-file-invoice"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-extrabold text-slate-900 tracking-tight">MakeMy<span class="text-red-600">Resume</span></span>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Create. Impress. Succeed.</p>
+                </div>
             </div>
-            <span class="text-lg font-extrabold text-slate-900 tracking-tight">MakeMy<span class="text-red-600">Resume</span></span>
-        </div>
 
-        <div class="flex items-center gap-4">
-            <span class="text-xs font-bold bg-red-50 text-red-600 px-3 py-1.5 rounded-full border border-red-100">
-                <i class="fa-solid fa-fire text-amber-500 mr-1"></i> 100 Professional Formats Available
-            </span>
-            <button onclick="window.location.href='admin.html'" class="text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-xl transition shadow flex items-center gap-2">
-                <i class="fa-solid fa-lock text-red-400"></i> Admin Panel
-            </button>
+            <!-- Nav Links -->
+            <nav class="hidden md:flex items-center gap-8 font-semibold text-sm text-slate-600">
+                <a href="index.html" class="text-red-600">Home</a>
+                <a href="#templates" class="hover:text-red-600 transition">Templates</a>
+                <a href="#features" class="hover:text-red-600 transition">Features</a>
+                <a href="#howitworks" class="hover:text-red-600 transition">How It Works</a>
+                <a href="#pricing" class="hover:text-red-600 transition">Pricing</a>
+                <a href="#blog" class="hover:text-red-600 transition">Blog</a>
+                <a href="#contact" class="hover:text-red-600 transition">Contact</a>
+            </nav>
+
+            <!-- Action Buttons & Auth / Admin Links -->
+            <div class="flex items-center gap-3">
+                <a href="admin.html" class="hidden lg:flex items-center gap-1.5 text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-xl transition">
+                    <i class="fa-solid fa-lock text-red-600"></i> Admin Panel
+                </a>
+                <div class="hidden xl:flex items-center gap-1.5 text-xs font-bold text-slate-700 bg-red-50 border border-red-100 px-3 py-1.5 rounded-full">
+                    <i class="fa-solid fa-heart text-red-500"></i> Trusted by 50,000+
+                </div>
+                <button onclick="openAuthModal('login')" class="text-sm font-bold text-slate-700 hover:text-red-600 px-3 py-2">Log in</button>
+                <button onclick="openAuthModal('register')" class="bg-red-600 hover:bg-red-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-red-200 transition">Get Started</button>
+            </div>
         </div>
     </header>
 
     <!-- HERO SECTION -->
-    <section class="bg-gradient-to-b from-white to-slate-100 py-12 px-6 border-b text-center">
-        <div class="max-w-3xl mx-auto space-y-4">
-            <h1 class="text-3xl sm:text-4xl font-black text-slate-900 uppercase tracking-tight">
-                Build Your Professional Resume in <span class="text-red-600">Minutes</span>
+    <section class="max-w-7xl mx-auto px-6 py-12 lg:py-20 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <div class="lg:col-span-6 space-y-6">
+            <div class="inline-flex items-center gap-2 bg-indigo-50 border border-indigo-100 px-3.5 py-1.5 rounded-full text-xs font-bold text-indigo-600">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> AI POWERED RESUME BUILDER
+            </div>
+            
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.1]">
+                Create Your Professional <span class="text-red-600">Resume That Gets You Hired</span>
             </h1>
-            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-2xl mx-auto">
-                Choose from our library of 100+ government, corporate, and private job formats. Fill your details once and instantly preview or download!
+
+            <p class="text-base text-slate-600 leading-relaxed font-medium">
+                Choose from 100+ ATS-friendly templates, customize in minutes, and download your resume in PDF.
             </p>
+
+            <div class="flex flex-wrap items-center gap-4 pt-2">
+                <a href="editor.html?template=1" class="bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-4 rounded-xl shadow-xl shadow-red-200 transition flex items-center gap-2 text-base">
+                    Create My Resume <i class="fa-solid fa-arrow-right text-xs"></i>
+                </a>
+                <a href="#templates" class="bg-white border-2 border-slate-200 hover:border-slate-300 text-slate-700 font-bold px-6 py-4 rounded-xl transition flex items-center gap-2 text-base">
+                    <i class="fa-regular fa-eye text-red-600"></i> View Templates
+                </a>
+            </div>
+
+            <div class="pt-4 flex items-center gap-3">
+                <div class="flex -space-x-2">
+                    <img class="w-9 h-9 rounded-full border-2 border-white object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" alt="User">
+                    <img class="w-9 h-9 rounded-full border-2 border-white object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100" alt="User">
+                    <img class="w-9 h-9 rounded-full border-2 border-white object-cover" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100" alt="User">
+                    <img class="w-9 h-9 rounded-full border-2 border-white object-cover" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100" alt="User">
+                </div>
+                <div>
+                    <div class="flex text-amber-400 text-xs gap-0.5">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-xs font-bold text-slate-700">Trusted by 50,000+ job seekers worldwide</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Mockup Preview -->
+        <div class="lg:col-span-6 relative flex justify-center">
+            <div class="relative bg-white p-6 rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full">
+                <div class="flex items-center gap-4 border-b pb-4 mb-4">
+                    <div class="w-14 h-14 bg-slate-200 rounded-full flex items-center justify-center font-bold text-slate-500 overflow-hidden border">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150" class="w-full h-full object-cover">
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-slate-900 text-lg">Rohan Kumar</h3>
+                        <p class="text-xs font-semibold text-slate-500">Software Engineer</p>
+                    </div>
+                </div>
+                <div class="space-y-3 text-xs text-slate-600">
+                    <div>
+                        <h4 class="font-bold text-slate-900 uppercase text-[10px] tracking-wider text-red-600 mb-1">About Me</h4>
+                        <p>Software Engineer with 4+ years of experience in building scalable web applications.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900 uppercase text-[10px] tracking-wider text-red-600 mb-1">Experience</h4>
+                        <p class="font-semibold text-slate-800">Senior Software Engineer - Tech Solutions Pvt. Ltd.</p>
+                        <p class="text-[11px] text-slate-500">Jan 2022 - Present • Developed scalable web apps using React.js and Node.js.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900 uppercase text-[10px] tracking-wider text-red-600 mb-1">Skills</h4>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="bg-slate-100 px-2 py-0.5 rounded font-semibold text-[10px]">JavaScript</span>
+                            <span class="bg-slate-100 px-2 py-0.5 rounded font-semibold text-[10px]">React.js</span>
+                            <span class="bg-slate-100 px-2 py-0.5 rounded font-semibold text-[10px]">Node.js</span>
+                            <span class="bg-slate-100 px-2 py-0.5 rounded font-semibold text-[10px]">MongoDB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- TEMPLATES GRID CONTAINER -->
-    <main class="flex-1 max-w-7xl mx-auto px-6 py-10 w-full space-y-6">
-        <div class="flex items-center justify-between">
-            <h2 class="text-sm font-extrabold uppercase text-slate-900 tracking-wider">
-                <i class="fa-solid fa-layer-group text-red-600 mr-1.5"></i> Select a Template to Customize
-            </h2>
-            <span id="totalCountBadge" class="text-xs font-bold text-slate-500">Loading 100 templates...</span>
+    <!-- FEATURES BAR -->
+    <section id="features" class="max-w-7xl mx-auto px-6 py-8">
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 text-center">
+            <div class="space-y-2">
+                <div class="w-10 h-10 mx-auto bg-red-50 text-red-600 rounded-xl flex items-center justify-center text-base"><i class="fa-solid fa-file-shield"></i></div>
+                <h4 class="font-extrabold text-xs text-slate-900">ATS Friendly</h4>
+                <p class="text-[11px] text-slate-500">Optimized resumes that pass ATS scans</p>
+            </div>
+            <div class="space-y-2">
+                <div class="w-10 h-10 mx-auto bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-base"><i class="fa-solid fa-layer-group"></i></div>
+                <h4 class="font-extrabold text-xs text-slate-900">Professional Templates</h4>
+                <p class="text-[11px] text-slate-500">Choose from 100+ modern & elegant templates</p>
+            </div>
+            <div class="space-y-2">
+                <div class="w-10 h-10 mx-auto bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-base"><i class="fa-solid fa-cloud-arrow-down"></i></div>
+                <h4 class="font-extrabold text-xs text-slate-900">Instant Download</h4>
+                <p class="text-[11px] text-slate-500">Download your resume in PDF format instantly</p>
+            </div>
+            <div class="space-y-2">
+                <div class="w-10 h-10 mx-auto bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-base"><i class="fa-solid fa-bolt"></i></div>
+                <h4 class="font-extrabold text-xs text-slate-900">Easy to Use</h4>
+                <p class="text-[11px] text-slate-500">Simple steps to create your perfect resume</p>
+            </div>
+            <div class="space-y-2">
+                <div class="w-10 h-10 mx-auto bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center text-base"><i class="fa-solid fa-shield-halved"></i></div>
+                <h4 class="font-extrabold text-xs text-slate-900">Secure & Private</h4>
+                <p class="text-[11px] text-slate-500">Your data is safe with us. We don't share data</p>
+            </div>
+            <div class="space-y-2">
+                <div class="w-10 h-10 mx-auto bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center text-base"><i class="fa-solid fa-award"></i></div>
+                <h4 class="font-extrabold text-xs text-slate-900">Expert Approved</h4>
+                <p class="text-[11px] text-slate-500">Designed by HR experts and career coaches</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- TEMPLATES SECTION (SHOWCASING POPULAR + ALL 100 ACCESS) -->
+    <section id="templates" class="max-w-7xl mx-auto px-6 py-16">
+        <div class="text-center space-y-2 mb-12">
+            <h2 class="text-3xl font-black text-slate-900 tracking-tight">Professional Resume Templates</h2>
+            <p class="text-sm font-semibold text-slate-500">Choose from our collection of 100+ ATS-friendly resume templates</p>
         </div>
 
-        <!-- 100 Dynamic Template Cards Grid -->
-        <div id="templatesGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            <!-- Dynamically populated via JS script -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
+            <div onclick="window.location.href='editor.html?template=1'" class="bg-white p-3 rounded-xl border border-slate-200 hover:border-red-500 transition cursor-pointer group shadow-sm">
+                <div class="h-44 bg-slate-100 rounded-lg mb-3 flex items-center justify-center border group-hover:bg-red-50/50 transition"><i class="fa-solid fa-file-lines text-slate-400 text-3xl group-hover:text-red-600"></i></div>
+                <div class="flex items-center justify-between"><span class="text-xs font-bold text-slate-800">Modern Blue</span><span class="w-3 h-3 rounded-full bg-blue-600 inline-block"></span></div>
+            </div>
+            <div onclick="window.location.href='editor.html?template=2'" class="bg-white p-3 rounded-xl border border-slate-200 hover:border-red-500 transition cursor-pointer group shadow-sm">
+                <div class="h-44 bg-slate-100 rounded-lg mb-3 flex items-center justify-center border group-hover:bg-red-50/50 transition"><i class="fa-solid fa-file-lines text-slate-400 text-3xl group-hover:text-red-600"></i></div>
+                <div class="flex items-center justify-between"><span class="text-xs font-bold text-slate-800">Clean Green</span><span class="w-3 h-3 rounded-full bg-emerald-600 inline-block"></span></div>
+            </div>
+            <div onclick="window.location.href='editor.html?template=3'" class="bg-white p-3 rounded-xl border border-slate-200 hover:border-red-500 transition cursor-pointer group shadow-sm">
+                <div class="h-44 bg-slate-100 rounded-lg mb-3 flex items-center justify-center border group-hover:bg-red-50/50 transition"><i class="fa-solid fa-file-lines text-slate-400 text-3xl group-hover:text-red-600"></i></div>
+                <div class="flex items-center justify-between"><span class="text-xs font-bold text-slate-800">Executive Black</span><span class="w-3 h-3 rounded-full bg-slate-900 inline-block"></span></div>
+            </div>
+            <div onclick="window.location.href='editor.html?template=4'" class="bg-white p-3 rounded-xl border border-slate-200 hover:border-red-500 transition cursor-pointer group shadow-sm">
+                <div class="h-44 bg-slate-100 rounded-lg mb-3 flex items-center justify-center border group-hover:bg-red-50/50 transition"><i class="fa-solid fa-file-lines text-slate-400 text-3xl group-hover:text-red-600"></i></div>
+                <div class="flex items-center justify-between"><span class="text-xs font-bold text-slate-800">Creative Purple</span><span class="w-3 h-3 rounded-full bg-purple-600 inline-block"></span></div>
+            </div>
+            <div onclick="window.location.href='editor.html?template=5'" class="bg-white p-3 rounded-xl border border-slate-200 hover:border-red-500 transition cursor-pointer group shadow-sm">
+                <div class="h-44 bg-slate-100 rounded-lg mb-3 flex items-center justify-center border group-hover:bg-red-50/50 transition"><i class="fa-solid fa-file-lines text-slate-400 text-3xl group-hover:text-red-600"></i></div>
+                <div class="flex items-center justify-between"><span class="text-xs font-bold text-slate-800">Minimal Red</span><span class="w-3 h-3 rounded-full bg-red-600 inline-block"></span></div>
+            </div>
+            <div onclick="window.location.href='editor.html?template=6'" class="bg-white p-3 rounded-xl border border-slate-200 hover:border-red-500 transition cursor-pointer group shadow-sm">
+                <div class="h-44 bg-slate-100 rounded-lg mb-3 flex items-center justify-center border group-hover:bg-red-50/50 transition"><i class="fa-solid fa-file-lines text-slate-400 text-3xl group-hover:text-red-600"></i></div>
+                <div class="flex items-center justify-between"><span class="text-xs font-bold text-slate-800">Professional Yellow</span><span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span></div>
+            </div>
         </div>
-    </main>
+
+        <div class="mt-12 text-center">
+            <button onclick="openAllTemplatesModal()" class="inline-flex items-center gap-2 text-sm font-bold text-white bg-red-600 hover:bg-red-700 px-8 py-3.5 rounded-xl transition shadow-lg shadow-red-200">
+                View All 100 Templates <i class="fa-solid fa-arrow-right text-xs"></i>
+            </button>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS SECTION -->
+    <section id="howitworks" class="max-w-7xl mx-auto px-6 py-16 bg-white rounded-3xl border border-slate-200 my-10 shadow-sm">
+        <div class="text-center space-y-2 mb-12">
+            <h2 class="text-3xl font-black text-slate-900 tracking-tight">How It Works</h2>
+            <p class="text-sm font-semibold text-slate-500">Create your standout resume in 3 simple steps</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center px-4">
+            <div class="space-y-3 p-6 rounded-2xl bg-slate-50 border">
+                <div class="w-12 h-12 mx-auto bg-red-600 text-white rounded-xl flex items-center justify-center font-black text-lg">1</div>
+                <h3 class="font-extrabold text-base text-slate-900">Choose Template</h3>
+                <p class="text-xs text-slate-600">Select any template from our collection of 100+ professional formats.</p>
+            </div>
+            <div class="space-y-3 p-6 rounded-2xl bg-slate-50 border">
+                <div class="w-12 h-12 mx-auto bg-red-600 text-white rounded-xl flex items-center justify-center font-black text-lg">2</div>
+                <h3 class="font-extrabold text-base text-slate-900">Add Information</h3>
+                <p class="text-xs text-slate-600">Fill in your personal, qualification, and experience details easily.</p>
+            </div>
+            <div class="space-y-3 p-6 rounded-2xl bg-slate-50 border">
+                <div class="w-12 h-12 mx-auto bg-red-600 text-white rounded-xl flex items-center justify-center font-black text-lg">3</div>
+                <h3 class="font-extrabold text-base text-slate-900">Download PDF</h3>
+                <p class="text-xs text-slate-600">Download your perfect resume instantly in high-definition PDF.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRICING SECTION -->
+    <section id="pricing" class="max-w-7xl mx-auto px-6 py-16">
+        <div class="text-center space-y-2 mb-12">
+            <h2 class="text-3xl font-black text-slate-900 tracking-tight">Simple Pricing</h2>
+            <p class="text-sm font-semibold text-slate-500">Choose the plan that's right for you</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <!-- Free Plan -->
+            <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-base font-extrabold text-slate-900">Free</h3>
+                    <p class="text-3xl font-black text-slate-900 mt-2">₹0</p>
+                    <p class="text-xs text-slate-500 mt-1">For basic users</p>
+                    <ul class="mt-6 space-y-3 text-xs text-slate-600 font-medium">
+                        <li><i class="fa-solid fa-check text-emerald-600 mr-2"></i> 1 Resume</li>
+                        <li><i class="fa-solid fa-check text-emerald-600 mr-2"></i> Basic Templates</li>
+                        <li><i class="fa-solid fa-check text-emerald-600 mr-2"></i> PDF Download (Watermark)</li>
+                    </ul>
+                </div>
+                <a href="editor.html" class="w-full block text-center bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-3 rounded-xl text-xs transition">Get Started</a>
+            </div>
+            <!-- Premium Plan -->
+            <div class="bg-white p-8 rounded-3xl border-2 border-red-600 shadow-xl space-y-6 flex flex-col justify-between relative">
+                <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-red-600 text-white text-[10px] font-extrabold uppercase px-3 py-1 rounded-full tracking-wider">Popular</div>
+                <div>
+                    <h3 class="text-base font-extrabold text-slate-900">Premium</h3>
+                    <p class="text-3xl font-black text-slate-900 mt-2">₹5</p>
+                    <p class="text-xs text-slate-500 mt-1">One-time payment</p>
+                    <ul class="mt-6 space-y-3 text-xs text-slate-600 font-medium">
+                        <li><i class="fa-solid fa-check text-emerald-600 mr-2"></i> Unlimited Resumes</li>
+                        <li><i class="fa-solid fa-check text-emerald-600 mr-2"></i> All 100+ Templates</li>
+                        <li><i class="fa-solid fa-check text-emerald-600 mr-2"></i> PDF Download (No Watermark)</li>
+                        <li><i class="fa-solid fa-check text-emerald-600 mr-2"></i> Priority Support</li>
+                    </ul>
+                </div>
+                <a href="editor.html" class="w-full block text-center bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl text-xs transition shadow-md shadow-red-200">Get Started</a>
+            </div>
+            <!-- Pro Plan -->
+            <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-base font-extrabold text-slate-900">Pro</h3>
+                    <p class="text-3xl font-black text-slate-900 mt-2">₹49</p>
+                    <p class="text-xs text-slate-500 mt-1">For advanced users</p>
+                    <ul class="mt-6 space-y-3 text-xs text-slate-600 font-medium">
+                        <li><i class="fa-solid fa-check text-emerald-600 mr-2"></i> Everything in Premium</li>
+                        <li><i class="fa-solid fa-check text-emerald-600 mr-2"></i> AI Suggestions</li>
+                        <li><i class="fa-solid fa-check text-emerald-600 mr-2"></i> Cover Letter Builder</li>
+                        <li><i class="fa-solid fa-check text-emerald-600 mr-2"></i> Priority Support</li>
+                    </ul>
+                </div>
+                <a href="editor.html" class="w-full block text-center bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-3 rounded-xl text-xs transition">Get Started</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="max-w-7xl mx-auto px-6 py-16">
+        <div class="text-center space-y-2 mb-12">
+            <h2 class="text-3xl font-black text-slate-900 tracking-tight">What Our Users Say</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-2xl border space-y-4 shadow-sm">
+                <div class="flex items-center gap-3">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" class="w-10 h-10 rounded-full object-cover">
+                    <div>
+                        <h4 class="font-extrabold text-xs text-slate-900">Ankit Verma</h4>
+                        <p class="text-[10px] text-slate-500">Software Engineer</p>
+                    </div>
+                </div>
+                <div class="flex text-amber-400 text-xs"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                <p class="text-xs text-slate-600 italic">"MakeMyResume helped me create a professional resume that landed me my dream job!"</p>
+            </div>
+            <div class="bg-white p-6 rounded-2xl border space-y-4 shadow-sm">
+                <div class="flex items-center gap-3">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100" class="w-10 h-10 rounded-full object-cover">
+                    <div>
+                        <h4 class="font-extrabold text-xs text-slate-900">Priya Singh</h4>
+                        <p class="text-[10px] text-slate-500">HR Manager</p>
+                    </div>
+                </div>
+                <div class="flex text-amber-400 text-xs"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                <p class="text-xs text-slate-600 italic">"The templates are amazing and easy to customize. Highly recommended!"</p>
+            </div>
+            <div class="bg-white p-6 rounded-2xl border space-y-4 shadow-sm">
+                <div class="flex items-center gap-3">
+                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100" class="w-10 h-10 rounded-full object-cover">
+                    <div>
+                        <h4 class="font-extrabold text-xs text-slate-900">Rahul Mehta</h4>
+                        <p class="text-[10px] text-slate-500">Marketing Executive</p>
+                    </div>
+                </div>
+                <div class="flex text-amber-400 text-xs"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                <p class="text-xs text-slate-600 italic">"Super easy to use and the PDF quality is excellent. Worth every penny!"</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- AUTH MODAL (LOGIN & REGISTRATION) -->
+    <div id="authModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4 relative">
+            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
+            <h3 id="authTitle" class="text-lg font-black text-slate-900">Welcome Back</h3>
+            <div class="space-y-3">
+                <input type="email" placeholder="Email Address" class="w-full border p-2.5 rounded-xl text-xs">
+                <input type="password" placeholder="Password" class="w-full border p-2.5 rounded-xl text-xs">
+                <button onclick="alert('Successfully Authenticated!')" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-md">Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ALL 100 TEMPLATES MODAL -->
+    <div id="allTemplatesModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-6">
+        <div class="bg-white rounded-3xl max-w-5xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+            <div class="p-5 border-b flex items-center justify-between bg-slate-50">
+                <h3 class="font-extrabold text-sm text-slate-900 uppercase"><i class="fa-solid fa-layer-group text-red-600 mr-2"></i> All 100 Professional Resume Templates</h3>
+                <button onclick="closeAllTemplatesModal()" class="text-slate-500 hover:text-slate-800 font-extrabold text-lg">&times;</button>
+            </div>
+            <div id="modalTemplatesGrid" class="p-6 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                <!-- Dynamically loaded 100 templates -->
+            </div>
+        </div>
+    </div>
 
     <!-- FOOTER -->
-    <footer class="bg-slate-900 text-white py-6 px-8 text-center text-xs border-t border-slate-800">
-        <p>&copy; 2026 MakeMyResume. All rights reserved. Designed for professional success.</p>
+    <footer class="bg-slate-900 text-white py-12 mt-20 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div class="space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center text-white font-black text-sm">
+                        <i class="fa-solid fa-file-invoice"></i>
+                    </div>
+                    <span class="text-lg font-extrabold tracking-tight">MakeMy<span class="text-red-600">Resume</span></span>
+                </div>
+                <p class="text-xs text-slate-400 leading-relaxed">Create professional resumes in minutes with our advanced AI-powered resume builder tool.</p>
+            </div>
+            <div>
+                <h4 class="font-extrabold text-xs uppercase tracking-wider text-slate-300 mb-4">Quick Links</h4>
+                <ul class="space-y-2 text-xs text-slate-400 font-medium">
+                    <li><a href="index.html" class="hover:text-white transition">Home</a></li>
+                    <li><a href="#templates" class="hover:text-white transition">Templates</a></li>
+                    <li><a href="#pricing" class="hover:text-white transition">Pricing</a></li>
+                    <li><a href="editor.html" class="hover:text-white transition">Resume Editor</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-extrabold text-xs uppercase tracking-wider text-slate-300 mb-4">Admin Access</h4>
+                <ul class="space-y-2 text-xs text-slate-400 font-medium">
+                    <li><a href="admin.html" class="hover:text-red-400 transition font-bold"><i class="fa-solid fa-lock mr-1"></i> Admin Panel Dashboard</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-extrabold text-xs uppercase tracking-wider text-slate-300 mb-4">Contact Support</h4>
+                <p class="text-xs text-slate-400 mb-2"><i class="fa-solid fa-envelope mr-2"></i> support@makemyresume.io</p>
+                <p class="text-xs text-slate-400"><i class="fa-solid fa-phone mr-2"></i> +91 7000164080</p>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-6 pt-8 border-t border-slate-800 text-center text-xs text-slate-500">
+            &copy; 2026 MakeMyResume Inc. All rights reserved.
+        </div>
     </footer>
 
-    <!-- SCRIPT TO RENDER 100 TEMPLATES -->
+    <!-- JAVASCRIPT MODAL & 100 TEMPLATES GENERATOR -->
     <script>
-        window.addEventListener('DOMContentLoaded', () => {
-            const grid = document.getElementById('templatesGrid');
-            grid.innerHTML = "";
+        function openAuthModal(type) {
+            document.getElementById('authTitle').innerText = type === 'login' ? 'Login to Your Account' : 'Create an Account';
+            document.getElementById('authModal').classList.remove('hidden');
+        }
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.add('hidden');
+        }
 
-            for(let i = 1; i <= 100; i++) {
-                let category = "Govt & Formal Table Layout";
-                let badgeColor = "bg-blue-50 text-blue-700 border-blue-200";
-                
-                if(i % 5 === 0) {
-                    category = "Executive Sidebar Layout";
-                    badgeColor = "bg-purple-50 text-purple-700 border-purple-200";
-                } else if(i % 3 === 0) {
-                    category = "Modern Corporate Minimal";
-                    badgeColor = "bg-emerald-50 text-emerald-700 border-emerald-200";
-                } else if(i % 2 === 0) {
-                    category = "Private Job Professional Grid";
-                    badgeColor = "bg-amber-50 text-amber-700 border-amber-200";
+        function openAllTemplatesModal() {
+            const grid = document.getElementById('modalTemplatesGrid');
+            if(grid.children.length === 0) {
+                for(let i=1; i<=100; i++) {
+                    const card = document.createElement('div');
+                    card.className = "bg-white p-3 rounded-xl border border-slate-200 hover:border-red-500 transition cursor-pointer group shadow-sm flex flex-col justify-between";
+                    card.onclick = () => { window.location.href = `editor.html?template=${i}`; };
+                    card.innerHTML = `
+                        <div class="h-32 bg-slate-100 rounded-lg mb-2 flex items-center justify-center border group-hover:bg-red-50/50 transition">
+                            <span class="text-xs font-black text-slate-500 group-hover:text-red-600">#${i}</span>
+                        </div>
+                        <span class="text-[11px] font-bold text-slate-800 text-center truncate">Template #${i}</span>
+                    `;
+                    grid.appendChild(card);
                 }
-
-                const card = document.createElement('div');
-                card.className = "bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col group cursor-pointer";
-                card.onclick = () => { window.location.href = `editor.html?template=${i}`; };
-
-                card.innerHTML = `
-                    <div class="h-44 bg-slate-100 border-b relative flex items-center justify-center p-4 group-hover:bg-red-50/40 transition">
-                        <div class="absolute top-3 left-3 text-[10px] font-extrabold px-2.5 py-1 rounded-lg border ${badgeColor}">
-                            #${i}
-                        </div>
-                        <!-- Mini visual preview simulation -->
-                        <div class="w-24 h-32 bg-white shadow rounded border p-2 space-y-1.5 opacity-80 group-hover:scale-105 transition">
-                            <div class="w-10 h-2 bg-slate-800 rounded"></div>
-                            <div class="w-full h-1 bg-slate-200 rounded"></div>
-                            <div class="w-3/4 h-1 bg-slate-200 rounded"></div>
-                            <div class="pt-2 space-y-1">
-                                <div class="w-full h-4 bg-slate-100 rounded border"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
-                        <div>
-                            <h3 class="font-extrabold text-xs text-slate-900 group-hover:text-red-600 transition">Template Design #${i}</h3>
-                            <p class="text-[11px] text-slate-500 mt-0.5">${category}</p>
-                        </div>
-                        <button class="w-full bg-red-50 hover:bg-red-600 text-red-600 hover:text-white font-bold py-2 rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-sm">
-                            <i class="fa-solid fa-pen-nib"></i> Use This Template
-                        </button>
-                    </div>
-                `;
-
-                grid.appendChild(card);
             }
-
-            document.getElementById('totalCountBadge').innerText = "Showing All 100 Professional Templates";
-        });
+            document.getElementById('allTemplatesModal').classList.remove('hidden');
+        }
+        function closeAllTemplatesModal() {
+            document.getElementById('allTemplatesModal').classList.add('hidden');
+        }
     </script>
 </body>
 </html>
