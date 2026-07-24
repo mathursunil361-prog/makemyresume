@@ -3,233 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MakeMyResume Editor</title>
+    <title>MakeMyResume - Resume Builder</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <style>
-        .watermark-layer {
-            position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-            pointer-events: none; opacity: 0.12; font-size: 34px; font-weight: 900; color: #dc2626;
-            transform: rotate(-30deg); z-index: 20; white-space: nowrap;
-        }
-    </style>
 </head>
-<body class="bg-slate-950 font-sans h-screen flex flex-col text-slate-100">
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col font-sans">
 
-    <!-- TOP TOOLBAR -->
-    <header class="bg-slate-900 border-b border-slate-800 px-6 py-3 flex flex-wrap justify-between items-center gap-3">
+    <!-- HEADER -->
+    <header class="bg-white border-b px-6 py-3 flex justify-between items-center sticky top-0 z-40">
         <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
-            <span class="bg-red-600 text-white p-1.5 rounded-lg"><i class="fa-solid fa-file-invoice"></i></span>
-            <span class="font-extrabold text-white">MakeMy<span class="text-red-500">Resume</span></span>
-        </div>
-
-        <div class="flex items-center gap-4 text-xs">
-            <div>
-                <label class="font-bold text-slate-400 mr-1">Accent Color:</label>
-                <input type="color" id="themeColor" value="#dc2626" onchange="render()" class="w-6 h-6 rounded cursor-pointer bg-transparent align-middle">
+            <div class="w-7 h-7 bg-red-600 rounded flex items-center justify-center text-white font-black text-sm">
+                <i class="fa-solid fa-file-invoice"></i>
             </div>
-            <div>
-                <label class="font-bold text-slate-400 mr-1">Font Size:</label>
-                <select id="fontSizeSelect" onchange="render()" class="bg-slate-800 text-white border border-slate-700 rounded p-1 font-semibold">
-                    <option value="12px">Compact (12px)</option>
-                    <option value="14px" selected>Regular (14px)</option>
-                    <option value="16px">Large (16px)</option>
-                </select>
-            </div>
+            <span class="text-sm font-extrabold text-slate-900">MakeMy<span class="text-red-600">Resume</span></span>
         </div>
-
-        <div class="flex items-center gap-2">
-            <button onclick="downloadPDF(false)" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-3 py-2 rounded-lg border border-slate-700">
-                <i class="fa-solid fa-download mr-1"></i> Free (Watermark)
-            </button>
-            <button onclick="downloadPDF(true)" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 py-2 rounded-lg shadow-lg shadow-red-600/30">
-                <i class="fa-solid fa-crown mr-1"></i> Pro Download (<span id="btnPrice">₹5</span>)
+        <div class="flex gap-3">
+            <a href="index.html" class="px-3 py-1.5 border rounded text-xs font-bold text-slate-600 hover:bg-slate-50">Back to Home</a>
+            <button onclick="downloadPDF()" class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-1.5 rounded text-xs shadow flex items-center gap-1.5">
+                <i class="fa-solid fa-download"></i> Download PDF
             </button>
         </div>
     </header>
 
-    <!-- EDITOR & CANVAS -->
-    <div class="flex-1 flex overflow-hidden">
-        
-        <!-- INPUTS -->
-        <div class="w-full md:w-1/2 bg-slate-900 p-6 overflow-y-auto border-r border-slate-800 space-y-4 text-xs">
-            <h2 class="font-bold text-white text-sm border-b border-slate-800 pb-2"><i class="fa-solid fa-pen text-red-500 mr-1"></i> Live Resume Details</h2>
-
-            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-                <label class="block font-bold text-slate-300 mb-1">Profile Photo</label>
-                <input type="file" accept="image/*" onchange="previewPhoto(event)" class="text-slate-400">
-            </div>
-
+    <!-- EDITOR WORKSPACE -->
+    <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 max-w-7xl mx-auto w-full">
+        <!-- LEFT INPUT FORM -->
+        <div class="lg:col-span-5 bg-white p-5 rounded-xl border shadow-sm space-y-4 max-h-[85vh] overflow-y-auto">
+            <h3 class="font-bold text-sm text-slate-900 border-b pb-2">Fill Resume Details</h3>
+            
             <div>
-                <label class="block font-bold text-slate-300 mb-1">Full Name</label>
-                <input type="text" id="inName" oninput="render()" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-lg text-white">
+                <label class="block text-[10px] font-bold text-slate-500 uppercase">Full Name</label>
+                <input type="text" id="inName" value="Rohan Kumar" oninput="updatePreview()" class="w-full border p-2 rounded text-xs">
+            </div>
+            <div>
+                <label class="block text-[10px] font-bold text-slate-500 uppercase">Job Title</label>
+                <input type="text" id="inTitle" value="Software Engineer" oninput="updatePreview()" class="w-full border p-2 rounded text-xs">
             </div>
             <div class="grid grid-cols-2 gap-2">
                 <div>
-                    <label class="block font-bold text-slate-300 mb-1">Email</label>
-                    <input type="email" id="inEmail" oninput="render()" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-lg text-white">
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase">Email</label>
+                    <input type="email" id="inEmail" value="rohan.kumar@gmail.com" oninput="updatePreview()" class="w-full border p-2 rounded text-xs">
                 </div>
                 <div>
-                    <label class="block font-bold text-slate-300 mb-1">Mobile</label>
-                    <input type="text" id="inPhone" oninput="render()" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-lg text-white">
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-                <div>
-                    <label class="block font-bold text-slate-300 mb-1">Location</label>
-                    <input type="text" id="inLocation" oninput="render()" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-lg text-white">
-                </div>
-                <div>
-                    <label class="block font-bold text-slate-300 mb-1">Address</label>
-                    <input type="text" id="inAddress" oninput="render()" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-lg text-white">
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase">Phone</label>
+                    <input type="text" id="inPhone" value="+91 98765 43210" oninput="updatePreview()" class="w-full border p-2 rounded text-xs">
                 </div>
             </div>
             <div>
-                <label class="block font-bold text-slate-300 mb-1">Education Details</label>
-                <textarea id="inEdu" rows="2" oninput="render()" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-lg text-white"></textarea>
+                <label class="block text-[10px] font-bold text-slate-500 uppercase">About Me Summary</label>
+                <textarea id="inAbout" rows="3" oninput="updatePreview()" class="w-full border p-2 rounded text-xs">Software Engineer with 4+ years of experience in building scalable web applications. Passionate about clean code, problem-solving and creating impactful digital solutions.</textarea>
             </div>
             <div>
-                <label class="block font-bold text-slate-300 mb-1">Work Experience</label>
-                <textarea id="inExp" rows="3" oninput="render()" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-lg text-white"></textarea>
+                <label class="block text-[10px] font-bold text-slate-500 uppercase">Work Experience</label>
+                <textarea id="inExp" rows="3" oninput="updatePreview()" class="w-full border p-2 rounded text-xs">Senior Software Engineer - Tech Solutions Pvt. Ltd. (Jan 2022 - Present)</textarea>
             </div>
             <div>
-                <label class="block font-bold text-slate-300 mb-1">Auto Job Request Application Letter</label>
-                <textarea id="inCover" rows="4" oninput="render()" class="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-lg text-red-300"></textarea>
+                <label class="block text-[10px] font-bold text-slate-500 uppercase">Education</label>
+                <textarea id="inEdu" rows="2" oninput="updatePreview()" class="w-full border p-2 rounded text-xs">B.Tech in Computer Science - DTU (2017 - 2021)</textarea>
             </div>
         </div>
 
-        <!-- CANVAS -->
-        <div class="hidden md:flex flex-1 bg-slate-950 p-6 overflow-y-auto justify-center text-slate-900">
-            <div id="resumeCanvas" class="bg-white w-[210mm] min-h-[297mm] p-8 shadow-2xl rounded relative">
-                
-                <div id="watermark" class="watermark-layer">
-                    FREE WATERMARK - MAKEMYRESUME
+        <!-- RIGHT LIVE RESUME PREVIEW -->
+        <div class="lg:col-span-7 flex justify-center items-start">
+            <div id="resumePreview" class="bg-white border p-8 rounded-lg shadow-xl w-full max-w-xl text-slate-800 text-xs min-h-[600px]">
+                <div class="border-b pb-4 mb-4">
+                    <h1 id="pvName" class="text-2xl font-extrabold text-slate-900">Rohan Kumar</h1>
+                    <p id="pvTitle" class="text-red-600 font-bold text-sm">Software Engineer</p>
+                    <p class="text-[10px] text-slate-500 mt-1"><span id="pvEmail">rohan.kumar@gmail.com</span> | <span id="pvPhone">+91 98765 43210</span></p>
                 </div>
-
-                <div class="flex justify-between items-center border-b-2 pb-4 mb-4" id="headerBorder">
+                <div class="space-y-4">
                     <div>
-                        <h1 id="outName" class="text-2xl font-extrabold">Rahul Sharma</h1>
-                        <p id="outContact" class="text-xs text-slate-600 mt-1"></p>
-                        <p id="outAddress" class="text-[11px] text-slate-500"></p>
+                        <h4 class="font-bold uppercase text-[10px] text-slate-400 tracking-wider">About Me</h4>
+                        <p id="pvAbout" class="text-slate-600 leading-relaxed mt-1">Software Engineer with 4+ years of experience in building scalable web applications.</p>
                     </div>
-                    <div id="photoBox" class="hidden">
-                        <img id="outPhoto" src="" class="w-20 h-20 object-cover rounded-full border-2 border-slate-300">
+                    <div>
+                        <h4 class="font-bold uppercase text-[10px] text-slate-400 tracking-wider">Experience</h4>
+                        <p id="pvExp" class="text-slate-700 font-medium whitespace-pre-line mt-1">Senior Software Engineer - Tech Solutions Pvt. Ltd.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold uppercase text-[10px] text-slate-400 tracking-wider">Education</h4>
+                        <p id="pvEdu" class="text-slate-700 font-medium whitespace-pre-line mt-1">B.Tech in Computer Science - DTU</p>
                     </div>
                 </div>
-
-                <div class="mb-4">
-                    <h3 id="tEdu" class="font-bold text-xs uppercase mb-1">Education</h3>
-                    <p id="outEdu" class="text-xs text-slate-700 whitespace-pre-line"></p>
-                </div>
-
-                <div class="mb-4">
-                    <h3 id="tExp" class="font-bold text-xs uppercase mb-1">Work Experience</h3>
-                    <p id="outExp" class="text-xs text-slate-700 whitespace-pre-line"></p>
-                </div>
-
-                <div class="mt-6 pt-4 border-t">
-                    <h3 id="tCover" class="font-bold text-xs uppercase mb-1">Application / Request Letter</h3>
-                    <p id="outCover" class="text-xs text-slate-600 italic leading-relaxed whitespace-pre-line"></p>
-                </div>
-
             </div>
         </div>
     </div>
 
     <script>
-        window.addEventListener('DOMContentLoaded', () => {
-            const price = localStorage.getItem('app_download_price') || "5";
-            document.getElementById('btnPrice').innerText = "₹" + price;
-
-            const user = JSON.parse(localStorage.getItem('current_logged_user'));
-            if(user) {
-                document.getElementById('inName').value = user.name || '';
-                document.getElementById('inEmail').value = user.email || '';
-                document.getElementById('inPhone').value = user.phone || '';
-                document.getElementById('inLocation').value = (user.district || '') + ', ' + (user.country || '');
-                document.getElementById('inAddress').value = user.address || '';
-                document.getElementById('inEdu').value = user.edu || '';
-                document.getElementById('inExp').value = user.exp || '';
-
-                document.getElementById('inCover').value = 
-`To,
-The Hiring Manager,
-Subject: Job Application
-
-Respected Sir/Madam,
-I am submitting my application for potential career opportunities. With my education background in ${user.edu || 'my field'} and work experience in ${user.exp || 'relevant roles'}, I am confident in adding value to your organization.
-
-Sincerely,
-${user.name}`;
-            }
-            render();
-        });
-
-        function previewPhoto(e) {
-            const reader = new FileReader();
-            reader.onload = function() {
-                document.getElementById('outPhoto').src = reader.result;
-                document.getElementById('photoBox').classList.remove('hidden');
-            }
-            if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
+        function updatePreview() {
+            document.getElementById('pvName').innerText = document.getElementById('inName').value;
+            document.getElementById('pvTitle').innerText = document.getElementById('inTitle').value;
+            document.getElementById('pvEmail').innerText = document.getElementById('inEmail').value;
+            document.getElementById('pvPhone').innerText = document.getElementById('inPhone').value;
+            document.getElementById('pvAbout').innerText = document.getElementById('inAbout').value;
+            document.getElementById('pvExp').innerText = document.getElementById('inExp').value;
+            document.getElementById('pvEdu').innerText = document.getElementById('inEdu').value;
         }
 
-        function render() {
-            const color = document.getElementById('themeColor').value;
-            const size = document.getElementById('fontSizeSelect').value;
+        function downloadPDF() {
+            const element = document.getElementById('resumePreview');
+            html2pdf().from(element).save('Resume.pdf');
 
-            const canvas = document.getElementById('resumeCanvas');
-            canvas.style.fontSize = size;
-
-            document.getElementById('outName').innerText = document.getElementById('inName').value || 'Your Name';
-            document.getElementById('outName').style.color = color;
-            document.getElementById('headerBorder').style.borderColor = color;
-            document.getElementById('tEdu').style.color = color;
-            document.getElementById('tExp').style.color = color;
-            document.getElementById('tCover').style.color = color;
-
-            document.getElementById('outContact').innerText = `${document.getElementById('inEmail').value} | ${document.getElementById('inPhone').value} | ${document.getElementById('inLocation').value}`;
-            document.getElementById('outAddress').innerText = document.getElementById('inAddress').value;
-            document.getElementById('outEdu').innerText = document.getElementById('inEdu').value;
-            document.getElementById('outExp').innerText = document.getElementById('inExp').value;
-            document.getElementById('outCover').innerText = document.getElementById('inCover').value;
-        }
-
-        function downloadPDF(isPaid) {
             let user = JSON.parse(localStorage.getItem('current_logged_user'));
-            const price = localStorage.getItem('app_download_price') || "5";
+            if(user) {
+                let usersDb = JSON.parse(localStorage.getItem('registered_users_db')) || [];
+                user.downloadsCount = (user.downloadsCount || 0) + 1;
+                localStorage.setItem('current_logged_user', JSON.stringify(user));
 
-            if(isPaid) {
-                if(!user) {
-                    alert("Without Watermark Download karne ke liye Kripya Login ya Register karein!");
-                    window.location.href = "index.html";
-                    return;
-                }
-
-                let pay = confirm(`Pay ₹${price} for Watermark-Free PDF Download?`);
-                if(pay) {
-                    // Log PDF Download Count
-                    user.downloadsCount = (user.downloadsCount || 0) + 1;
-                    localStorage.setItem('current_logged_user', JSON.stringify(user));
-
-                    let usersDb = JSON.parse(localStorage.getItem('registered_users_db')) || [];
-                    const idx = usersDb.findIndex(u => u.id === user.id);
-                    if(idx !== -1) { usersDb[idx] = user; localStorage.setItem('registered_users_db', JSON.stringify(usersDb)); }
-
-                    document.getElementById('watermark').style.display = 'none';
-                    generatePDF('pro_resume.pdf');
-                }
-            } else {
-                document.getElementById('watermark').style.display = 'flex';
-                generatePDF('free_resume_draft.pdf');
+                const index = usersDb.findIndex(u => u.id === user.id);
+                if(index !== -1) { usersDb[index] = user; localStorage.setItem('registered_users_db', JSON.stringify(usersDb)); }
             }
-        }
-
-        function generatePDF(filename) {
-            const element = document.getElementById('resumeCanvas');
-            const opt = { margin: 0, filename: filename, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4' } };
-            html2pdf().set(opt).from(element).save();
         }
     </script>
 </body>
