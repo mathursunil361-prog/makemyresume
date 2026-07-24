@@ -1,452 +1,93 @@
 <!DOCTYPE html>
-<html lang="hi" class="scroll-smooth">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MakeMyResume - Super Admin Control Panel</title>
+    <title>Admin Dashboard - MakeMyResume</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #0f172a; }
-        
-        /* Blur Overlay for Glassmorphism Popup Effect (Point 13) */
-        .glass-overlay {
-            background: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-        }
-
-        .word-editor-area {
-            min-height: 350px;
-            background: #ffffff;
-            color: #0f172a;
-            border: 1px solid #cbd5e1;
-            border-radius: 0 0 12px 12px;
-            padding: 20px;
-            outline: none;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="min-h-screen relative overflow-x-hidden">
+<body class="bg-slate-100 font-sans p-6">
 
-    <!-- WEBSITE BACKGROUND DEMO SCREEN (Keeps underlying site visible) -->
-    <div class="p-8 max-w-7xl mx-auto space-y-6 opacity-80 pointer-events-none">
-        <div class="flex justify-between items-center border-b pb-4">
-            <h1 class="text-2xl font-extrabold text-slate-800">MakeMyResume Main Portal</h1>
-            <span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-xs font-bold">Public View</span>
+    <div class="max-w-6xl mx-auto space-y-6">
+        <div class="flex justify-between items-center bg-slate-900 text-white p-4 rounded-xl shadow">
+            <h1 class="text-lg font-bold"><i class="fa-solid fa-user-shield text-red-500 mr-2"></i> Admin Control Center</h1>
+            <a href="index.html" class="text-xs bg-slate-800 px-3 py-1.5 rounded">Back to Site</a>
         </div>
-        <div class="grid grid-cols-3 gap-6">
-            <div class="h-40 bg-white rounded-2xl shadow-sm border p-4">Resume Template Preview 1</div>
-            <div class="h-40 bg-white rounded-2xl shadow-sm border p-4">Resume Template Preview 2</div>
-            <div class="h-40 bg-white rounded-2xl shadow-sm border p-4">Resume Template Preview 3</div>
+
+        <!-- PRICE CONTROL PANEL -->
+        <div class="bg-white p-5 rounded-xl border shadow-sm">
+            <h2 class="font-bold text-slate-800 text-sm mb-2"><i class="fa-solid fa-indian-rupee-sign text-emerald-600 mr-1"></i> Set Resume Download Price</h2>
+            <div class="flex gap-3 max-w-xs">
+                <input type="number" id="priceInput" placeholder="Enter Price in ₹" class="border p-2 rounded text-sm w-full font-bold">
+                <button onclick="updatePrice()" class="bg-emerald-600 text-white font-bold px-4 py-2 rounded text-xs">Save Price</button>
+            </div>
+            <p class="text-xs text-slate-500 mt-1">Current Active Price: <b id="currentPriceLabel">₹5</b></p>
+        </div>
+
+        <!-- REGISTERED USERS DATABASE TABLE -->
+        <div class="bg-white rounded-xl border shadow-sm p-5">
+            <h2 class="font-bold text-slate-800 text-sm mb-4"><i class="fa-solid fa-users text-blue-600 mr-1"></i> Registered User Profiles</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                        <tr class="bg-slate-100 uppercase text-slate-600 border-b">
+                            <th class="p-3">User Name</th>
+                            <th class="p-3">Email & Phone</th>
+                            <th class="p-3">Location</th>
+                            <th class="p-3">Education</th>
+                            <th class="p-3">Work Exp</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTable">
+                        <!-- Dynamic User Row -->
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-    <!-- POINT 13: TRANSPARENT BLUR OVERLAY & POPUP CONTAINER -->
-    <div id="adminModalOverlay" class="fixed inset-0 z-50 glass-overlay flex items-center justify-center p-4">
-        
-        <!-- BACK TO WEBSITE BUTTON -->
-        <button onclick="closeAdminPopup()" class="fixed top-6 right-6 bg-white hover:bg-slate-100 text-slate-800 font-extrabold px-4 py-2.5 rounded-2xl shadow-lg border border-slate-200 text-xs flex items-center gap-2 transition z-50">
-            <i class="fa-solid fa-arrow-left text-red-600"></i> Back to Website
-        </button>
-
-        <!-- A. LOGIN / REGISTRATION POPUP CARD -->
-        <div id="authCard" class="bg-white/95 border border-white/40 shadow-2xl max-w-md w-full p-8 rounded-3xl space-y-6 relative">
-            <div class="text-center">
-                <div class="w-12 h-12 bg-red-600 rounded-2xl flex items-center justify-center mx-auto text-white text-xl font-black mb-3 shadow-md shadow-red-200">
-                    <i class="fa-solid fa-user-shield"></i>
-                </div>
-                <h2 id="authTitle" class="text-2xl font-extrabold text-slate-900">Admin Control Access</h2>
-                <p class="text-xs text-slate-500 mt-1">MakeMyResume Ownership & Management</p>
-            </div>
-
-            <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Admin Email</label>
-                    <input type="email" id="authEmail" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-red-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Password</label>
-                    <input type="password" id="authPassword" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-red-500">
-                </div>
-                <button type="submit" id="authBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-extrabold py-3 rounded-xl transition text-sm shadow-md shadow-red-200">
-                    Login to Admin Panel
-                </button>
-            </form>
-
-            <div class="text-center pt-2">
-                <button onclick="toggleAuthMode()" id="authToggleBtn" class="text-xs text-slate-600 hover:text-red-600 underline font-semibold">
-                    First time Owner? Register Admin Account
-                </button>
-            </div>
-        </div>
-
-        <!-- B. MAIN ADMIN CONTROL DASHBOARD POPUP WINDOW -->
-        <div id="dashboardCard" class="hidden bg-white/95 border border-slate-200 shadow-2xl w-full max-w-6xl h-[90vh] rounded-3xl overflow-hidden flex flex-col relative">
-            
-            <!-- DASHBOARD HEADER -->
-            <div class="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center font-black text-xl text-white shadow-md shadow-red-200">M</div>
-                    <div>
-                        <h1 class="font-extrabold text-slate-900 text-sm">MakeMyResume Admin Control</h1>
-                        <span id="adminProfileEmail" class="text-[10px] text-red-600 font-bold">admin@makemyresume.com</span>
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-4">
-                    <button onclick="logoutAdmin()" class="text-xs font-bold text-slate-500 hover:text-red-600 flex items-center gap-1.5"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
-                    <button onclick="closeAdminPopup()" class="bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700">Exit Panel</button>
-                </div>
-            </div>
-
-            <div class="flex-1 flex overflow-hidden">
-                <!-- SIDEBAR NAV -->
-                <aside class="w-56 bg-slate-50 border-r border-slate-200 p-4 space-y-2 text-xs font-bold">
-                    <button onclick="switchTab('tabAnalytics')" class="w-full text-left px-4 py-3 rounded-xl bg-white border shadow-sm text-slate-900 flex items-center gap-2"><i class="fa-solid fa-chart-pie text-red-600"></i> Dashboard</button>
-                    <button onclick="switchTab('tabUsers')" class="w-full text-left px-4 py-3 rounded-xl hover:bg-white text-slate-600 flex items-center gap-2"><i class="fa-solid fa-users text-blue-600"></i> Users Database</button>
-                    <button onclick="switchTab('tabTemplates')" class="w-full text-left px-4 py-3 rounded-xl hover:bg-white text-slate-600 flex items-center gap-2"><i class="fa-solid fa-file-word text-amber-600"></i> Word Template Studio</button>
-                    <button onclick="switchTab('tabPricing')" class="w-full text-left px-4 py-3 rounded-xl hover:bg-white text-slate-600 flex items-center gap-2"><i class="fa-solid fa-tags text-emerald-600"></i> Price Controller</button>
-                    <button onclick="switchTab('tabSettings')" class="w-full text-left px-4 py-3 rounded-xl hover:bg-white text-slate-600 flex items-center gap-2"><i class="fa-solid fa-gears text-purple-600"></i> Owner Settings</button>
-                </aside>
-
-                <!-- TAB CONTENT AREA -->
-                <main class="flex-1 p-6 overflow-y-auto">
-                    
-                    <!-- TAB 1: ANALYTICS OVERVIEW -->
-                    <div id="tabAnalytics" class="tab-content space-y-6">
-                        <div class="grid grid-cols-3 gap-6">
-                            <div class="bg-white p-5 rounded-2xl border border-slate-200 border-l-4 border-l-blue-600">
-                                <p class="text-xs font-bold text-slate-500 uppercase">Registered Users</p>
-                                <h3 id="statTotalUsers" class="text-3xl font-black mt-2">0</h3>
-                            </div>
-                            <div class="bg-white p-5 rounded-2xl border border-slate-200 border-l-4 border-l-amber-500">
-                                <p class="text-xs font-bold text-slate-500 uppercase">Total Pro Downloads</p>
-                                <h3 id="statProDownloads" class="text-3xl font-black mt-2">0</h3>
-                            </div>
-                            <div class="bg-white p-5 rounded-2xl border border-slate-200 border-l-4 border-l-emerald-600">
-                                <p class="text-xs font-bold text-slate-500 uppercase">Earned Revenue</p>
-                                <h3 id="statRevenue" class="text-3xl font-black mt-2">₹0</h3>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- TAB 2: USER MANAGEMENT (SHOW PASSWORDS) -->
-                    <div id="tabUsers" class="tab-content hidden space-y-4">
-                        <h2 class="text-base font-bold text-slate-900">User Credentials & Management</h2>
-                        <div class="bg-white border rounded-2xl overflow-hidden">
-                            <table class="w-full text-left text-xs">
-                                <thead class="bg-slate-100 text-slate-600 border-b">
-                                    <tr>
-                                        <th class="p-3">Email</th>
-                                        <th class="p-3">Phone</th>
-                                        <th class="p-3">Visible Password</th>
-                                        <th class="p-3">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="userTableBody" class="divide-y text-slate-700">
-                                    <!-- Dynamic Rows -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- TAB 3: POINT 14 - FULL MS WORD FEATURE TEMPLATE DESIGNER -->
-                    <div id="tabTemplates" class="tab-content hidden space-y-4">
-                        <div class="flex justify-between items-center">
-                            <h2 class="text-base font-bold text-slate-900">MS Word Resume Format Designer</h2>
-                            <button onclick="saveCustomTemplate()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2">
-                                <i class="fa-solid fa-paper-plane"></i> Publish To Live Site
-                            </button>
-                        </div>
-
-                        <div class="grid grid-cols-12 gap-4">
-                            <div class="col-span-4 space-y-3">
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-600 mb-1">Template Name</label>
-                                    <input type="text" id="tplTitle" placeholder="e.g. Executive Corporate Resume" class="w-full bg-white border rounded-xl p-2.5 text-xs">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-600 mb-1">Category</label>
-                                    <input type="text" id="tplCategory" placeholder="e.g. Software / Tech" class="w-full bg-white border rounded-xl p-2.5 text-xs">
-                                </div>
-                                <div class="p-3 bg-slate-100 rounded-xl text-[11px] text-slate-600 space-y-1">
-                                    <p class="font-bold text-slate-900">Variables Code:</p>
-                                    <p>`{{NAME}}`, `{{EMAIL}}`, `{{PHONE}}`, `{{EDUCATION}}`, `{{EXPERIENCE}}`</p>
-                                </div>
-                            </div>
-
-                            <!-- ADVANCED MS WORD TOOLBAR -->
-                            <div class="col-span-8">
-                                <div class="bg-slate-100 border border-slate-300 rounded-t-xl p-2 flex flex-wrap gap-1.5 text-xs">
-                                    <button onclick="execCmd('undo')" class="p-1.5 bg-white border rounded" title="Undo"><i class="fa-solid fa-rotate-left"></i></button>
-                                    <button onclick="execCmd('redo')" class="p-1.5 bg-white border rounded" title="Redo"><i class="fa-solid fa-rotate-right"></i></button>
-                                    <div class="h-4 w-[1px] bg-slate-300 mx-1"></div>
-                                    <button onclick="execCmd('bold')" class="p-1.5 bg-white border rounded font-bold" title="Bold">B</button>
-                                    <button onclick="execCmd('italic')" class="p-1.5 bg-white border rounded italic" title="Italic">I</button>
-                                    <button onclick="execCmd('underline')" class="p-1.5 bg-white border rounded underline" title="Underline">U</button>
-                                    <button onclick="execCmd('strikeThrough')" class="p-1.5 bg-white border rounded line-through" title="Strikethrough">S</button>
-                                    <div class="h-4 w-[1px] bg-slate-300 mx-1"></div>
-                                    <button onclick="execCmd('justifyLeft')" class="p-1.5 bg-white border rounded"><i class="fa-solid fa-align-left"></i></button>
-                                    <button onclick="execCmd('justifyCenter')" class="p-1.5 bg-white border rounded"><i class="fa-solid fa-align-center"></i></button>
-                                    <button onclick="execCmd('justifyRight')" class="p-1.5 bg-white border rounded"><i class="fa-solid fa-align-right"></i></button>
-                                    <div class="h-4 w-[1px] bg-slate-300 mx-1"></div>
-                                    <button onclick="execCmd('insertUnorderedList')" class="p-1.5 bg-white border rounded"><i class="fa-solid fa-list-ul"></i></button>
-                                    <button onclick="execCmd('insertOrderedList')" class="p-1.5 bg-white border rounded"><i class="fa-solid fa-list-ol"></i></button>
-                                    <div class="h-4 w-[1px] bg-slate-300 mx-1"></div>
-                                    <input type="color" onchange="execCmd('foreColor', this.value)" class="w-6 h-6 border rounded cursor-pointer" title="Font Color">
-                                </div>
-                                <div id="wordTemplateEditor" class="word-editor-area" contenteditable="true">
-                                    <h1 style="color:#dc2626;"><b>{{NAME}}</b></h1>
-                                    <p>{{EMAIL}} | {{PHONE}}</p>
-                                    <hr><br>
-                                    <h3><b>PROFESSIONAL SUMMARY</b></h3>
-                                    <p>Write short objective here...</p>
-                                    <br>
-                                    <h3><b>WORK EXPERIENCE</b></h3>
-                                    <p>{{EXPERIENCE}}</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mt-4">
-                            <h3 class="text-xs font-bold mb-2">Live Published Formats:</h3>
-                            <div id="publishedTemplatesList" class="grid grid-cols-3 gap-3"></div>
-                        </div>
-                    </div>
-
-                    <!-- TAB 4: PRICING -->
-                    <div id="tabPricing" class="tab-content hidden space-y-4 max-w-md">
-                        <h2 class="text-base font-bold text-slate-900">Pro Download Pricing (₹)</h2>
-                        <div class="bg-white p-5 border rounded-2xl space-y-3">
-                            <input type="number" id="customPriceInput" value="20" class="w-full bg-slate-50 border rounded-xl p-3 text-lg font-bold text-emerald-600">
-                            <button onclick="saveCustomPrice()" class="w-full bg-red-600 hover:bg-red-700 text-white py-2.5 rounded-xl font-bold text-xs">
-                                Update Live Website Price
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- TAB 5: OWNER PROFILE & PAYMENT SETTINGS -->
-                    <div id="tabSettings" class="tab-content hidden space-y-4 max-w-lg">
-                        <div class="bg-white p-5 border rounded-2xl space-y-3">
-                            <h3 class="text-xs font-bold text-red-600 uppercase">Owner Admin Profile</h3>
-                            <input type="email" id="setAdminEmail" placeholder="Admin Email" class="w-full bg-slate-50 border rounded-xl p-2.5 text-xs">
-                            <input type="text" id="setAdminPhone" placeholder="Admin Phone" class="w-full bg-slate-50 border rounded-xl p-2.5 text-xs">
-                            <input type="password" id="setAdminPass" placeholder="New Password" class="w-full bg-slate-50 border rounded-xl p-2.5 text-xs">
-                            <button onclick="updateOwnerProfile()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl font-bold text-xs">Save Profile</button>
-                        </div>
-                    </div>
-
-                </main>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- JAVASCRIPT SYSTEM LOGIC -->
     <script>
-        let isRegisterMode = false;
+        window.addEventListener('DOMContentLoaded', () => {
+            let pass = prompt("Enter Admin Security Password:");
+            if(pass !== "admin123") {
+                alert("Unauthorized Access!");
+                window.location.href = "index.html";
+                return;
+            }
 
-        document.addEventListener("DOMContentLoaded", () => {
-            checkAuthStatus();
-            initDemoData();
+            const price = localStorage.getItem('app_download_price') || "5";
+            document.getElementById('currentPriceLabel').innerText = "₹" + price;
+            document.getElementById('priceInput').value = price;
+
+            loadUserData();
         });
 
-        function closeAdminPopup() {
-            document.getElementById('adminModalOverlay').classList.add('hidden');
-        }
-
-        function toggleAuthMode() {
-            isRegisterMode = !isRegisterMode;
-            document.getElementById('authTitle').innerText = isRegisterMode ? "Register Owner Account" : "Admin Control Access";
-            document.getElementById('authBtn').innerText = isRegisterMode ? "Create Admin Account" : "Login to Admin Panel";
-            document.getElementById('authToggleBtn').innerText = isRegisterMode ? "Already Registered? Login" : "First time Owner? Register Admin Account";
-        }
-
-        function handleAuthSubmit(e) {
-            e.preventDefault();
-            const email = document.getElementById('authEmail').value;
-            const pass = document.getElementById('authPassword').value;
-
-            if (isRegisterMode) {
-                const adminData = { email, pass, phone: "+91 9876543210" };
-                localStorage.setItem("app_admin_account", JSON.stringify(adminData));
-                alert("Owner Account Created! Please Login.");
-                toggleAuthMode();
-            } else {
-                const storedAdmin = JSON.parse(localStorage.getItem("app_admin_account") || '{"email":"admin@makemyresume.com","pass":"admin123","phone":"+91 9876543210"}');
-                if (email === storedAdmin.email && pass === storedAdmin.pass) {
-                    sessionStorage.setItem("is_admin_logged_in", "true");
-                    checkAuthStatus();
-                } else {
-                    alert("Invalid Admin Credentials!");
-                }
+        function updatePrice() {
+            const newPrice = document.getElementById('priceInput').value;
+            if(newPrice) {
+                localStorage.setItem('app_download_price', newPrice);
+                document.getElementById('currentPriceLabel').innerText = "₹" + newPrice;
+                alert("Download price updated to ₹" + newPrice);
             }
         }
 
-        function checkAuthStatus() {
-            const isLoggedIn = sessionStorage.getItem("is_admin_logged_in") === "true";
-            if (isLoggedIn) {
-                document.getElementById('authCard').classList.add('hidden');
-                document.getElementById('dashboardCard').classList.remove('hidden');
-                loadDashboardData();
-            } else {
-                document.getElementById('authCard').classList.remove('hidden');
-                document.getElementById('dashboardCard').classList.add('hidden');
-            }
-        }
+        function loadUserData() {
+            const profile = JSON.parse(localStorage.getItem('user_full_profile'));
+            const tbody = document.getElementById('userTable');
 
-        function logoutAdmin() {
-            sessionStorage.removeItem("is_admin_logged_in");
-            checkAuthStatus();
-        }
-
-        function loadDashboardData() {
-            const admin = JSON.parse(localStorage.getItem("app_admin_account") || '{"email":"admin@makemyresume.com","phone":"+91 9876543210"}');
-            document.getElementById('adminProfileEmail').innerText = admin.email;
-            document.getElementById('setAdminEmail').value = admin.email;
-            document.getElementById('setAdminPhone').value = admin.phone;
-
-            document.getElementById('customPriceInput').value = localStorage.getItem('app_pro_price') || '20';
-
-            renderUsersTable();
-            renderTemplates();
-            updateStats();
-        }
-
-        function initDemoData() {
-            if (!localStorage.getItem('app_users_db')) {
-                const users = [
-                    { id: 1, email: "sunil@gmail.com", phone: "7000164080", pass: "sunil123" },
-                    { id: 2, email: "rahul@tech.com", phone: "9826011223", pass: "rahulPass99" }
-                ];
-                localStorage.setItem('app_users_db', JSON.stringify(users));
-            }
-        }
-
-        function renderUsersTable() {
-            const users = JSON.parse(localStorage.getItem('app_users_db') || '[]');
-            const tbody = document.getElementById('userTableBody');
-            tbody.innerHTML = '';
-
-            users.forEach((u, index) => {
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50">
-                        <td class="p-3 font-bold text-slate-900">${u.email}</td>
-                        <td class="p-3 text-slate-600">${u.phone}</td>
-                        <td class="p-3"><span class="bg-amber-50 border border-amber-200 px-2 py-0.5 rounded text-amber-700 font-mono text-xs font-bold">${u.pass}</span></td>
-                        <td class="p-3 space-x-2">
-                            <button onclick="editUser(${index})" class="text-blue-600 hover:underline font-bold">Edit</button>
-                            <button onclick="deleteUser(${index})" class="text-red-600 hover:underline font-bold">Delete</button>
-                        </td>
+            if(profile && profile.isRegistered) {
+                tbody.innerHTML = `
+                    <tr class="border-b hover:bg-slate-50">
+                        <td class="p-3 font-bold">${profile.name}</td>
+                        <td class="p-3">${profile.email}<br><span class="text-slate-500">${profile.phone}</span></td>
+                        <td class="p-3">${profile.district}, ${profile.country}<br><span class="text-slate-400">${profile.address}</span></td>
+                        <td class="p-3">${profile.edu || 'N/A'}</td>
+                        <td class="p-3">${profile.exp || 'N/A'}</td>
                     </tr>
                 `;
-            });
-        }
-
-        function deleteUser(index) {
-            let users = JSON.parse(localStorage.getItem('app_users_db') || '[]');
-            if(confirm("Delete this user?")) {
-                users.splice(index, 1);
-                localStorage.setItem('app_users_db', JSON.stringify(users));
-                renderUsersTable();
-                updateStats();
+            } else {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">No registered users recorded yet.</td></tr>`;
             }
-        }
-
-        function editUser(index) {
-            let users = JSON.parse(localStorage.getItem('app_users_db') || '[]');
-            const u = users[index];
-            const newEmail = prompt("Edit Email:", u.email);
-            const newPass = prompt("Edit Password:", u.pass);
-            if (newEmail && newPass) {
-                users[index].email = newEmail;
-                users[index].pass = newPass;
-                localStorage.setItem('app_users_db', JSON.stringify(users));
-                renderUsersTable();
-            }
-        }
-
-        function execCmd(command, value = null) {
-            document.execCommand(command, false, value);
-        }
-
-        function saveCustomTemplate() {
-            const title = document.getElementById('tplTitle').value || 'Untitled Template';
-            const category = document.getElementById('tplCategory').value || 'General';
-            const htmlContent = document.getElementById('wordTemplateEditor').innerHTML;
-
-            let templates = JSON.parse(localStorage.getItem('app_custom_templates') || '[]');
-            templates.push({ id: Date.now(), title, category, htmlContent });
-            localStorage.setItem('app_custom_templates', JSON.stringify(templates));
-
-            alert("Template Published To Website!");
-            document.getElementById('tplTitle').value = '';
-            renderTemplates();
-        }
-
-        function renderTemplates() {
-            let templates = JSON.parse(localStorage.getItem('app_custom_templates') || '[]');
-            const container = document.getElementById('publishedTemplatesList');
-            container.innerHTML = '';
-
-            templates.forEach((t, index) => {
-                container.innerHTML += `
-                    <div class="bg-white border p-3 rounded-xl flex justify-between items-center text-xs">
-                        <div>
-                            <h4 class="font-bold text-slate-900">${t.title}</h4>
-                            <span class="text-[10px] text-slate-500">${t.category}</span>
-                        </div>
-                        <button onclick="deleteTemplate(${index})" class="text-red-600 hover:underline font-bold">Remove</button>
-                    </div>
-                `;
-            });
-        }
-
-        function deleteTemplate(index) {
-            let templates = JSON.parse(localStorage.getItem('app_custom_templates') || '[]');
-            templates.splice(index, 1);
-            localStorage.setItem('app_custom_templates', JSON.stringify(templates));
-            renderTemplates();
-        }
-
-        function saveCustomPrice() {
-            const val = document.getElementById('customPriceInput').value;
-            localStorage.setItem('app_pro_price', val);
-            alert(`Website Pro Price Updated to ₹${val}`);
-            updateStats();
-        }
-
-        function updateOwnerProfile() {
-            const email = document.getElementById('setAdminEmail').value;
-            const phone = document.getElementById('setAdminPhone').value;
-            const pass = document.getElementById('setAdminPass').value;
-
-            let admin = JSON.parse(localStorage.getItem("app_admin_account") || '{}');
-            admin.email = email;
-            admin.phone = phone;
-            if (pass.trim() !== '') admin.pass = pass;
-
-            localStorage.setItem("app_admin_account", JSON.stringify(admin));
-            alert("Owner Profile Saved!");
-            loadDashboardData();
-        }
-
-        function updateStats() {
-            const users = JSON.parse(localStorage.getItem('app_users_db') || '[]');
-            const price = parseInt(localStorage.getItem('app_pro_price') || '20');
-            const downloads = 12;
-
-            document.getElementById('statTotalUsers').innerText = users.length;
-            document.getElementById('statProDownloads').innerText = downloads;
-            document.getElementById('statRevenue').innerText = `₹${downloads * price}`;
-        }
-
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById(tabId).classList.remove('hidden');
         }
     </script>
 </body>
