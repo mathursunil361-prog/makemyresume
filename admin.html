@@ -1,1 +1,94 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - MakeMyResume</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-100 font-sans p-6">
 
+    <div class="max-w-6xl mx-auto space-y-6">
+        <div class="flex justify-between items-center bg-slate-900 text-white p-4 rounded-xl shadow">
+            <h1 class="text-lg font-bold"><i class="fa-solid fa-user-shield text-red-500 mr-2"></i> Admin Control Center</h1>
+            <a href="index.html" class="text-xs bg-slate-800 px-3 py-1.5 rounded">Back to Site</a>
+        </div>
+
+        <!-- PRICE CONTROL PANEL -->
+        <div class="bg-white p-5 rounded-xl border shadow-sm">
+            <h2 class="font-bold text-slate-800 text-sm mb-2"><i class="fa-solid fa-indian-rupee-sign text-emerald-600 mr-1"></i> Set Resume Download Price</h2>
+            <div class="flex gap-3 max-w-xs">
+                <input type="number" id="priceInput" placeholder="Enter Price in ₹" class="border p-2 rounded text-sm w-full font-bold">
+                <button onclick="updatePrice()" class="bg-emerald-600 text-white font-bold px-4 py-2 rounded text-xs">Save Price</button>
+            </div>
+            <p class="text-xs text-slate-500 mt-1">Current Active Price: <b id="currentPriceLabel">₹5</b></p>
+        </div>
+
+        <!-- REGISTERED USERS DATABASE TABLE -->
+        <div class="bg-white rounded-xl border shadow-sm p-5">
+            <h2 class="font-bold text-slate-800 text-sm mb-4"><i class="fa-solid fa-users text-blue-600 mr-1"></i> Registered User Profiles</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                        <tr class="bg-slate-100 uppercase text-slate-600 border-b">
+                            <th class="p-3">User Name</th>
+                            <th class="p-3">Email & Phone</th>
+                            <th class="p-3">Location</th>
+                            <th class="p-3">Education</th>
+                            <th class="p-3">Work Exp</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTable">
+                        <!-- Dynamic User Row -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            let pass = prompt("Enter Admin Security Password:");
+            if(pass !== "admin123") {
+                alert("Unauthorized Access!");
+                window.location.href = "index.html";
+                return;
+            }
+
+            const price = localStorage.getItem('app_download_price') || "5";
+            document.getElementById('currentPriceLabel').innerText = "₹" + price;
+            document.getElementById('priceInput').value = price;
+
+            loadUserData();
+        });
+
+        function updatePrice() {
+            const newPrice = document.getElementById('priceInput').value;
+            if(newPrice) {
+                localStorage.setItem('app_download_price', newPrice);
+                document.getElementById('currentPriceLabel').innerText = "₹" + newPrice;
+                alert("Download price updated to ₹" + newPrice);
+            }
+        }
+
+        function loadUserData() {
+            const profile = JSON.parse(localStorage.getItem('user_full_profile'));
+            const tbody = document.getElementById('userTable');
+
+            if(profile && profile.isRegistered) {
+                tbody.innerHTML = `
+                    <tr class="border-b hover:bg-slate-50">
+                        <td class="p-3 font-bold">${profile.name}</td>
+                        <td class="p-3">${profile.email}<br><span class="text-slate-500">${profile.phone}</span></td>
+                        <td class="p-3">${profile.district}, ${profile.country}<br><span class="text-slate-400">${profile.address}</span></td>
+                        <td class="p-3">${profile.edu || 'N/A'}</td>
+                        <td class="p-3">${profile.exp || 'N/A'}</td>
+                    </tr>
+                `;
+            } else {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">No registered users recorded yet.</td></tr>`;
+            }
+        }
+    </script>
+</body>
+</html>
