@@ -3,165 +3,234 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MakeMyResume - Pro AI Resume Builder</title>
+    <title>MakeMyResume - Pro Resume & Cover Letter Builder</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        .slider-track { display: flex; gap: 1rem; overflow-x: auto; scroll-behavior: smooth; padding-bottom: 1rem; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .slider-track { display: flex; gap: 1.25rem; overflow-x: auto; scroll-behavior: smooth; padding: 1rem 0; }
         .slider-track::-webkit-scrollbar { height: 6px; }
         .slider-track::-webkit-scrollbar-thumb { background: #dc2626; border-radius: 10px; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased">
+<body class="bg-slate-950 text-slate-100 antialiased min-h-screen flex flex-col">
 
-    <!-- HEADER -->
-    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200">
-        <div class="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
-            <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
-                <span class="bg-red-600 text-white p-2 rounded-lg"><i class="fa-solid fa-file-invoice text-xl"></i></span>
-                <span class="text-xl font-bold text-slate-900 tracking-tight">MakeMy<span class="text-red-600">Resume</span></span>
+    <!-- PREMIUM HEADER -->
+    <header class="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-6 h-18 flex justify-between items-center py-3">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="window.location.href='index.html'">
+                <div class="bg-gradient-to-tr from-red-600 to-rose-500 text-white p-2.5 rounded-xl shadow-lg shadow-red-600/30">
+                    <i class="fa-solid fa-file-invoice text-xl"></i>
+                </div>
+                <span class="text-2xl font-extrabold text-white tracking-tight">MakeMy<span class="text-red-500">Resume</span></span>
             </div>
-            <nav class="hidden md:flex gap-6 text-sm font-semibold text-slate-600">
-                <a href="#templates-slider" class="hover:text-red-600">100+ Templates</a>
-                <a href="editor.html" class="hover:text-red-600">Instant Builder</a>
-                <a href="admin.html" class="text-xs bg-slate-100 text-slate-700 px-2 py-1 rounded border">Admin Panel</a>
+
+            <nav class="hidden md:flex gap-8 text-sm font-semibold text-slate-300">
+                <a href="#templates" class="hover:text-red-500 transition">100+ Templates</a>
+                <a href="editor.html" class="hover:text-red-500 transition">Resume Builder</a>
+                <a href="admin.html" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 flex items-center gap-1.5"><i class="fa-solid fa-lock text-red-500"></i> Admin</a>
             </nav>
-            <div id="navAuthArea" class="flex gap-2">
-                <button onclick="openAuthModal('login')" class="text-sm font-semibold text-slate-700 px-3 py-2">Log in</button>
-                <button onclick="openAuthModal('register')" class="bg-red-600 text-white font-semibold text-sm px-4 py-2 rounded-lg shadow">Register Profile</button>
+
+            <div id="authNavArea" class="flex items-center gap-3">
+                <button onclick="openAuthModal('login')" class="text-sm font-bold text-slate-300 hover:text-white px-4 py-2">Log In</button>
+                <button onclick="openAuthModal('register')" class="bg-red-600 hover:bg-red-700 text-white font-bold text-sm px-5 py-2.5 rounded-xl shadow-lg shadow-red-600/30 transition">Create Account</button>
             </div>
         </div>
     </header>
 
     <!-- HERO SECTION -->
-    <section class="max-w-7xl mx-auto px-4 py-12 md:py-16 text-center">
-        <span class="bg-red-50 text-red-600 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider"><i class="fa-solid fa-bolt mr-1"></i> Auto-Fill Engine Included</span>
-        <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 mt-4 leading-tight">
-            One Profile Registration, <br><span class="text-red-600">100+ Automatic Resumes</span>
+    <section class="relative max-w-7xl mx-auto px-6 py-16 md:py-24 text-center">
+        <div class="inline-flex items-center gap-2 bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-bold px-4 py-2 rounded-full mb-6">
+            <i class="fa-solid fa-sparkles"></i> Next-Gen Auto Resume Engine
+        </div>
+        <h1 class="text-4xl md:text-6xl font-black text-white leading-tight max-w-4xl mx-auto">
+            Build Outstanding Resumes in Seconds with <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-rose-400">Smart Auto-Fill</span>
         </h1>
-        <p class="text-slate-600 max-w-2xl mx-auto mt-4 text-sm md:text-base">
-            Apni information ek baar bharein, aur hum aapka Resume + Job Request Letter har template par automatic ready kar denge! Free mein watermark ke saath download karein ya Pro PDF lein.
+        <p class="text-slate-400 max-w-2xl mx-auto mt-6 text-base md:text-lg">
+            Register once and generate resumes across 100+ ATS-friendly templates instantly along with auto-crafted cover letters.
         </p>
-        <div class="mt-6 flex justify-center gap-4">
-            <a href="editor.html" class="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded-xl shadow-lg transition">Create Resume Now</a>
-            <button onclick="openAuthModal('register')" class="bg-slate-900 text-white font-bold px-6 py-3 rounded-xl shadow transition">Register Profile</button>
+        <div class="mt-8 flex flex-wrap justify-center gap-4">
+            <a href="editor.html" class="bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-bold px-8 py-4 rounded-xl shadow-xl shadow-red-600/25 transition">Start Building Free</a>
+            <button onclick="openAuthModal('register')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold px-8 py-4 rounded-xl border border-slate-700 transition">Register Profile</button>
         </div>
     </section>
 
-    <!-- 100 TEMPLATES SLIDER SHOWCASE -->
-    <section id="templates-slider" class="bg-white py-12 border-y border-slate-200">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="flex justify-between items-center mb-6">
+    <!-- 100 TEMPLATES CAROUSEL SLIDER -->
+    <section id="templates" class="bg-slate-900/50 py-16 border-y border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex justify-between items-end mb-8">
                 <div>
-                    <h2 class="text-2xl font-bold text-slate-900">100+ Resume Styles & Layouts</h2>
-                    <p class="text-xs text-slate-500">Scroll right to explore templates</p>
+                    <h2 class="text-2xl font-bold text-white">100+ Professional Resume Templates</h2>
+                    <p class="text-xs text-slate-400 mt-1">Select any template to auto-populate your registered details</p>
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="scrollSlider(-300)" class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center hover:bg-slate-200"><i class="fa-solid fa-chevron-left"></i></button>
-                    <button onclick="scrollSlider(300)" class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center hover:bg-slate-200"><i class="fa-solid fa-chevron-right"></i></button>
+                    <button onclick="scrollSlider(-350)" class="w-10 h-10 bg-slate-800 hover:bg-slate-700 rounded-xl text-white flex items-center justify-center border border-slate-700"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button onclick="scrollSlider(350)" class="w-10 h-10 bg-slate-800 hover:bg-slate-700 rounded-xl text-white flex items-center justify-center border border-slate-700"><i class="fa-solid fa-chevron-right"></i></button>
                 </div>
             </div>
 
-            <!-- DYNAMIC TEMPLATE SLIDER CAROUSEL -->
             <div id="sliderTrack" class="slider-track">
-                <!-- 100 Templates will be generated dynamically by JavaScript below -->
+                <!-- 100 Cards Dynamic Render -->
             </div>
         </div>
     </section>
 
-    <!-- DETAILED REGISTRATION & PROFILE MODAL -->
-    <div id="authModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4 overflow-y-auto">
-        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl relative my-8">
-            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+    <!-- USER DASHBOARD MODAL (ACTIVITIES & TEMPLATE HISTORY) -->
+    <div id="dashboardModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center z-50 p-4 overflow-y-auto">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-3xl w-full p-6 shadow-2xl relative text-slate-100">
+            <button onclick="closeDashboardModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
             
-            <h3 id="modalTitle" class="text-xl font-bold text-slate-900">Complete Profile Registration</h3>
-            <p class="text-xs text-slate-500 mb-4">Ek baar details bharein, saare 100 templates automatic ready ho jayenge.</p>
+            <div class="flex items-center gap-4 border-b border-slate-800 pb-4 mb-6">
+                <div class="w-14 h-14 bg-red-600/20 text-red-500 rounded-2xl flex items-center justify-center text-2xl font-bold border border-red-500/30">
+                    <i class="fa-solid fa-user-circle"></i>
+                </div>
+                <div>
+                    <h3 id="dashUserName" class="text-xl font-bold text-white">User Name</h3>
+                    <p id="dashUserEmail" class="text-xs text-slate-400">user@example.com</p>
+                </div>
+            </div>
 
-            <form id="profileForm" onsubmit="handleRegistration(event)" class="space-y-4 text-left">
-                <!-- Contact Details -->
+            <!-- ACTIVITY STATS -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+                    <span class="text-xs text-slate-400 font-semibold uppercase">Total Templates Used</span>
+                    <h4 id="dashUsedCount" class="text-2xl font-bold text-red-500 mt-1">0</h4>
+                </div>
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+                    <span class="text-xs text-slate-400 font-semibold uppercase">PDF Downloads</span>
+                    <h4 id="dashDownloadCount" class="text-2xl font-bold text-emerald-400 mt-1">0</h4>
+                </div>
+            </div>
+
+            <!-- RECENT ACTIVITY LOG & TEMPLATES USED LIST -->
+            <h4 class="font-bold text-sm text-slate-200 mb-3"><i class="fa-solid fa-clock-rotate-left text-red-500 mr-2"></i> Recent Activity & Templates History</h4>
+            <div id="activityHistoryList" class="bg-slate-950 border border-slate-800 rounded-xl p-4 max-h-48 overflow-y-auto text-xs space-y-2 text-slate-400">
+                <!-- Dynamic Logs -->
+            </div>
+        </div>
+    </div>
+
+    <!-- AUTHENTICATION MODAL (LOGIN & REGISTRATION) -->
+    <div id="authModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center z-50 p-4 overflow-y-auto">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-xl w-full p-6 shadow-2xl relative text-slate-100 my-8">
+            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+            
+            <!-- MODAL HEADER TOGGLE -->
+            <div class="flex gap-4 border-b border-slate-800 pb-3 mb-6">
+                <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="text-base font-bold text-red-500 border-b-2 border-red-500 pb-1">Log In</button>
+                <button id="tabRegBtn" onclick="switchAuthTab('register')" class="text-base font-bold text-slate-400 hover:text-slate-200 pb-1">Register Account</button>
+            </div>
+
+            <!-- LOGIN FORM -->
+            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Email ID or Mobile Number *</label>
+                    <input type="text" id="loginIdentifier" required placeholder="Enter Email or Phone Number" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:border-red-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Password *</label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:border-red-500 focus:outline-none">
+                </div>
+                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl text-xs transition">Log In to Account</button>
+            </form>
+
+            <!-- REGISTRATION FORM -->
+            <form id="regForm" onsubmit="handleRegistration(event)" class="space-y-4 hidden">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Full Name *</label>
-                        <input type="text" id="regName" required placeholder="Rahul Sharma" class="w-full border p-2 rounded text-xs">
+                        <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Full Name *</label>
+                        <input type="text" id="regName" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Email *</label>
-                        <input type="email" id="regEmail" required placeholder="rahul@example.com" class="w-full border p-2 rounded text-xs">
+                        <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Email ID *</label>
+                        <input type="email" id="regEmail" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mobile Number *</label>
-                        <input type="tel" id="regPhone" required placeholder="+91 9876543210" class="w-full border p-2 rounded text-xs">
+                        <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Mobile Number *</label>
+                        <input type="tel" id="regPhone" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Country *</label>
-                        <input type="text" id="regCountry" required placeholder="India" class="w-full border p-2 rounded text-xs">
+                        <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Password *</label>
+                        <input type="password" id="regPassword" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">State / District *</label>
-                        <input type="text" id="regDistrict" required placeholder="Bhopal, MP" class="w-full border p-2 rounded text-xs">
+                        <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Country *</label>
+                        <input type="text" id="regCountry" required placeholder="India" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Local Address</label>
-                        <input type="text" id="regAddress" placeholder="Flat No 101, MP Nagar" class="w-full border p-2 rounded text-xs">
+                        <label class="block text-xs font-bold text-slate-300 uppercase mb-1">District / State *</label>
+                        <input type="text" id="regDistrict" required placeholder="Bhopal, MP" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white">
                     </div>
                 </div>
-
-                <!-- Education Details -->
-                <div class="border-t pt-3">
-                    <h4 class="text-xs font-bold text-red-600 uppercase mb-2">Educational Information</h4>
-                    <textarea id="regEdu" rows="2" placeholder="e.g., B.Tech Computer Science - ABC Institute (2018-2022) - 82%" class="w-full border p-2 rounded text-xs"></textarea>
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Local Address</label>
+                    <input type="text" id="regAddress" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white">
                 </div>
-
-                <!-- Work Experience -->
-                <div class="border-t pt-3">
-                    <h4 class="text-xs font-bold text-red-600 uppercase mb-2">Work Experience Details</h4>
-                    <textarea id="regExp" rows="2" placeholder="e.g., Software Engineer at XYZ Tech (2022 - Present). Handled web development and client projects." class="w-full border p-2 rounded text-xs"></textarea>
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Educational Background</label>
+                    <textarea id="regEdu" rows="2" placeholder="e.g. B.Tech Computer Science, DTU (2018-2022)" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white"></textarea>
                 </div>
-
-                <!-- Auto-Generated Cover Letter Preview Notice -->
-                <div class="bg-blue-50 p-2.5 rounded border border-blue-200 text-[11px] text-blue-800">
-                    <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> <b>Auto Request Letter Engine:</b> Aapke registration details se ek professional <i>Job Application Request Letter</i> bhi automatic generate ho jayega!
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Work Experience</label>
+                    <textarea id="regExp" rows="2" placeholder="e.g. Software Engineer at ABC Tech (2022 - Present)" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white"></textarea>
                 </div>
-
-                <button type="submit" class="w-full bg-red-600 text-white font-bold py-2.5 rounded-lg text-sm hover:bg-red-700">Save Profile & Open Editor</button>
+                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl text-xs transition">Create Account & Register Profile</button>
             </form>
         </div>
     </div>
 
-    <!-- JAVASCRIPT FOR SLIDER & PROFILE LOGIC -->
+    <!-- JAVASCRIPT FOR AUTH & USER ACTIVITIES -->
     <script>
-        // 1. Generate 100 Template Cards Dynamically in Slider
         window.addEventListener('DOMContentLoaded', () => {
+            renderTemplatesSlider();
+            checkSession();
+        });
+
+        function renderTemplatesSlider() {
             const track = document.getElementById('sliderTrack');
-            const styles = ['Modern', 'Executive', 'Creative', 'Minimal', 'ATS Classic', 'Tech Lead', 'Designer', 'Corporate'];
-            const colors = ['#2563eb', '#059669', '#7c3aed', '#dc2626', '#0f172a', '#0d9488', '#d97706', '#e11d48'];
+            const styles = ['Executive', 'Modern Split', 'Minimal Red', 'Tech Lead', 'Creative Sidebar', 'Corporate Slate'];
+            const colors = ['#dc2626', '#2563eb', '#059669', '#7c3aed', '#0d9488', '#d97706'];
 
             for (let i = 1; i <= 100; i++) {
                 const styleName = styles[i % styles.length];
                 const colorHex = colors[i % colors.length];
-                
+
                 const card = document.createElement('div');
-                card.className = "flex-shrink-0 w-44 bg-slate-100 border rounded-xl p-3 hover:border-red-600 cursor-pointer transition text-center shadow-sm hover:shadow-md";
-                card.onclick = () => window.location.href = `editor.html?tpl=${i}`;
+                card.className = "flex-shrink-0 w-48 bg-slate-900 border border-slate-800 rounded-2xl p-3.5 hover:border-red-500 cursor-pointer transition text-center shadow-lg hover:shadow-red-500/10";
+                card.onclick = () => selectTemplateAndLaunch(i, styleName);
                 card.innerHTML = `
-                    <div class="h-32 rounded-lg mb-2 flex items-center justify-center text-white font-bold text-lg shadow-inner" style="background-color: ${colorHex}">
-                        Template #${i}
+                    <div class="h-36 rounded-xl mb-3 flex flex-col justify-between p-3 text-white font-bold text-xs shadow-inner" style="background-color: ${colorHex}">
+                        <span class="text-[10px] bg-black/30 px-2 py-0.5 rounded self-start">Template #${i}</span>
+                        <p class="text-sm font-black uppercase">${styleName}</p>
                     </div>
-                    <p class="text-xs font-bold text-slate-800">${styleName} #${i}</p>
-                    <span class="text-[10px] text-red-600 font-semibold">Auto-Fill Ready</span>
+                    <p class="text-xs font-bold text-slate-200">${styleName} #${i}</p>
+                    <span class="text-[10px] text-red-400 font-semibold">Auto-Fill Enabled</span>
                 `;
                 track.appendChild(card);
             }
-
-            checkSession();
-        });
-
-        function scrollSlider(amount) {
-            document.getElementById('sliderTrack').scrollBy({ left: amount, behavior: 'smooth' });
         }
 
-        function openAuthModal() {
+        function scrollSlider(amt) {
+            document.getElementById('sliderTrack').scrollBy({ left: amt, behavior: 'smooth' });
+        }
+
+        function switchAuthTab(type) {
+            if(type === 'login') {
+                document.getElementById('loginForm').classList.remove('hidden');
+                document.getElementById('regForm').classList.add('hidden');
+                document.getElementById('tabLoginBtn').className = "text-base font-bold text-red-500 border-b-2 border-red-500 pb-1";
+                document.getElementById('tabRegBtn').className = "text-base font-bold text-slate-400 hover:text-slate-200 pb-1";
+            } else {
+                document.getElementById('regForm').classList.remove('hidden');
+                document.getElementById('loginForm').classList.add('hidden');
+                document.getElementById('tabRegBtn').className = "text-base font-bold text-red-500 border-b-2 border-red-500 pb-1";
+                document.getElementById('tabLoginBtn').className = "text-base font-bold text-slate-400 hover:text-slate-200 pb-1";
+            }
+        }
+
+        function openAuthModal(mode) {
+            switchAuthTab(mode);
             document.getElementById('authModal').classList.remove('hidden');
             document.getElementById('authModal').classList.add('flex');
         }
@@ -171,37 +240,132 @@
             document.getElementById('authModal').classList.remove('flex');
         }
 
+        // REGISTRATION WITH DUPLICATE CHECK LOGIC
         function handleRegistration(e) {
             e.preventDefault();
-            const profileData = {
+            const email = document.getElementById('regEmail').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+
+            let usersDb = JSON.parse(localStorage.getItem('registered_users_db')) || [];
+
+            // Duplicate Email or Phone Check
+            const existingUser = usersDb.find(u => u.email === email || u.phone === phone);
+            if(existingUser) {
+                alert("Error: Yeh Email ID ya Mobile Number pehle se registered hai! Kripya Login karein.");
+                switchAuthTab('login');
+                return;
+            }
+
+            const newUser = {
+                id: 'USER_' + Date.now(),
                 name: document.getElementById('regName').value,
-                email: document.getElementById('regEmail').value,
-                phone: document.getElementById('regPhone').value,
+                email: email,
+                phone: phone,
+                password: document.getElementById('regPassword').value,
                 country: document.getElementById('regCountry').value,
                 district: document.getElementById('regDistrict').value,
                 address: document.getElementById('regAddress').value,
                 edu: document.getElementById('regEdu').value,
                 exp: document.getElementById('regExp').value,
-                isRegistered: true
+                history: [],
+                downloadsCount: 0
             };
 
-            // Save in localStorage for automatic fill across templates
-            localStorage.setItem('user_full_profile', JSON.stringify(profileData));
-            alert("Profile Registered Successfully! Opening Resume Builder...");
-            window.location.href = "editor.html";
+            usersDb.push(newUser);
+            localStorage.setItem('registered_users_db', JSON.stringify(usersDb));
+            localStorage.setItem('current_logged_user', JSON.stringify(newUser));
+
+            alert("Registration Successful! Logging in...");
+            closeAuthModal();
+            checkSession();
+        }
+
+        // LOGIN ENGINE
+        function handleLogin(e) {
+            e.preventDefault();
+            const identifier = document.getElementById('loginIdentifier').value.trim();
+            const pass = document.getElementById('loginPassword').value;
+
+            let usersDb = JSON.parse(localStorage.getItem('registered_users_db')) || [];
+            
+            const matchedUser = usersDb.find(u => (u.email === identifier || u.phone === identifier) && u.password === pass);
+
+            if(matchedUser) {
+                localStorage.setItem('current_logged_user', JSON.stringify(matchedUser));
+                alert("Welcome back, " + matchedUser.name + "!");
+                closeAuthModal();
+                checkSession();
+            } else {
+                alert("Invalid Email/Mobile Number or Password!");
+            }
         }
 
         function checkSession() {
-            const profile = JSON.parse(localStorage.getItem('user_full_profile'));
-            if(profile && profile.isRegistered) {
-                document.getElementById('navAuthArea').innerHTML = `
-                    <div class="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-lg">
-                        <i class="fa-solid fa-user-circle text-red-600 text-lg"></i>
-                        <span class="text-xs font-bold">${profile.name}</span>
-                    </div>
-                    <button onclick="localStorage.clear(); location.reload();" class="text-xs text-red-600 font-semibold">Reset</button>
+            const user = JSON.parse(localStorage.getItem('current_logged_user'));
+            const navArea = document.getElementById('authNavArea');
+
+            if(user) {
+                navArea.innerHTML = `
+                    <button onclick="openUserDashboard()" class="flex items-center gap-2 bg-slate-800 border border-slate-700 px-4 py-2 rounded-xl text-white text-xs font-bold hover:border-red-500">
+                        <i class="fa-solid fa-circle-user text-red-500 text-sm"></i>
+                        <span>${user.name}</span>
+                    </button>
+                    <button onclick="logout()" class="text-xs text-red-400 font-bold hover:text-red-300">Logout</button>
                 `;
             }
+        }
+
+        function openUserDashboard() {
+            const user = JSON.parse(localStorage.getItem('current_logged_user'));
+            if(!user) return;
+
+            document.getElementById('dashUserName').innerText = user.name;
+            document.getElementById('dashUserEmail').innerText = `${user.email} | ${user.phone}`;
+            document.getElementById('dashUsedCount').innerText = user.history ? user.history.length : 0;
+            document.getElementById('dashDownloadCount').innerText = user.downloadsCount || 0;
+
+            const list = document.getElementById('activityHistoryList');
+            list.innerHTML = '';
+
+            if(user.history && user.history.length > 0) {
+                user.history.forEach(act => {
+                    const item = document.createElement('div');
+                    item.className = "flex justify-between items-center border-b border-slate-800 pb-2";
+                    item.innerHTML = `<span><i class="fa-solid fa-file-lines text-red-500 mr-2"></i> ${act.templateName}</span> <span class="text-[10px] text-slate-500">${act.date}</span>`;
+                    list.appendChild(item);
+                });
+            } else {
+                list.innerHTML = `<p class="text-slate-500 italic">Abhi tak koi template use nahi kiya gaya hai.</p>`;
+            }
+
+            document.getElementById('dashboardModal').classList.remove('hidden');
+            document.getElementById('dashboardModal').classList.add('flex');
+        }
+
+        function closeDashboardModal() {
+            document.getElementById('dashboardModal').classList.add('hidden');
+            document.getElementById('dashboardModal').classList.remove('flex');
+        }
+
+        function selectTemplateAndLaunch(tplId, tplName) {
+            let user = JSON.parse(localStorage.getItem('current_logged_user'));
+            if(user) {
+                // Log history
+                let usersDb = JSON.parse(localStorage.getItem('registered_users_db')) || [];
+                user.history = user.history || [];
+                user.history.unshift({ templateName: `Template #${tplId} (${tplName})`, date: new Date().toLocaleString() });
+                
+                // Update Local Storage
+                localStorage.setItem('current_logged_user', JSON.stringify(user));
+                const index = usersDb.findIndex(u => u.id === user.id);
+                if(index !== -1) { usersDb[index] = user; localStorage.setItem('registered_users_db', JSON.stringify(usersDb)); }
+            }
+            window.location.href = `editor.html?tpl=${tplId}`;
+        }
+
+        function logout() {
+            localStorage.removeItem('current_logged_user');
+            location.reload();
         }
     </script>
 </body>
