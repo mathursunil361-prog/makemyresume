@@ -5,373 +5,516 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MakeMyResume - Admin Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #0f172a; }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #f8fafc; 
+            color: #0f172a; 
+        }
+        
+        /* Glassmorphism Blur Overlay (Point 13) */
+        .glass-overlay {
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+
+        /* MS Word Rich Editor Container (Point 11, 14) */
+        .word-editor-area {
+            min-height: 280px;
+            background: #ffffff;
+            color: #0f172a;
+            border: 1px solid #e2e8f0;
+            border-radius: 0 0 12px 12px;
+            padding: 20px;
+            outline: none;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
-<body class="antialiased min-h-screen flex flex-col">
+<body class="min-h-screen relative">
 
-    <!-- ADMIN HEADER -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-6 h-16 flex justify-between items-center text-xs">
-            <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
-                <div class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white font-black text-base">
+    <!-- TRANSPARENT BLUR OVERLAY & POPUP SYSTEM (Point 13, 16) -->
+    <div id="adminModalOverlay" class="fixed inset-0 z-50 glass-overlay flex items-center justify-center p-4">
+        
+        <!-- BACK TO WEBSITE BUTTON -->
+        <button onclick="window.location.href='index.html'" class="fixed top-6 right-6 bg-white hover:bg-slate-50 text-slate-800 font-bold px-4 py-2.5 rounded-xl shadow-xl border border-slate-200 text-xs flex items-center gap-2 transition z-50 cursor-pointer">
+            <i class="fa-solid fa-arrow-left text-red-600"></i> Back to Website
+        </button>
+
+        <!-- A. LOGIN / REGISTRATION POPUP CARD (Point 6) -->
+        <div id="authCard" class="bg-white border border-slate-200 shadow-2xl max-w-md w-full p-8 rounded-3xl space-y-6 relative">
+            <div class="text-center">
+                <div class="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center mx-auto text-white text-xl font-black mb-3 shadow-md">
                     <i class="fa-solid fa-user-shield"></i>
                 </div>
-                <span class="text-base font-extrabold text-slate-900">MakeMy<span class="text-red-600">Resume</span> <span class="bg-red-100 text-red-600 px-2 py-0.5 rounded text-[10px] uppercase font-bold ml-1">Admin</span></span>
+                <h2 id="authTitle" class="text-2xl font-extrabold text-slate-900">Admin Access Control</h2>
+                <p class="text-xs text-slate-500 mt-1">MakeMyResume Owner Authorization System</p>
             </div>
-            
-            <div class="flex items-center gap-4">
-                <a href="editor.html" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-2 rounded-lg transition">
-                    <i class="fa-solid fa-pen-to-square"></i> Open Editor
-                </a>
-                <button onclick="logoutAdmin()" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold px-3 py-2 rounded-lg transition">
-                    <i class="fa-solid fa-power-off"></i> Logout
+
+            <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-[11px] font-extrabold uppercase text-slate-500 mb-1">Admin Email</label>
+                    <input type="email" id="authEmail" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 focus:outline-none focus:border-slate-800">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-extrabold uppercase text-slate-500 mb-1">Password</label>
+                    <input type="password" id="authPassword" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 focus:outline-none focus:border-slate-800">
+                </div>
+                <button type="submit" id="authBtn" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-extrabold py-3 rounded-xl transition text-xs shadow-md">
+                    Login to Admin Panel
+                </button>
+            </form>
+
+            <div class="text-center pt-2 border-t border-slate-100">
+                <button onclick="toggleAuthMode()" id="authToggleBtn" class="text-xs text-slate-600 hover:text-slate-900 underline font-semibold">
+                    First time Owner? Register Admin Account
                 </button>
             </div>
         </div>
-    </header>
 
-    <!-- DASHBOARD CONTAINER -->
-    <main class="flex-1 max-w-7xl mx-auto w-full p-6 space-y-8">
-        
-        <!-- TOP STATS OVERVIEW -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
-                <div class="flex justify-between items-center text-slate-400 mb-2">
-                    <span class="text-xs font-bold uppercase">Total Registered Users</span>
-                    <i class="fa-solid fa-users text-lg text-blue-500"></i>
-                </div>
-                <div class="text-2xl font-black text-slate-900" id="statUsers">0</div>
-            </div>
-
-            <div class="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
-                <div class="flex justify-between items-center text-slate-400 mb-2">
-                    <span class="text-xs font-bold uppercase">Pro Pricing (Current)</span>
-                    <i class="fa-solid fa-tag text-lg text-amber-500"></i>
-                </div>
-                <div class="text-2xl font-black text-slate-900" id="statPrice">₹20</div>
-            </div>
-
-            <div class="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
-                <div class="flex justify-between items-center text-slate-400 mb-2">
-                    <span class="text-xs font-bold uppercase">Total Pro Downloads</span>
-                    <i class="fa-solid fa-file-arrow-down text-lg text-emerald-500"></i>
-                </div>
-                <div class="text-2xl font-black text-slate-900" id="statDownloads">0</div>
-            </div>
-
-            <div class="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
-                <div class="flex justify-between items-center text-slate-400 mb-2">
-                    <span class="text-xs font-bold uppercase">Estimated Revenue</span>
-                    <i class="fa-solid fa-indian-rupee-sign text-lg text-red-500"></i>
-                </div>
-                <div class="text-2xl font-black text-slate-900" id="statRevenue">₹0</div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <!-- B. MAIN DASHBOARD POPUP WINDOW (Point 15 - Look & Feel Kept Intact) -->
+        <div id="dashboardCard" class="hidden bg-slate-50 border border-slate-200 shadow-2xl w-full max-w-7xl h-[92vh] rounded-3xl overflow-hidden flex flex-col relative">
             
-            <!-- LEFT PANEL: PRICING & SYSTEM SETTINGS -->
-            <div class="lg:col-span-4 space-y-6">
-                
-                <!-- PRICE CONFIGURATION CARD -->
-                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                    <h3 class="font-bold text-slate-900 text-sm border-b pb-3 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-indian-rupee-sign text-red-600"></i> Set Custom Pricing
-                    </h3>
-                    <form onsubmit="savePriceSetting(event)" class="space-y-4">
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Pro Download Price (₹)</label>
-                            <input type="number" id="inputProPrice" required min="0" class="w-full border p-2.5 rounded-lg text-xs bg-slate-50 font-bold text-slate-800">
-                            <p class="text-[10px] text-slate-400 mt-1">Ye price seedhe editor page me update ho jayega.</p>
-                        </div>
-                        <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-lg text-xs transition">
-                            Update Price
-                        </button>
-                    </form>
+            <!-- HEADER -->
+            <div class="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-slate-900 rounded-xl flex items-center justify-center font-black text-white text-lg">M</div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="font-black text-slate-900 text-lg">MakeMyResume</h1>
+                        <span class="bg-red-100 text-red-600 font-extrabold text-[10px] px-2 py-0.5 rounded uppercase">ADMIN</span>
+                    </div>
                 </div>
 
-                <!-- PAYMENT GATEWAY KEYS (FUTURE READY) -->
-                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                    <h3 class="font-bold text-slate-900 text-sm border-b pb-3 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-key text-red-600"></i> Payment Gateway API Keys
-                    </h3>
-                    <form onsubmit="saveGatewaySettings(event)" class="space-y-3">
+                <div class="flex items-center gap-4">
+                    <!-- Point 16: "Back to Home" in place of Open Editor -->
+                    <button onclick="window.location.href='index.html'" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 border border-slate-200 transition">
+                        <i class="fa-solid fa-house text-slate-500"></i> Back to Home
+                    </button>
+                    <!-- Point 16: Auto lock logout -->
+                    <button onclick="logoutAdmin()" class="bg-red-50 hover:bg-red-100 text-red-600 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 border border-red-200 transition">
+                        <i class="fa-solid fa-power-off"></i> Logout
+                    </button>
+                </div>
+            </div>
+
+            <!-- DASHBOARD CONTENT AREA -->
+            <div class="flex-1 p-6 overflow-y-auto space-y-6">
+
+                <!-- TOP STATS COUNTERS (Point 4) -->
+                <div class="grid grid-cols-4 gap-4">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 flex justify-between items-center shadow-xs">
                         <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Razorpay Key ID</label>
-                            <input type="text" id="rzpKeyId" placeholder="rzp_live_xxxxxxxx" class="w-full border p-2 rounded text-xs bg-slate-50">
+                            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Total Registered Users</p>
+                            <h3 id="statUsers" class="text-2xl font-extrabold mt-1 text-slate-900">0</h3>
                         </div>
+                        <i class="fa-solid fa-users text-xl text-blue-500 bg-blue-50 p-3 rounded-xl"></i>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 flex justify-between items-center shadow-xs">
                         <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Razorpay Secret Key</label>
-                            <input type="password" id="rzpKeySecret" placeholder="••••••••••••••••" class="w-full border p-2 rounded text-xs bg-slate-50">
+                            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Pro Pricing (Current)</p>
+                            <h3 id="statPrice" class="text-2xl font-extrabold mt-1 text-slate-900">₹100</h3>
                         </div>
-                        <button type="submit" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2 rounded-lg text-xs transition">
-                            Save API Credentials
-                        </button>
-                    </form>
+                        <i class="fa-solid fa-tag text-xl text-amber-500 bg-amber-50 p-3 rounded-xl"></i>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 flex justify-between items-center shadow-xs">
+                        <div>
+                            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Total Pro Downloads</p>
+                            <h3 id="statDownloads" class="text-2xl font-extrabold mt-1 text-slate-900">0</h3>
+                        </div>
+                        <i class="fa-solid fa-download text-xl text-emerald-500 bg-emerald-50 p-3 rounded-xl"></i>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 flex justify-between items-center shadow-xs">
+                        <div>
+                            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Estimated Revenue</p>
+                            <h3 id="statRevenue" class="text-2xl font-extrabold mt-1 text-slate-900">₹0</h3>
+                        </div>
+                        <i class="fa-solid fa-indian-rupee-sign text-xl text-red-500 bg-red-50 p-3 rounded-xl"></i>
+                    </div>
                 </div>
 
-                <!-- ADD NEW TEMPLATE CARD -->
-                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                    <h3 class="font-bold text-slate-900 text-sm border-b pb-3 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-layer-group text-red-600"></i> Add New Resume Template
-                    </h3>
-                    <form onsubmit="addTemplate(event)" class="space-y-3">
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Template Name</label>
-                            <input type="text" id="tplName" required placeholder="e.g. Modern Executive" class="w-full border p-2 rounded text-xs bg-slate-50">
+                <!-- MAIN CONTROLS GRID -->
+                <div class="grid grid-cols-12 gap-6">
+                    
+                    <!-- LEFT COLUMN -->
+                    <div class="col-span-4 space-y-6">
+                        
+                        <!-- SET CUSTOM PRICING (Point 1) -->
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
+                            <h3 class="text-xs font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-indian-rupee-sign text-emerald-600"></i> Set Custom Pricing</h3>
+                            <div>
+                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Pro Download Price (₹)</label>
+                                <input type="number" id="priceInput" value="100" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-bold focus:outline-none focus:border-slate-800">
+                                <p class="text-[10px] text-slate-400 mt-1">Ye price seedhe editor page me update ho jayega.</p>
+                            </div>
+                            <button onclick="updatePricing()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs transition">Update Price</button>
                         </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Category</label>
-                            <select id="tplCategory" class="w-full border p-2 rounded text-xs bg-slate-50">
-                                <option value="Professional">Professional</option>
-                                <option value="Creative">Creative</option>
-                                <option value="Simple">Simple / Minimal</option>
-                            </select>
+
+                        <!-- PAYMENT GATEWAY KEYS (Point 5) -->
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
+                            <h3 class="text-xs font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-key text-amber-500"></i> Payment Gateway API Keys</h3>
+                            <div>
+                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Razorpay Key ID</label>
+                                <input type="text" id="rzpKeyId" placeholder="rzp_live_xxxx" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:border-slate-800">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Razorpay Secret Key</label>
+                                <input type="password" id="rzpSecretKey" placeholder="••••••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:border-slate-800">
+                            </div>
+                            <button onclick="saveApiKeys()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2 rounded-xl text-xs border border-slate-200 transition">Save API Credentials</button>
                         </div>
-                        <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded-lg text-xs transition">
-                            <i class="fa-solid fa-plus"></i> Add Template
-                        </button>
-                    </form>
+
+                        <!-- OWNER PROFILE SETTINGS (Point 7) -->
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
+                            <h3 class="text-xs font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-user-gear text-blue-600"></i> Admin Profile & Credentials</h3>
+                            <div>
+                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Admin Email</label>
+                                <input type="email" id="ownerEmail" placeholder="Admin Email" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:border-slate-800">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Admin Phone</label>
+                                <input type="text" id="ownerPhone" placeholder="Phone Number" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:border-slate-800">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Admin Address</label>
+                                <input type="text" id="ownerAddress" placeholder="Physical Address" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:border-slate-800">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">New Password</label>
+                                <input type="password" id="ownerPass" placeholder="Leave blank if unchanged" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:border-slate-800">
+                            </div>
+                            <button onclick="saveOwnerProfile()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 rounded-xl text-xs transition">Save Profile Changes</button>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT COLUMN -->
+                    <div class="col-span-8 space-y-6">
+                        
+                        <!-- REGISTERED USERS MANAGEMENT (Point 2, 9) -->
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
+                            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                                <h3 class="text-xs font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-users-gear text-blue-600"></i> Registered Users Management</h3>
+                                <span id="userCountBadge" class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">0 Users</span>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-xs">
+                                    <thead class="bg-slate-50 text-slate-400 uppercase text-[10px]">
+                                        <tr>
+                                            <th class="p-2.5">User Details</th>
+                                            <th class="p-2.5">Mobile / Location</th>
+                                            <th class="p-2.5">Password</th>
+                                            <th class="p-2.5">Downloads</th>
+                                            <th class="p-2.5 text-right">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="userListTable" class="divide-y divide-slate-100 text-slate-700">
+                                        <!-- Dynamic User Rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- WORD TEMPLATE DESIGNER STUDIO (Point 8, 10, 11, 14) -->
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-4 shadow-xs">
+                            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                                <div>
+                                    <h3 class="text-xs font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-file-word text-blue-600"></i> MS Word Resume Template Designer</h3>
+                                    <p class="text-[10px] text-slate-400">Design custom formats with Word controls and publish live to users.</p>
+                                </div>
+                                <button onclick="publishTemplate()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 transition">
+                                    <i class="fa-solid fa-paper-plane"></i> Publish Template
+                                </button>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Template Name</label>
+                                    <input type="text" id="tplTitleInput" placeholder="e.g. Modern Executive Resume" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:border-slate-800">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Category</label>
+                                    <input type="text" id="tplCatInput" placeholder="e.g. IT / Software / Management" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:border-slate-800">
+                                </div>
+                            </div>
+
+                            <!-- MS WORD TOOLBAR (Point 11, 14) -->
+                            <div>
+                                <div class="bg-slate-100 border border-slate-200 rounded-t-xl p-2 flex flex-wrap gap-1 text-xs">
+                                    <button onclick="execCmd('undo')" class="p-1.5 bg-white hover:bg-slate-50 border rounded shadow-xs" title="Undo"><i class="fa-solid fa-rotate-left"></i></button>
+                                    <button onclick="execCmd('redo')" class="p-1.5 bg-white hover:bg-slate-50 border rounded shadow-xs" title="Redo"><i class="fa-solid fa-rotate-right"></i></button>
+                                    <div class="h-4 w-[1px] bg-slate-300 mx-1 align-middle self-center"></div>
+                                    <button onclick="execCmd('bold')" class="p-1.5 px-2 bg-white hover:bg-slate-50 border rounded shadow-xs font-bold">B</button>
+                                    <button onclick="execCmd('italic')" class="p-1.5 px-2 bg-white hover:bg-slate-50 border rounded shadow-xs italic">I</button>
+                                    <button onclick="execCmd('underline')" class="p-1.5 px-2 bg-white hover:bg-slate-50 border rounded shadow-xs underline">U</button>
+                                    <button onclick="execCmd('strikeThrough')" class="p-1.5 px-2 bg-white hover:bg-slate-50 border rounded shadow-xs line-through">S</button>
+                                    <div class="h-4 w-[1px] bg-slate-300 mx-1 align-middle self-center"></div>
+                                    <button onclick="execCmd('justifyLeft')" class="p-1.5 bg-white hover:bg-slate-50 border rounded shadow-xs"><i class="fa-solid fa-align-left"></i></button>
+                                    <button onclick="execCmd('justifyCenter')" class="p-1.5 bg-white hover:bg-slate-50 border rounded shadow-xs"><i class="fa-solid fa-align-center"></i></button>
+                                    <button onclick="execCmd('justifyRight')" class="p-1.5 bg-white hover:bg-slate-50 border rounded shadow-xs"><i class="fa-solid fa-align-right"></i></button>
+                                    <div class="h-4 w-[1px] bg-slate-300 mx-1 align-middle self-center"></div>
+                                    <button onclick="execCmd('insertUnorderedList')" class="p-1.5 bg-white hover:bg-slate-50 border rounded shadow-xs"><i class="fa-solid fa-list-ul"></i></button>
+                                    <button onclick="execCmd('insertOrderedList')" class="p-1.5 bg-white hover:bg-slate-50 border rounded shadow-xs"><i class="fa-solid fa-list-ol"></i></button>
+                                    <div class="h-4 w-[1px] bg-slate-300 mx-1 align-middle self-center"></div>
+                                    <button onclick="execCmd('formatBlock', '<h1>')" class="p-1 bg-white hover:bg-slate-50 border rounded px-1.5 font-bold">H1</button>
+                                    <button onclick="execCmd('formatBlock', '<h2>')" class="p-1 bg-white hover:bg-slate-50 border rounded px-1.5 font-bold">H2</button>
+                                    <button onclick="execCmd('formatBlock', '<h3>')" class="p-1 bg-white hover:bg-slate-50 border rounded px-1.5 font-bold">H3</button>
+                                    <div class="h-4 w-[1px] bg-slate-300 mx-1 align-middle self-center"></div>
+                                    <input type="color" onchange="execCmd('foreColor', this.value)" class="w-6 h-6 border rounded cursor-pointer self-center" title="Font Color">
+                                </div>
+                                <div id="wordEditor" class="word-editor-area" contenteditable="true">
+                                    <h1 style="color: #1e293b; font-size: 20px; font-weight: bold;">{{FULL_NAME}}</h1>
+                                    <p style="color: #64748b; font-size: 12px;">{{EMAIL}} | {{PHONE}} | {{LOCATION}}</p>
+                                    <hr style="margin: 10px 0; border-color: #cbd5e1;">
+                                    <h3 style="color: #0f172a; font-weight: bold;">PROFESSIONAL SUMMARY</h3>
+                                    <p style="font-size: 13px; color: #334155;">Write summary here or use template variables...</p>
+                                </div>
+                            </div>
+
+                            <!-- PUBLISHED TEMPLATES LIST (Point 3) -->
+                            <div class="pt-2">
+                                <h4 class="text-xs font-bold text-slate-900 mb-2 flex items-center gap-2"><i class="fa-solid fa-layer-group text-slate-500"></i> Active Templates List</h4>
+                                <div id="templateListGrid" class="grid grid-cols-2 gap-3"></div>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
 
             </div>
-
-            <!-- RIGHT PANEL: USER MANAGEMENT & TEMPLATE LIST -->
-            <div class="lg:col-span-8 space-y-6">
-                
-                <!-- USER MANAGEMENT TABLE -->
-                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                    <div class="flex justify-between items-center border-b pb-3 mb-4">
-                        <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
-                            <i class="fa-solid fa-users-gear text-red-600"></i> Registered Users Management
-                        </h3>
-                        <span class="text-[10px] bg-slate-100 text-slate-600 font-bold px-2 py-1 rounded" id="userCountBadge">0 Users</span>
-                    </div>
-
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs border-collapse">
-                            <thead>
-                                <tr class="bg-slate-50 text-slate-500 font-bold uppercase border-b border-slate-200">
-                                    <th class="p-3">User Details</th>
-                                    <th class="p-3">Mobile / Location</th>
-                                    <th class="p-3 text-center">Downloads</th>
-                                    <th class="p-3 text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="userTableBody" class="divide-y divide-slate-100 text-slate-700">
-                                <!-- User rows will load dynamically here -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- ADDED TEMPLATES MANAGEMENT -->
-                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                    <h3 class="font-bold text-slate-900 text-sm border-b pb-3 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-cubes text-red-600"></i> Active Templates List
-                    </h3>
-                    <div id="templatesList" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <!-- Templates load dynamically -->
-                    </div>
-                </div>
-
-            </div>
-
         </div>
 
-    </main>
-
-    <!-- EDIT USER MODAL -->
-    <div id="editUserModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
-            <h3 class="font-bold text-slate-900 text-sm">Edit User Profile</h3>
-            <input type="hidden" id="editUserId">
-            <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Full Name</label>
-                <input type="text" id="editUserName" class="w-full border p-2 rounded text-xs">
-            </div>
-            <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Email</label>
-                <input type="email" id="editUserEmail" class="w-full border p-2 rounded text-xs">
-            </div>
-            <div class="flex justify-end gap-2">
-                <button onclick="closeEditModal()" class="px-3 py-1.5 bg-slate-100 text-slate-600 text-xs font-bold rounded">Cancel</button>
-                <button onclick="saveUserEdit()" class="px-3 py-1.5 bg-red-600 text-white text-xs font-bold rounded">Save Changes</button>
-            </div>
-        </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- SCRIPT & ENGINE LOGIC -->
     <script>
-        // Init Load
-        document.addEventListener('DOMContentLoaded', () => {
-            loadStats();
-            loadUsers();
-            loadTemplates();
-            loadSavedSettings();
+        let isRegisterMode = false;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            initDefaults();
+            checkAuth();
         });
 
-        // 1. Load Stats
-        function loadStats() {
-            const users = JSON.parse(localStorage.getItem('registered_users_db')) || [];
-            const price = localStorage.getItem('app_pro_price') || '20';
-            
-            let totalDownloads = 0;
-            users.forEach(u => totalDownloads += (u.downloadsCount || 0));
-
-            document.getElementById('statUsers').innerText = users.length;
-            document.getElementById('statPrice').innerText = `₹${price}`;
-            document.getElementById('inputProPrice').value = price;
-            document.getElementById('statDownloads').innerText = totalDownloads;
-            document.getElementById('statRevenue').innerText = `₹${totalDownloads * parseInt(price)}`;
-            document.getElementById('userCountBadge').innerText = `${users.length} Users`;
+        function toggleAuthMode() {
+            isRegisterMode = !isRegisterMode;
+            document.getElementById('authTitle').innerText = isRegisterMode ? "Register Owner Account" : "Admin Access Control";
+            document.getElementById('authBtn').innerText = isRegisterMode ? "Create Admin Credentials" : "Login to Admin Panel";
+            document.getElementById('authToggleBtn').innerText = isRegisterMode ? "Already Registered? Login" : "First time Owner? Register Admin Account";
         }
 
-        // 2. Save Custom Pricing
-        function savePriceSetting(e) {
+        function handleAuthSubmit(e) {
             e.preventDefault();
-            const newPrice = document.getElementById('inputProPrice').value;
-            localStorage.setItem('app_pro_price', newPrice);
-            alert('Custom Price updated successfully!');
-            loadStats();
+            const email = document.getElementById('authEmail').value;
+            const pass = document.getElementById('authPassword').value;
+
+            if (isRegisterMode) {
+                localStorage.setItem("app_admin", JSON.stringify({ email, pass, phone: "+91 9876543210", address: "Bhopal, India" }));
+                alert("Admin Registration Successful! Please login.");
+                toggleAuthMode();
+            } else {
+                const admin = JSON.parse(localStorage.getItem("app_admin") || '{"email":"admin@makemyresume.com","pass":"admin123","phone":"+91 9876543210","address":"India"}');
+                if (email === admin.email && pass === admin.pass) {
+                    sessionStorage.setItem("is_admin", "true");
+                    checkAuth();
+                } else {
+                    alert("Incorrect Email or Password!");
+                }
+            }
         }
 
-        // 3. User Table & Operations
-        function loadUsers() {
-            const users = JSON.parse(localStorage.getItem('registered_users_db')) || [];
-            const tbody = document.getElementById('userTableBody');
-            tbody.innerHTML = '';
+        function checkAuth() {
+            const loggedIn = sessionStorage.getItem("is_admin") === "true";
+            if (loggedIn) {
+                document.getElementById('authCard').classList.add('hidden');
+                document.getElementById('dashboardCard').classList.remove('hidden');
+                loadData();
+            } else {
+                document.getElementById('authCard').classList.remove('hidden');
+                document.getElementById('dashboardCard').classList.add('hidden');
+            }
+        }
+
+        function logoutAdmin() {
+            sessionStorage.removeItem("is_admin");
+            checkAuth();
+        }
+
+        function initDefaults() {
+            if (!localStorage.getItem('app_users')) {
+                const initialUsers = [
+                    { email: "sunil.mathur@gmail.com", phone: "+91 7000164080", location: "Bhopal, MP", pass: "sunil@2026", downloads: 2 },
+                    { email: "rahul.tech@yahoo.com", phone: "+91 9826011223", location: "Indore, MP", pass: "rahul999", downloads: 1 }
+                ];
+                localStorage.setItem('app_users', JSON.stringify(initialUsers));
+            }
+        }
+
+        function loadData() {
+            const price = localStorage.getItem('app_pro_price') || '100';
+            document.getElementById('priceInput').value = price;
+            document.getElementById('statPrice').innerText = `₹${price}`;
+
+            const rzpKey = localStorage.getItem('app_rzp_key') || '';
+            const rzpSecret = localStorage.getItem('app_rzp_secret') || '';
+            document.getElementById('rzpKeyId').value = rzpKey;
+            document.getElementById('rzpSecretKey').value = rzpSecret;
+
+            const admin = JSON.parse(localStorage.getItem("app_admin") || '{"email":"admin@makemyresume.com","phone":"+91 9876543210","address":"Bhopal, MP"}');
+            document.getElementById('ownerEmail').value = admin.email || '';
+            document.getElementById('ownerPhone').value = admin.phone || '';
+            document.getElementById('ownerAddress').value = admin.address || '';
+
+            renderUsers();
+            renderTemplates();
+        }
+
+        function updatePricing() {
+            const val = document.getElementById('priceInput').value;
+            localStorage.setItem('app_pro_price', val);
+            document.getElementById('statPrice').innerText = `₹${val}`;
+            alert("Live Pricing Updated Successfully!");
+        }
+
+        function saveApiKeys() {
+            const key = document.getElementById('rzpKeyId').value;
+            const secret = document.getElementById('rzpSecretKey').value;
+            localStorage.setItem('app_rzp_key', key);
+            localStorage.setItem('app_rzp_secret', secret);
+            alert("Payment API Credentials Saved!");
+        }
+
+        function saveOwnerProfile() {
+            const email = document.getElementById('ownerEmail').value;
+            const phone = document.getElementById('ownerPhone').value;
+            const address = document.getElementById('ownerAddress').value;
+            const pass = document.getElementById('ownerPass').value;
+
+            let admin = JSON.parse(localStorage.getItem("app_admin") || '{}');
+            admin.email = email;
+            admin.phone = phone;
+            admin.address = address;
+            if (pass.trim() !== "") admin.pass = pass;
+
+            localStorage.setItem("app_admin", JSON.stringify(admin));
+            alert("Admin Profile Details Updated Successfully!");
+        }
+
+        function renderUsers() {
+            const users = JSON.parse(localStorage.getItem('app_users') || '[]');
+            const table = document.getElementById('userListTable');
+            document.getElementById('userCountBadge').innerText = `${users.length} Users`;
+            document.getElementById('statUsers').innerText = users.length;
+
+            let totalDownloads = 0;
+            users.forEach(u => totalDownloads += (u.downloads || 0));
+            document.getElementById('statDownloads').innerText = totalDownloads;
+            
+            const currentPrice = parseInt(localStorage.getItem('app_pro_price') || '100');
+            document.getElementById('statRevenue').innerText = `₹${totalDownloads * currentPrice}`;
 
             if (users.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400">No registered users found yet.</td></tr>`;
+                table.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">No registered users found yet.</td></tr>`;
                 return;
             }
 
-            users.forEach((user, index) => {
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50">
-                        <td class="p-3">
-                            <div class="font-bold text-slate-900">${user.name || 'User'}</div>
-                            <div class="text-slate-400 text-[10px]">${user.email || 'N/A'}</div>
-                        </td>
-                        <td class="p-3">
-                            <div>${user.phone || 'N/A'}</div>
-                            <div class="text-slate-400 text-[10px]">${user.location || 'N/A'}</div>
-                        </td>
-                        <td class="p-3 text-center font-bold text-emerald-600">${user.downloadsCount || 0}</td>
-                        <td class="p-3 text-right space-x-1">
-                            <button onclick="openEditModal(${index})" class="bg-slate-100 hover:bg-slate-200 text-slate-600 p-1.5 rounded"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="deleteUser(${index})" class="bg-red-50 hover:bg-red-100 text-red-600 p-1.5 rounded"><i class="fa-solid fa-trash"></i></button>
+            table.innerHTML = '';
+            users.forEach((u, index) => {
+                table.innerHTML += `
+                    <tr>
+                        <td class="p-2.5 font-bold text-slate-900">${u.email}</td>
+                        <td class="p-2.5">${u.phone}<br><span class="text-[10px] text-slate-400">${u.location || 'N/A'}</span></td>
+                        <td class="p-2.5 font-mono text-amber-600 font-bold">${u.pass}</td>
+                        <td class="p-2.5 font-bold">${u.downloads || 0}</td>
+                        <td class="p-2.5 text-right space-x-2">
+                            <button onclick="editUser(${index})" class="text-blue-600 hover:underline font-bold">Edit</button>
+                            <button onclick="deleteUser(${index})" class="text-red-600 hover:underline font-bold">Delete</button>
                         </td>
                     </tr>
                 `;
             });
         }
 
+        function editUser(index) {
+            let users = JSON.parse(localStorage.getItem('app_users') || '[]');
+            const user = users[index];
+            const newPhone = prompt("Update Phone Number:", user.phone);
+            const newPass = prompt("Update User Password:", user.pass);
+
+            if (newPhone !== null) user.phone = newPhone;
+            if (newPass !== null) user.pass = newPass;
+
+            users[index] = user;
+            localStorage.setItem('app_users', JSON.stringify(users));
+            renderUsers();
+        }
+
         function deleteUser(index) {
-            if (confirm('Kya aap sach me is user ko delete karna chahte hain?')) {
-                let users = JSON.parse(localStorage.getItem('registered_users_db')) || [];
+            if (confirm("Are you sure you want to delete this user?")) {
+                let users = JSON.parse(localStorage.getItem('app_users') || '[]');
                 users.splice(index, 1);
-                localStorage.setItem('registered_users_db', JSON.stringify(users));
-                loadUsers();
-                loadStats();
+                localStorage.setItem('app_users', JSON.stringify(users));
+                renderUsers();
             }
         }
 
-        function openEditModal(index) {
-            let users = JSON.parse(localStorage.getItem('registered_users_db')) || [];
-            const u = users[index];
-            document.getElementById('editUserId').value = index;
-            document.getElementById('editUserName').value = u.name || '';
-            document.getElementById('editUserEmail').value = u.email || '';
-            
-            document.getElementById('editUserModal').classList.remove('hidden');
-            document.getElementById('editUserModal').classList.add('flex');
+        function execCmd(cmd, val = null) {
+            document.execCommand(cmd, false, val);
         }
 
-        function closeEditModal() {
-            document.getElementById('editUserModal').classList.add('hidden');
-            document.getElementById('editUserModal').classList.remove('flex');
+        function publishTemplate() {
+            const title = document.getElementById('tplTitleInput').value || 'Modern Template';
+            const category = document.getElementById('tplCatInput').value || 'Executive';
+            const htmlContent = document.getElementById('wordEditor').innerHTML;
+
+            let templates = JSON.parse(localStorage.getItem('app_templates') || '[]');
+            templates.push({ title, category, htmlContent });
+            localStorage.setItem('app_templates', JSON.stringify(templates));
+
+            alert("New Resume Template Published Live!");
+            document.getElementById('tplTitleInput').value = '';
+            renderTemplates();
         }
 
-        function saveUserEdit() {
-            const idx = document.getElementById('editUserId').value;
-            let users = JSON.parse(localStorage.getItem('registered_users_db')) || [];
-            
-            users[idx].name = document.getElementById('editUserName').value;
-            users[idx].email = document.getElementById('editUserEmail').value;
+        function renderTemplates() {
+            let templates = JSON.parse(localStorage.getItem('app_templates') || '[]');
+            const grid = document.getElementById('templateListGrid');
 
-            localStorage.setItem('registered_users_db', JSON.stringify(users));
-            closeEditModal();
-            loadUsers();
-        }
+            if (templates.length === 0) {
+                grid.innerHTML = `<p class="text-xs text-slate-400 col-span-2">No active published templates.</p>`;
+                return;
+            }
 
-        // 4. Template Management
-        function addTemplate(e) {
-            e.preventDefault();
-            const name = document.getElementById('tplName').value;
-            const cat = document.getElementById('tplCategory').value;
-
-            let templates = JSON.parse(localStorage.getItem('app_templates_db')) || [
-                { name: 'Classic Professional', category: 'Professional' },
-                { name: 'Modern Minimal', category: 'Creative' }
-            ];
-
-            templates.push({ name: name, category: cat });
-            localStorage.setItem('app_templates_db', JSON.stringify(templates));
-            
-            document.getElementById('tplName').value = '';
-            loadTemplates();
-        }
-
-        function loadTemplates() {
-            let templates = JSON.parse(localStorage.getItem('app_templates_db')) || [
-                { name: 'Classic Professional', category: 'Professional' },
-                { name: 'Modern Minimal', category: 'Creative' }
-            ];
-
-            const container = document.getElementById('templatesList');
-            container.innerHTML = '';
-
-            templates.forEach((tpl, i) => {
-                container.innerHTML += `
-                    <div class="border border-slate-200 p-3 rounded-xl flex justify-between items-center bg-slate-50">
+            grid.innerHTML = '';
+            templates.forEach((t, i) => {
+                grid.innerHTML += `
+                    <div class="bg-slate-50 border border-slate-200 p-3 rounded-xl flex justify-between items-center text-xs">
                         <div>
-                            <div class="font-bold text-xs text-slate-800">${tpl.name}</div>
-                            <span class="text-[9px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded uppercase font-bold">${tpl.category}</span>
+                            <p class="font-bold text-slate-900">${t.title}</p>
+                            <span class="text-[10px] text-slate-400 uppercase font-bold">${t.category}</span>
                         </div>
-                        <button onclick="removeTemplate(${i})" class="text-slate-400 hover:text-red-600"><i class="fa-solid fa-xmark"></i></button>
+                        <button onclick="removeTemplate(${i})" class="text-red-600 hover:underline font-bold">Remove</button>
                     </div>
                 `;
             });
         }
 
         function removeTemplate(index) {
-            let templates = JSON.parse(localStorage.getItem('app_templates_db')) || [];
-            templates.splice(index, 1);
-            localStorage.setItem('app_templates_db', JSON.stringify(templates));
-            loadTemplates();
-        }
-
-        // 5. Gateway Settings
-        function saveGatewaySettings(e) {
-            e.preventDefault();
-            localStorage.setItem('rzp_key_id', document.getElementById('rzpKeyId').value);
-            localStorage.setItem('rzp_key_secret', document.getElementById('rzpKeySecret').value);
-            alert('API Credentials Saved Successfully!');
-        }
-
-        function loadSavedSettings() {
-            document.getElementById('rzpKeyId').value = localStorage.getItem('rzp_key_id') || '';
-            document.getElementById('rzpKeySecret').value = localStorage.getItem('rzp_key_secret') || '';
-        }
-
-        function logoutAdmin() {
-            window.location.href = 'index.html';
+            if (confirm("Remove this template from live website?")) {
+                let templates = JSON.parse(localStorage.getItem('app_templates') || '[]');
+                templates.splice(index, 1);
+                localStorage.setItem('app_templates', JSON.stringify(templates));
+                renderTemplates();
+            }
         }
     </script>
 </body>
