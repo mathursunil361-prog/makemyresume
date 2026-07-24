@@ -12,16 +12,11 @@
             font-family: 'Plus Jakarta Sans', sans-serif; 
             background-color: #f8fafc; 
             color: #0f172a; 
-        }
-        
-        /* Glassmorphism Blur Overlay (Point 13) */
-        .glass-overlay {
-            background: rgba(15, 23, 42, 0.55);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
+            margin: 0;
+            padding: 0;
         }
 
-        /* MS Word Rich Editor Container (Point 11, 14) */
+        /* MS Word Rich Editor Container */
         .word-editor-area {
             min-height: 280px;
             background: #ffffff;
@@ -38,20 +33,26 @@
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Login Glass Backdrop */
+        .login-backdrop {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
     </style>
 </head>
-<body class="min-h-screen relative">
+<body class="min-h-screen bg-slate-50">
 
-    <!-- TRANSPARENT BLUR OVERLAY & POPUP SYSTEM (Point 13, 16) -->
-    <div id="adminModalOverlay" class="fixed inset-0 z-50 glass-overlay flex items-center justify-center p-4">
-        
-        <!-- BACK TO WEBSITE BUTTON -->
-        <button onclick="window.location.href='index.html'" class="fixed top-6 right-6 bg-white hover:bg-slate-50 text-slate-800 font-bold px-4 py-2.5 rounded-xl shadow-xl border border-slate-200 text-xs flex items-center gap-2 transition z-50 cursor-pointer">
+    <!-- LOGIN / REGISTRATION MODAL OVERLAY (Shown when logged out) -->
+    <div id="authOverlay" class="fixed inset-0 z-50 login-backdrop flex items-center justify-center p-4">
+        <!-- Back to Website Button -->
+        <button onclick="window.location.href='index.html'" class="fixed top-6 right-6 bg-white hover:bg-slate-100 text-slate-800 font-bold px-4 py-2.5 rounded-xl shadow-xl border border-slate-200 text-xs flex items-center gap-2 transition z-50 cursor-pointer">
             <i class="fa-solid fa-arrow-left text-red-600"></i> Back to Website
         </button>
 
-        <!-- A. LOGIN / REGISTRATION POPUP CARD (Point 6) -->
-        <div id="authCard" class="bg-white border border-slate-200 shadow-2xl max-w-md w-full p-8 rounded-3xl space-y-6 relative">
+        <!-- AUTH CARD -->
+        <div class="bg-white border border-slate-200 shadow-2xl max-w-md w-full p-8 rounded-3xl space-y-6 relative">
             <div class="text-center">
                 <div class="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center mx-auto text-white text-xl font-black mb-3 shadow-md">
                     <i class="fa-solid fa-user-shield"></i>
@@ -80,12 +81,14 @@
                 </button>
             </div>
         </div>
+    </div>
 
-        <!-- B. MAIN DASHBOARD POPUP WINDOW (Point 15 - Look & Feel Kept Intact) -->
-        <div id="dashboardCard" class="hidden bg-slate-50 border border-slate-200 shadow-2xl w-full max-w-7xl h-[92vh] rounded-3xl overflow-hidden flex flex-col relative">
-            
-            <!-- HEADER -->
-            <div class="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center">
+    <!-- FULL SCREEN ADMIN DASHBOARD (No black overlay, Full screen page) -->
+    <div id="mainDashboard" class="hidden min-h-screen flex flex-col bg-slate-50">
+        
+        <!-- FULL WIDTH HEADER -->
+        <header class="bg-white border-b border-slate-200 px-8 py-4 sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
                 <div class="flex items-center gap-3">
                     <div class="w-9 h-9 bg-slate-900 rounded-xl flex items-center justify-center font-black text-white text-lg">M</div>
                     <div class="flex items-center gap-2">
@@ -94,206 +97,203 @@
                     </div>
                 </div>
 
-                <div class="flex items-center gap-4">
-                    <!-- Point 16: "Back to Home" in place of Open Editor -->
+                <div class="flex items-center gap-3">
                     <button onclick="window.location.href='index.html'" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 border border-slate-200 transition">
                         <i class="fa-solid fa-house text-slate-500"></i> Back to Home
                     </button>
-                    <!-- Point 16: Auto lock logout -->
                     <button onclick="logoutAdmin()" class="bg-red-50 hover:bg-red-100 text-red-600 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 border border-red-200 transition">
                         <i class="fa-solid fa-power-off"></i> Logout
                     </button>
                 </div>
             </div>
+        </header>
 
-            <!-- DASHBOARD CONTENT AREA -->
-            <div class="flex-1 p-6 overflow-y-auto space-y-6">
+        <!-- DASHBOARD CONTAINER -->
+        <main class="flex-1 max-w-7xl w-full mx-auto p-6 space-y-6">
 
-                <!-- TOP STATS COUNTERS (Point 4) -->
-                <div class="grid grid-cols-4 gap-4">
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200 flex justify-between items-center shadow-xs">
-                        <div>
-                            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Total Registered Users</p>
-                            <h3 id="statUsers" class="text-2xl font-extrabold mt-1 text-slate-900">0</h3>
-                        </div>
-                        <i class="fa-solid fa-users text-xl text-blue-500 bg-blue-50 p-3 rounded-xl"></i>
+            <!-- STATS CARDS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 flex justify-between items-center shadow-xs">
+                    <div>
+                        <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Total Registered Users</p>
+                        <h3 id="statUsers" class="text-2xl font-extrabold mt-1 text-slate-900">0</h3>
                     </div>
-
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200 flex justify-between items-center shadow-xs">
-                        <div>
-                            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Pro Pricing (Current)</p>
-                            <h3 id="statPrice" class="text-2xl font-extrabold mt-1 text-slate-900">₹100</h3>
-                        </div>
-                        <i class="fa-solid fa-tag text-xl text-amber-500 bg-amber-50 p-3 rounded-xl"></i>
-                    </div>
-
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200 flex justify-between items-center shadow-xs">
-                        <div>
-                            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Total Pro Downloads</p>
-                            <h3 id="statDownloads" class="text-2xl font-extrabold mt-1 text-slate-900">0</h3>
-                        </div>
-                        <i class="fa-solid fa-download text-xl text-emerald-500 bg-emerald-50 p-3 rounded-xl"></i>
-                    </div>
-
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200 flex justify-between items-center shadow-xs">
-                        <div>
-                            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Estimated Revenue</p>
-                            <h3 id="statRevenue" class="text-2xl font-extrabold mt-1 text-slate-900">₹0</h3>
-                        </div>
-                        <i class="fa-solid fa-indian-rupee-sign text-xl text-red-500 bg-red-50 p-3 rounded-xl"></i>
-                    </div>
+                    <i class="fa-solid fa-users text-xl text-blue-500 bg-blue-50 p-3 rounded-xl"></i>
                 </div>
 
-                <!-- MAIN CONTROLS GRID -->
-                <div class="grid grid-cols-12 gap-6">
-                    
-                    <!-- LEFT COLUMN -->
-                    <div class="col-span-4 space-y-6">
-                        
-                        <!-- SET CUSTOM PRICING (Point 1) -->
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
-                            <h3 class="text-xs font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-indian-rupee-sign text-emerald-600"></i> Set Custom Pricing</h3>
-                            <div>
-                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Pro Download Price (₹)</label>
-                                <input type="number" id="priceInput" value="100" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-bold focus:outline-none focus:border-slate-800">
-                                <p class="text-[10px] text-slate-400 mt-1">Ye price seedhe editor page me update ho jayega.</p>
-                            </div>
-                            <button onclick="updatePricing()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs transition">Update Price</button>
-                        </div>
-
-                        <!-- PAYMENT GATEWAY KEYS (Point 5) -->
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
-                            <h3 class="text-xs font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-key text-amber-500"></i> Payment Gateway API Keys</h3>
-                            <div>
-                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Razorpay Key ID</label>
-                                <input type="text" id="rzpKeyId" placeholder="rzp_live_xxxx" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:border-slate-800">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Razorpay Secret Key</label>
-                                <input type="password" id="rzpSecretKey" placeholder="••••••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:border-slate-800">
-                            </div>
-                            <button onclick="saveApiKeys()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2 rounded-xl text-xs border border-slate-200 transition">Save API Credentials</button>
-                        </div>
-
-                        <!-- OWNER PROFILE SETTINGS (Point 7) -->
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
-                            <h3 class="text-xs font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-user-gear text-blue-600"></i> Admin Profile & Credentials</h3>
-                            <div>
-                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Admin Email</label>
-                                <input type="email" id="ownerEmail" placeholder="Admin Email" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:border-slate-800">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Admin Phone</label>
-                                <input type="text" id="ownerPhone" placeholder="Phone Number" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:border-slate-800">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Admin Address</label>
-                                <input type="text" id="ownerAddress" placeholder="Physical Address" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:border-slate-800">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">New Password</label>
-                                <input type="password" id="ownerPass" placeholder="Leave blank if unchanged" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:border-slate-800">
-                            </div>
-                            <button onclick="saveOwnerProfile()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 rounded-xl text-xs transition">Save Profile Changes</button>
-                        </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 flex justify-between items-center shadow-xs">
+                    <div>
+                        <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Pro Pricing (Current)</p>
+                        <h3 id="statPrice" class="text-2xl font-extrabold mt-1 text-slate-900">₹100</h3>
                     </div>
-
-                    <!-- RIGHT COLUMN -->
-                    <div class="col-span-8 space-y-6">
-                        
-                        <!-- REGISTERED USERS MANAGEMENT (Point 2, 9) -->
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
-                            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                                <h3 class="text-xs font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-users-gear text-blue-600"></i> Registered Users Management</h3>
-                                <span id="userCountBadge" class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">0 Users</span>
-                            </div>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left text-xs">
-                                    <thead class="bg-slate-50 text-slate-400 uppercase text-[10px]">
-                                        <tr>
-                                            <th class="p-2.5">User Details</th>
-                                            <th class="p-2.5">Mobile / Location</th>
-                                            <th class="p-2.5">Password</th>
-                                            <th class="p-2.5">Downloads</th>
-                                            <th class="p-2.5 text-right">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="userListTable" class="divide-y divide-slate-100 text-slate-700">
-                                        <!-- Dynamic User Rows -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <!-- WORD TEMPLATE DESIGNER STUDIO (Point 8, 10, 11, 14) -->
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-4 shadow-xs">
-                            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                                <div>
-                                    <h3 class="text-xs font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-file-word text-blue-600"></i> MS Word Resume Template Designer</h3>
-                                    <p class="text-[10px] text-slate-400">Design custom formats with Word controls and publish live to users.</p>
-                                </div>
-                                <button onclick="publishTemplate()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 transition">
-                                    <i class="fa-solid fa-paper-plane"></i> Publish Template
-                                </button>
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Template Name</label>
-                                    <input type="text" id="tplTitleInput" placeholder="e.g. Modern Executive Resume" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:border-slate-800">
-                                </div>
-                                <div>
-                                    <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Category</label>
-                                    <input type="text" id="tplCatInput" placeholder="e.g. IT / Software / Management" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:border-slate-800">
-                                </div>
-                            </div>
-
-                            <!-- MS WORD TOOLBAR (Point 11, 14) -->
-                            <div>
-                                <div class="bg-slate-100 border border-slate-200 rounded-t-xl p-2 flex flex-wrap gap-1 text-xs">
-                                    <button onclick="execCmd('undo')" class="p-1.5 bg-white hover:bg-slate-50 border rounded shadow-xs" title="Undo"><i class="fa-solid fa-rotate-left"></i></button>
-                                    <button onclick="execCmd('redo')" class="p-1.5 bg-white hover:bg-slate-50 border rounded shadow-xs" title="Redo"><i class="fa-solid fa-rotate-right"></i></button>
-                                    <div class="h-4 w-[1px] bg-slate-300 mx-1 align-middle self-center"></div>
-                                    <button onclick="execCmd('bold')" class="p-1.5 px-2 bg-white hover:bg-slate-50 border rounded shadow-xs font-bold">B</button>
-                                    <button onclick="execCmd('italic')" class="p-1.5 px-2 bg-white hover:bg-slate-50 border rounded shadow-xs italic">I</button>
-                                    <button onclick="execCmd('underline')" class="p-1.5 px-2 bg-white hover:bg-slate-50 border rounded shadow-xs underline">U</button>
-                                    <button onclick="execCmd('strikeThrough')" class="p-1.5 px-2 bg-white hover:bg-slate-50 border rounded shadow-xs line-through">S</button>
-                                    <div class="h-4 w-[1px] bg-slate-300 mx-1 align-middle self-center"></div>
-                                    <button onclick="execCmd('justifyLeft')" class="p-1.5 bg-white hover:bg-slate-50 border rounded shadow-xs"><i class="fa-solid fa-align-left"></i></button>
-                                    <button onclick="execCmd('justifyCenter')" class="p-1.5 bg-white hover:bg-slate-50 border rounded shadow-xs"><i class="fa-solid fa-align-center"></i></button>
-                                    <button onclick="execCmd('justifyRight')" class="p-1.5 bg-white hover:bg-slate-50 border rounded shadow-xs"><i class="fa-solid fa-align-right"></i></button>
-                                    <div class="h-4 w-[1px] bg-slate-300 mx-1 align-middle self-center"></div>
-                                    <button onclick="execCmd('insertUnorderedList')" class="p-1.5 bg-white hover:bg-slate-50 border rounded shadow-xs"><i class="fa-solid fa-list-ul"></i></button>
-                                    <button onclick="execCmd('insertOrderedList')" class="p-1.5 bg-white hover:bg-slate-50 border rounded shadow-xs"><i class="fa-solid fa-list-ol"></i></button>
-                                    <div class="h-4 w-[1px] bg-slate-300 mx-1 align-middle self-center"></div>
-                                    <button onclick="execCmd('formatBlock', '<h1>')" class="p-1 bg-white hover:bg-slate-50 border rounded px-1.5 font-bold">H1</button>
-                                    <button onclick="execCmd('formatBlock', '<h2>')" class="p-1 bg-white hover:bg-slate-50 border rounded px-1.5 font-bold">H2</button>
-                                    <button onclick="execCmd('formatBlock', '<h3>')" class="p-1 bg-white hover:bg-slate-50 border rounded px-1.5 font-bold">H3</button>
-                                    <div class="h-4 w-[1px] bg-slate-300 mx-1 align-middle self-center"></div>
-                                    <input type="color" onchange="execCmd('foreColor', this.value)" class="w-6 h-6 border rounded cursor-pointer self-center" title="Font Color">
-                                </div>
-                                <div id="wordEditor" class="word-editor-area" contenteditable="true">
-                                    <h1 style="color: #1e293b; font-size: 20px; font-weight: bold;">{{FULL_NAME}}</h1>
-                                    <p style="color: #64748b; font-size: 12px;">{{EMAIL}} | {{PHONE}} | {{LOCATION}}</p>
-                                    <hr style="margin: 10px 0; border-color: #cbd5e1;">
-                                    <h3 style="color: #0f172a; font-weight: bold;">PROFESSIONAL SUMMARY</h3>
-                                    <p style="font-size: 13px; color: #334155;">Write summary here or use template variables...</p>
-                                </div>
-                            </div>
-
-                            <!-- PUBLISHED TEMPLATES LIST (Point 3) -->
-                            <div class="pt-2">
-                                <h4 class="text-xs font-bold text-slate-900 mb-2 flex items-center gap-2"><i class="fa-solid fa-layer-group text-slate-500"></i> Active Templates List</h4>
-                                <div id="templateListGrid" class="grid grid-cols-2 gap-3"></div>
-                            </div>
-                        </div>
-
-                    </div>
+                    <i class="fa-solid fa-tag text-xl text-amber-500 bg-amber-50 p-3 rounded-xl"></i>
                 </div>
 
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 flex justify-between items-center shadow-xs">
+                    <div>
+                        <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Total Pro Downloads</p>
+                        <h3 id="statDownloads" class="text-2xl font-extrabold mt-1 text-slate-900">0</h3>
+                    </div>
+                    <i class="fa-solid fa-download text-xl text-emerald-500 bg-emerald-50 p-3 rounded-xl"></i>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 flex justify-between items-center shadow-xs">
+                    <div>
+                        <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Estimated Revenue</p>
+                        <h3 id="statRevenue" class="text-2xl font-extrabold mt-1 text-slate-900">₹0</h3>
+                    </div>
+                    <i class="fa-solid fa-indian-rupee-sign text-xl text-red-500 bg-red-50 p-3 rounded-xl"></i>
+                </div>
             </div>
-        </div>
 
+            <!-- CONTROLS & MANAGEMENT GRID -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- LEFT COLUMN CONTROLS -->
+                <div class="lg:col-span-4 space-y-6">
+                    
+                    <!-- SET CUSTOM PRICING -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
+                        <h3 class="text-xs font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-indian-rupee-sign text-emerald-600"></i> Set Custom Pricing</h3>
+                        <div>
+                            <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Pro Download Price (₹)</label>
+                            <input type="number" id="priceInput" value="100" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-bold focus:outline-none focus:border-slate-800">
+                            <p class="text-[10px] text-slate-400 mt-1">Ye price seedhe editor page me update ho jayega.</p>
+                        </div>
+                        <button onclick="updatePricing()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs transition">Update Price</button>
+                    </div>
+
+                    <!-- PAYMENT GATEWAY KEYS -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
+                        <h3 class="text-xs font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-key text-amber-500"></i> Payment Gateway API Keys</h3>
+                        <div>
+                            <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Razorpay Key ID</label>
+                            <input type="text" id="rzpKeyId" placeholder="rzp_live_xxxx" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:border-slate-800">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Razorpay Secret Key</label>
+                            <input type="password" id="rzpSecretKey" placeholder="••••••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:border-slate-800">
+                        </div>
+                        <button onclick="saveApiKeys()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2 rounded-xl text-xs border border-slate-200 transition">Save API Credentials</button>
+                    </div>
+
+                    <!-- OWNER PROFILE SETTINGS -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
+                        <h3 class="text-xs font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-user-gear text-blue-600"></i> Admin Profile & Credentials</h3>
+                        <div>
+                            <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Admin Email</label>
+                            <input type="email" id="ownerEmail" placeholder="Admin Email" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:border-slate-800">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Admin Phone</label>
+                            <input type="text" id="ownerPhone" placeholder="Phone Number" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:border-slate-800">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Admin Address</label>
+                            <input type="text" id="ownerAddress" placeholder="Physical Address" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:border-slate-800">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">New Password</label>
+                            <input type="password" id="ownerPass" placeholder="Leave blank if unchanged" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:border-slate-800">
+                        </div>
+                        <button onclick="saveOwnerProfile()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 rounded-xl text-xs transition">Save Profile Changes</button>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN MANAGEMENT -->
+                <div class="lg:col-span-8 space-y-6">
+                    
+                    <!-- USER MANAGEMENT TABLE -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
+                        <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                            <h3 class="text-xs font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-users-gear text-blue-600"></i> Registered Users Management</h3>
+                            <span id="userCountBadge" class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">0 Users</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-50 text-slate-400 uppercase text-[10px]">
+                                    <tr>
+                                        <th class="p-2.5">User Details</th>
+                                        <th class="p-2.5">Mobile / Location</th>
+                                        <th class="p-2.5">Password</th>
+                                        <th class="p-2.5">Downloads</th>
+                                        <th class="p-2.5 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="userListTable" class="divide-y divide-slate-100 text-slate-700">
+                                    <!-- Dynamic Rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- MS WORD TEMPLATE DESIGNER STUDIO -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-4 shadow-xs">
+                        <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                            <div>
+                                <h3 class="text-xs font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-file-word text-blue-600"></i> MS Word Resume Template Designer</h3>
+                                <p class="text-[10px] text-slate-400">Design custom formats with Word controls and publish live to users.</p>
+                            </div>
+                            <button onclick="publishTemplate()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 transition">
+                                <i class="fa-solid fa-paper-plane"></i> Publish Template
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Template Name</label>
+                                <input type="text" id="tplTitleInput" placeholder="e.g. Modern Executive Resume" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:border-slate-800">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Category</label>
+                                <input type="text" id="tplCatInput" placeholder="e.g. IT / Software / Management" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:border-slate-800">
+                            </div>
+                        </div>
+
+                        <!-- WORD TOOLBAR -->
+                        <div>
+                            <div class="bg-slate-100 border border-slate-200 rounded-t-xl p-2 flex flex-wrap gap-1 text-xs">
+                                <button onclick="execCmd('undo')" class="p-1.5 bg-white hover:bg-slate-50 border rounded shadow-xs" title="Undo"><i class="fa-solid fa-rotate-left"></i></button>
+                                <button onclick="execCmd('redo')" class="p-1.5 bg-white hover:bg-slate-50 border rounded shadow-xs" title="Redo"><i class="fa-solid fa-rotate-right"></i></button>
+                                <div class="h-4 w-[1px] bg-slate-300 mx-1 align-middle self-center"></div>
+                                <button onclick="execCmd('bold')" class="p-1.5 px-2 bg-white hover:bg-slate-50 border rounded shadow-xs font-bold">B</button>
+                                <button onclick="execCmd('italic')" class="p-1.5 px-2 bg-white hover:bg-slate-50 border rounded shadow-xs italic">I</button>
+                                <button onclick="execCmd('underline')" class="p-1.5 px-2 bg-white hover:bg-slate-50 border rounded shadow-xs underline">U</button>
+                                <button onclick="execCmd('strikeThrough')" class="p-1.5 px-2 bg-white hover:bg-slate-50 border rounded shadow-xs line-through">S</button>
+                                <div class="h-4 w-[1px] bg-slate-300 mx-1 align-middle self-center"></div>
+                                <button onclick="execCmd('justifyLeft')" class="p-1.5 bg-white hover:bg-slate-50 border rounded shadow-xs"><i class="fa-solid fa-align-left"></i></button>
+                                <button onclick="execCmd('justifyCenter')" class="p-1.5 bg-white hover:bg-slate-50 border rounded shadow-xs"><i class="fa-solid fa-align-center"></i></button>
+                                <button onclick="execCmd('justifyRight')" class="p-1.5 bg-white hover:bg-slate-50 border rounded shadow-xs"><i class="fa-solid fa-align-right"></i></button>
+                                <div class="h-4 w-[1px] bg-slate-300 mx-1 align-middle self-center"></div>
+                                <button onclick="execCmd('insertUnorderedList')" class="p-1.5 bg-white hover:bg-slate-50 border rounded shadow-xs"><i class="fa-solid fa-list-ul"></i></button>
+                                <button onclick="execCmd('insertOrderedList')" class="p-1.5 bg-white hover:bg-slate-50 border rounded shadow-xs"><i class="fa-solid fa-list-ol"></i></button>
+                                <div class="h-4 w-[1px] bg-slate-300 mx-1 align-middle self-center"></div>
+                                <button onclick="execCmd('formatBlock', '<h1>')" class="p-1 bg-white hover:bg-slate-50 border rounded px-1.5 font-bold">H1</button>
+                                <button onclick="execCmd('formatBlock', '<h2>')" class="p-1 bg-white hover:bg-slate-50 border rounded px-1.5 font-bold">H2</button>
+                                <button onclick="execCmd('formatBlock', '<h3>')" class="p-1 bg-white hover:bg-slate-50 border rounded px-1.5 font-bold">H3</button>
+                                <div class="h-4 w-[1px] bg-slate-300 mx-1 align-middle self-center"></div>
+                                <input type="color" onchange="execCmd('foreColor', this.value)" class="w-6 h-6 border rounded cursor-pointer self-center" title="Font Color">
+                            </div>
+                            <div id="wordEditor" class="word-editor-area" contenteditable="true">
+                                <h1 style="color: #1e293b; font-size: 20px; font-weight: bold;">{{FULL_NAME}}</h1>
+                                <p style="color: #64748b; font-size: 12px;">{{EMAIL}} | {{PHONE}} | {{LOCATION}}</p>
+                                <hr style="margin: 10px 0; border-color: #cbd5e1;">
+                                <h3 style="color: #0f172a; font-weight: bold;">PROFESSIONAL SUMMARY</h3>
+                                <p style="font-size: 13px; color: #334155;">Write summary here or use template variables...</p>
+                            </div>
+                        </div>
+
+                        <!-- ACTIVE TEMPLATES -->
+                        <div class="pt-2">
+                            <h4 class="text-xs font-bold text-slate-900 mb-2 flex items-center gap-2"><i class="fa-solid fa-layer-group text-slate-500"></i> Active Templates List</h4>
+                            <div id="templateListGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </main>
     </div>
 
     <!-- SCRIPT & ENGINE LOGIC -->
@@ -318,11 +318,11 @@
             const pass = document.getElementById('authPassword').value;
 
             if (isRegisterMode) {
-                localStorage.setItem("app_admin", JSON.stringify({ email, pass, phone: "+91 9876543210", address: "Bhopal, India" }));
+                localStorage.setItem("app_admin", JSON.stringify({ email, pass, phone: "+91 7000164080", address: "Bhopal, MP" }));
                 alert("Admin Registration Successful! Please login.");
                 toggleAuthMode();
             } else {
-                const admin = JSON.parse(localStorage.getItem("app_admin") || '{"email":"admin@makemyresume.com","pass":"admin123","phone":"+91 9876543210","address":"India"}');
+                const admin = JSON.parse(localStorage.getItem("app_admin") || '{"email":"sunilmathur361@gmail.com","pass":"admin123","phone":"+91 7000164080","address":"Bhopal, MP"}');
                 if (email === admin.email && pass === admin.pass) {
                     sessionStorage.setItem("is_admin", "true");
                     checkAuth();
@@ -335,12 +335,12 @@
         function checkAuth() {
             const loggedIn = sessionStorage.getItem("is_admin") === "true";
             if (loggedIn) {
-                document.getElementById('authCard').classList.add('hidden');
-                document.getElementById('dashboardCard').classList.remove('hidden');
+                document.getElementById('authOverlay').classList.add('hidden');
+                document.getElementById('mainDashboard').classList.remove('hidden');
                 loadData();
             } else {
-                document.getElementById('authCard').classList.remove('hidden');
-                document.getElementById('dashboardCard').classList.add('hidden');
+                document.getElementById('authOverlay').classList.remove('hidden');
+                document.getElementById('mainDashboard').classList.add('hidden');
             }
         }
 
@@ -352,7 +352,7 @@
         function initDefaults() {
             if (!localStorage.getItem('app_users')) {
                 const initialUsers = [
-                    { email: "sunil.mathur@gmail.com", phone: "+91 7000164080", location: "Bhopal, MP", pass: "sunil@2026", downloads: 2 },
+                    { email: "sunil.mathur@gmail.com", phone: "+91 7000164080", location: "Bhopal, MP", pass: "sunil12026", downloads: 2 },
                     { email: "rahul.tech@yahoo.com", phone: "+91 9826011223", location: "Indore, MP", pass: "rahul999", downloads: 1 }
                 ];
                 localStorage.setItem('app_users', JSON.stringify(initialUsers));
@@ -360,7 +360,7 @@
         }
 
         function loadData() {
-            const price = localStorage.getItem('app_pro_price') || '100';
+            const price = localStorage.getItem('app_pro_price') || '50';
             document.getElementById('priceInput').value = price;
             document.getElementById('statPrice').innerText = `₹${price}`;
 
@@ -369,7 +369,7 @@
             document.getElementById('rzpKeyId').value = rzpKey;
             document.getElementById('rzpSecretKey').value = rzpSecret;
 
-            const admin = JSON.parse(localStorage.getItem("app_admin") || '{"email":"admin@makemyresume.com","phone":"+91 9876543210","address":"Bhopal, MP"}');
+            const admin = JSON.parse(localStorage.getItem("app_admin") || '{"email":"sunilmathur361@gmail.com","phone":"+91 7000164080","address":"Bhopal, MP"}');
             document.getElementById('ownerEmail').value = admin.email || '';
             document.getElementById('ownerPhone').value = admin.phone || '';
             document.getElementById('ownerAddress').value = admin.address || '';
@@ -382,6 +382,7 @@
             const val = document.getElementById('priceInput').value;
             localStorage.setItem('app_pro_price', val);
             document.getElementById('statPrice').innerText = `₹${val}`;
+            renderUsers();
             alert("Live Pricing Updated Successfully!");
         }
 
@@ -419,7 +420,7 @@
             users.forEach(u => totalDownloads += (u.downloads || 0));
             document.getElementById('statDownloads').innerText = totalDownloads;
             
-            const currentPrice = parseInt(localStorage.getItem('app_pro_price') || '100');
+            const currentPrice = parseInt(localStorage.getItem('app_pro_price') || '50');
             document.getElementById('statRevenue').innerText = `₹${totalDownloads * currentPrice}`;
 
             if (users.length === 0) {
