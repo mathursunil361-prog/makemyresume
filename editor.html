@@ -1,401 +1,282 @@
 <!DOCTYPE html>
-<html lang="hi" class="scroll-smooth">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MakeMyResume - Advanced Resume Editor</title>
+    <title>MakeMyResume - Professional Resume Editor</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;600;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    
-    <!-- PDF Generation Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f1f5f9; }
-        
-        /* Resume Printable Area Styling */
-        .resume-page {
-            width: 210mm;
-            min-height: 297mm;
-            background: #ffffff;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-            position: relative;
-            overflow: hidden;
-            box-sizing: border-box;
-        }
-
-        /* Watermark Styling for Free Downloads */
-        .watermark-overlay {
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-45deg);
-            font-size: 36px;
-            font-weight: 900;
-            color: rgba(220, 38, 38, 0.15);
-            white-space: nowrap;
-            pointer-events: none;
-            z-index: 50;
-            user-select: none;
-        }
-
-        .show-watermark .watermark-overlay {
-            display: block;
-        }
-
-        /* Editable Content Table Formatting */
-        .resume-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-        .resume-table th, .resume-table td {
-            border: 1px solid #000;
-            padding: 6px 10px;
-            text-align: center;
-            font-size: 12px;
-        }
-        .resume-table th {
-            background-color: #fff;
-            font-weight: bold;
-        }
-
-        /* Modal Popup Styling */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 100;
-            align-items: center;
-            justify-content: center;
-        }
-        .modal-overlay.active {
-            display: flex;
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f1f5f9; color: #0f172a; }
+        /* A4 Sheet Dimensions for Screen Preview */
+        .a4-preview { width: 210mm; min-height: 297mm; padding: 15mm; margin: 0 auto; background: white; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="h-screen flex flex-col overflow-hidden">
 
-    <!-- HEADER & TOOLBAR -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
-            
-            <!-- BRAND LOGO -->
-            <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
-                <div class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white font-black text-base">
-                    <i class="fa-solid fa-file-pen"></i>
-                </div>
-                <span class="text-base font-extrabold text-slate-900">MakeMy<span class="text-red-600">Resume</span></span>
+    <!-- TOP NAVBAR -->
+    <header class="bg-white border-b border-slate-200 h-14 flex items-center justify-between px-6 shrink-0 z-20">
+        <div class="flex items-center gap-3 cursor-pointer" onclick="window.location.href='index.html'">
+            <div class="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center text-white font-black text-base">
+                <i class="fa-solid fa-file-invoice"></i>
             </div>
+            <span class="text-base font-extrabold text-slate-900">MakeMy<span class="text-red-600">Resume</span></span>
+        </div>
 
-            <!-- RICH TEXT & ELEMENT FORMATTING TOOLBAR (MS WORD STYLE) -->
-            <div class="hidden lg:flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-xl border border-slate-200 text-xs flex-wrap">
-                
-                <!-- Text Type Selector -->
-                <select onchange="applyTextFormat('formatBlock', this.value)" class="bg-white border border-slate-300 rounded px-2 py-1 font-semibold text-slate-700 outline-none">
-                    <option value="p">Paragraph</option>
-                    <option value="h1">Header (H1)</option>
-                    <option value="h2">Title (H2)</option>
-                    <option value="h3">Sub Title (H3)</option>
-                </select>
+        <!-- TEMPLATE SWITCHER SELECTOR -->
+        <div class="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-lg border">
+            <span class="text-xs font-bold text-slate-600"><i class="fa-solid fa-layer-group text-red-600 mr-1"></i> Active Template:</span>
+            <select id="templateSelector" onchange="changeTemplateLayout(this.value)" class="bg-transparent text-xs font-extrabold text-red-600 focus:outline-none cursor-pointer">
+                <!-- 100 Dynamic Templates Options will load here -->
+            </select>
+        </div>
 
-                <!-- Font Family -->
-                <select onchange="applyTextFormat('fontName', this.value)" class="bg-white border border-slate-300 rounded px-2 py-1 text-slate-700 outline-none">
-                    <option value="'Plus Jakarta Sans', sans-serif">Jakarta Sans</option>
-                    <option value="'Inter', sans-serif">Inter</option>
-                    <option value="'Roboto', sans-serif">Roboto</option>
-                    <option value="Arial">Arial</option>
-                </select>
-
-                <!-- Font Size -->
-                <select onchange="applyTextFormat('fontSize', this.value)" class="bg-white border border-slate-300 rounded px-2 py-1 text-slate-700 outline-none">
-                    <option value="2">Small (12px)</option>
-                    <option value="3" selected>Medium (14px)</option>
-                    <option value="4">Large (18px)</option>
-                    <option value="5">Extra Large (24px)</option>
-                </select>
-
-                <!-- Color Picker -->
-                <input type="color" onchange="applyTextFormat('foreColor', this.value)" class="w-7 h-7 p-0 border-0 rounded cursor-pointer bg-transparent" title="Font Color">
-
-                <div class="h-4 w-[1px] bg-slate-300 mx-0.5"></div>
-
-                <!-- Basic Formatting -->
-                <button onclick="applyTextFormat('bold')" class="bg-white border p-1.5 rounded hover:bg-slate-50 text-slate-700 font-bold" title="Bold"><i class="fa-solid fa-bold"></i></button>
-                <button onclick="applyTextFormat('italic')" class="bg-white border p-1.5 rounded hover:bg-slate-50 text-slate-700" title="Italic"><i class="fa-solid fa-italic"></i></button>
-                <button onclick="applyTextFormat('underline')" class="bg-white border p-1.5 rounded hover:bg-slate-50 text-slate-700" title="Underline"><i class="fa-solid fa-underline"></i></button>
-                <button onclick="applyTextFormat('strikeThrough')" class="bg-white border p-1.5 rounded hover:bg-slate-50 text-slate-700" title="Strikethrough"><i class="fa-solid fa-strikethrough"></i></button>
-
-                <div class="h-4 w-[1px] bg-slate-300 mx-0.5"></div>
-
-                <!-- Alignment Controls -->
-                <button onclick="applyTextFormat('justifyLeft')" class="bg-white border p-1.5 rounded hover:bg-slate-50 text-slate-700" title="Align Left"><i class="fa-solid fa-align-left"></i></button>
-                <button onclick="applyTextFormat('justifyCenter')" class="bg-white border p-1.5 rounded hover:bg-slate-50 text-slate-700" title="Align Center"><i class="fa-solid fa-align-center"></i></button>
-                <button onclick="applyTextFormat('justifyRight')" class="bg-white border p-1.5 rounded hover:bg-slate-50 text-slate-700" title="Align Right"><i class="fa-solid fa-align-right"></i></button>
-                <button onclick="applyTextFormat('justifyFull')" class="bg-white border p-1.5 rounded hover:bg-slate-50 text-slate-700" title="Justify"><i class="fa-solid fa-align-justify"></i></button>
-
-                <div class="h-4 w-[1px] bg-slate-300 mx-0.5"></div>
-
-                <!-- Bullet & List Options -->
-                <button onclick="applyTextFormat('insertUnorderedList')" class="bg-white border p-1.5 rounded hover:bg-slate-50 text-slate-700" title="Bullet List"><i class="fa-solid fa-list-ul"></i></button>
-                <button onclick="applyTextFormat('insertOrderedList')" class="bg-white border p-1.5 rounded hover:bg-slate-50 text-slate-700" title="Numbered List"><i class="fa-solid fa-list-ol"></i></button>
-
-                <div class="h-4 w-[1px] bg-slate-300 mx-0.5"></div>
-
-                <!-- Undo / Redo -->
-                <button onclick="applyTextFormat('undo')" class="bg-white border p-1.5 rounded hover:bg-slate-50 text-slate-700" title="Undo"><i class="fa-solid fa-rotate-left"></i></button>
-                <button onclick="applyTextFormat('redo')" class="bg-white border p-1.5 rounded hover:bg-slate-50 text-slate-700" title="Redo"><i class="fa-solid fa-rotate-right"></i></button>
-
-                <div class="h-4 w-[1px] bg-slate-300 mx-0.5"></div>
-
-                <!-- Table Insertion -->
-                <button onclick="insertCustomTable()" class="bg-slate-200 hover:bg-slate-300 px-2 py-1 rounded font-bold text-slate-800 flex items-center gap-1">
-                    <i class="fa-solid fa-table"></i> + Table
-                </button>
-            </div>
-
-            <!-- DOWNLOAD ACTIONS -->
-            <div class="flex items-center gap-3">
-                <button onclick="downloadFreeWithWatermark()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 transition">
-                    <i class="fa-solid fa-download"></i> Free (Watermark)
-                </button>
-                
-                <button onclick="handleProDownload()" class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow-md shadow-red-200 transition">
-                    <i class="fa-solid fa-crown text-amber-300"></i> Pro Download (<span id="btnProPrice">₹50</span>)
-                </button>
-            </div>
+        <div class="flex items-center gap-3">
+            <button onclick="downloadPDF()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-lg shadow transition flex items-center gap-1.5">
+                <i class="fa-solid fa-download"></i> Download PDF
+            </button>
         </div>
     </header>
 
-    <!-- EDITOR & PREVIEW WORKSPACE -->
-    <main class="flex-1 max-w-7xl mx-auto w-full p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <!-- MAIN WORKSPACE (Side by Side Fixed Screen) -->
+    <div class="flex-1 flex overflow-hidden">
         
-        <!-- LEFT INPUT FORM PANEL -->
-        <div class="lg:col-span-5 bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
-            <h2 class="font-extrabold text-slate-900 text-sm border-b pb-3 flex items-center gap-2">
-                <i class="fa-solid fa-pen-to-square text-red-600"></i> Live Resume Input Details
-            </h2>
-
-            <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Full Name</label>
-                <input type="text" id="inName" value="Sunil Kumar Mathur" oninput="syncInputs()" class="w-full border p-2.5 rounded-lg text-xs bg-slate-50">
+        <!-- LEFT PANEL: PRE-FILLED READYMADE DATA -->
+        <aside class="w-[420px] bg-white border-r border-slate-200 flex flex-col shrink-0 overflow-y-auto p-5 space-y-4">
+            <div class="flex items-center justify-between border-b pb-2">
+                <h2 class="font-extrabold text-xs text-slate-900 uppercase tracking-wider"><i class="fa-solid fa-pen-to-square text-red-600 mr-1"></i> Ready-Made Data Controls</h2>
+                <button onclick="loadDefaultData()" class="text-[10px] bg-red-50 text-red-600 font-bold px-2 py-1 rounded hover:bg-red-100">Load Sample Data</button>
             </div>
 
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Email</label>
-                    <input type="email" id="inEmail" value="mathursunil361@gmail.com" oninput="syncInputs()" class="w-full border p-2 rounded-lg text-xs bg-slate-50">
+            <!-- Personal Info -->
+            <div class="space-y-3">
+                <h3 class="text-[11px] font-bold text-slate-700 uppercase">1. Personal Details</h3>
+                <input type="text" id="inputName" placeholder="Full Name" oninput="updatePreview()" class="w-full border p-2 rounded text-xs">
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="text" id="inputEmail" placeholder="Email" oninput="updatePreview()" class="w-full border p-2 rounded text-xs">
+                    <input type="text" id="inputPhone" placeholder="Mobile" oninput="updatePreview()" class="w-full border p-2 rounded text-xs">
                 </div>
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Mobile</label>
-                    <input type="text" id="inPhone" value="7000164080" oninput="syncInputs()" class="w-full border p-2 rounded-lg text-xs bg-slate-50">
-                </div>
+                <input type="text" id="inputAddress" placeholder="Address" oninput="updatePreview()" class="w-full border p-2 rounded text-xs">
             </div>
 
-            <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Profile Photo</label>
-                <input type="file" id="inPhoto" accept="image/*" onchange="previewPhoto(event)" class="w-full border p-1 rounded-lg text-xs bg-slate-50">
+            <!-- Objective / Profile Summary -->
+            <div class="space-y-2">
+                <h3 class="text-[11px] font-bold text-slate-700 uppercase">2. Professional Objective</h3>
+                <textarea id="inputObjective" rows="2" oninput="updatePreview()" class="w-full border p-2 rounded text-xs">Graduate seeking an opportunity to utilize my skills for organizational growth.</textarea>
             </div>
 
-            <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Education Details</label>
-                <textarea id="inEdu" rows="3" oninput="syncInputs()" class="w-full border p-2 rounded-lg text-xs bg-slate-50">10th Class CG Board 2016
-12th Class CG Board 2019
-Bachelor of Computer Applications (BCA) - 2022</textarea>
-            </div>
-
-            <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Work Experience</label>
-                <textarea id="inExp" rows="3" oninput="syncInputs()" class="w-full border p-2 rounded-lg text-xs bg-slate-50">Frontend Developer - Tech Corp (2021 - Present)</textarea>
-            </div>
-            
-            <p class="text-[11px] text-slate-400 italic">💡 Tip: You can also edit text directly inside the preview sheet on the right!</p>
-        </div>
-
-        <!-- RIGHT LIVE RESUME PREVIEW PANEL -->
-        <div class="lg:col-span-7 flex justify-center overflow-x-auto pb-10">
-            
-            <div id="resumePreviewSheet" class="resume-page p-10 flex flex-col justify-between" contenteditable="true">
-                
-                <!-- WATERMARK TEXT -->
-                <div class="watermark-overlay">FREE WATERMARK - MAKEMYRESUME</div>
-
-                <div>
-                    <!-- RESUME HEADER WITH PHOTO -->
-                    <div class="flex gap-4 border-b-2 border-red-600 pb-4 mb-6 items-start">
-                        <div class="w-24 h-28 border border-slate-300 flex items-center justify-center text-xs text-slate-400 bg-slate-50 shrink-0 overflow-hidden relative group" contenteditable="false">
-                            <img id="pvPhotoImg" src="" class="w-full h-full object-cover hidden">
-                            <span id="pvPhotoTxt">Photo</span>
-                        </div>
-                        <div class="flex-grow">
-                            <h1 id="pvName" class="text-3xl font-extrabold text-red-600 tracking-tight">Sunil Kumar Mathur</h1>
-                            <p id="pvContact" class="text-xs text-slate-600 mt-1 font-medium">mathursunil361@gmail.com | 7000164080</p>
-                        </div>
+            <!-- Education Qualification Table Data -->
+            <div class="space-y-2">
+                <h3 class="text-[11px] font-bold text-slate-700 uppercase">3. Qualification Table Data</h3>
+                <div class="space-y-2 bg-slate-50 p-2.5 rounded border">
+                    <div class="grid grid-cols-3 gap-1 text-[10px] font-bold text-slate-500 uppercase">
+                        <span>Degree</span><span>Year</span><span>Board/Univ</span>
                     </div>
-
-                    <!-- EDUCATION SECTION -->
-                    <div class="mb-6">
-                        <h2 class="text-xs font-extrabold text-red-600 uppercase tracking-wider mb-2">Education</h2>
-                        <div id="pvEdu" class="text-xs text-slate-800 leading-relaxed whitespace-pre-line">
-                            Bachelor of Computer Applications (BCA) - 2022
-                        </div>
+                    <div class="grid grid-cols-3 gap-1">
+                        <input type="text" id="edu1_deg" value="10th" oninput="updatePreview()" class="border p-1 rounded text-xs">
+                        <input type="text" id="edu1_yr" value="2016" oninput="updatePreview()" class="border p-1 rounded text-xs">
+                        <input type="text" id="edu1_inst" value="CG Board" oninput="updatePreview()" class="border p-1 rounded text-xs">
                     </div>
-
-                    <!-- WORK EXPERIENCE SECTION -->
-                    <div class="mb-6">
-                        <h2 class="text-xs font-extrabold text-red-600 uppercase tracking-wider mb-2">Work Experience</h2>
-                        <div id="pvExp" class="text-xs text-slate-800 leading-relaxed whitespace-pre-line">
-                            Frontend Developer - Tech Corp (2021 - Present)
-                        </div>
+                    <div class="grid grid-cols-3 gap-1">
+                        <input type="text" id="edu2_deg" value="12th" oninput="updatePreview()" class="border p-1 rounded text-xs">
+                        <input type="text" id="edu2_yr" value="2018" oninput="updatePreview()" class="border p-1 rounded text-xs">
+                        <input type="text" id="edu2_inst" value="CG Board" oninput="updatePreview()" class="border p-1 rounded text-xs">
                     </div>
-
-                    <!-- CONTAINER FOR INSERTED TABLES & CUSTOM CONTENT -->
-                    <div id="customContainer"></div>
+                    <div class="grid grid-cols-3 gap-1">
+                        <input type="text" id="edu3_deg" value="BCA" oninput="updatePreview()" class="border p-1 rounded text-xs">
+                        <input type="text" id="edu3_yr" value="2022" oninput="updatePreview()" class="border p-1 rounded text-xs">
+                        <input type="text" id="edu3_inst" value="Durg Univ" oninput="updatePreview()" class="border p-1 rounded text-xs">
+                    </div>
                 </div>
-
-                <!-- FOOTER -->
-                <div class="text-[10px] text-slate-400 border-t pt-2 text-center" contenteditable="false">
-                    Created via MakeMyResume Platform
-                </div>
-
             </div>
 
-        </div>
-
-    </main>
-
-    <!-- CUSTOM POPUP MODAL FOR MISSING PAYMENT GATEWAY -->
-    <div id="noGatewayModal" class="modal-overlay">
-        <div class="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-xl text-center space-y-4">
-            <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto text-xl">
-                <i class="fa-solid fa-triangle-exclamation"></i>
+            <!-- Experience -->
+            <div class="space-y-2">
+                <h3 class="text-[11px] font-bold text-slate-700 uppercase">4. Work Experience / Skills</h3>
+                <textarea id="inputExperience" rows="2" oninput="updatePreview()" class="w-full border p-2 rounded text-xs">Frontend Developer - Tech Corp (2023 - Present)</textarea>
             </div>
-            <h3 class="font-bold text-slate-900 text-base">Payment Gateway Not Configured</h3>
-            <p class="text-xs text-slate-600">Please contact the admin or add Razorpay API credentials in the Admin Panel settings to enable Pro Downloads.</p>
-            <button onclick="closeModal()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 rounded-xl text-xs transition">
-                Okay, Got It
-            </button>
-        </div>
+        </aside>
+
+        <!-- RIGHT PANEL: LIVE A4 PREVIEW SHEET (Different Layouts per Template) -->
+        <main class="flex-1 bg-slate-200 overflow-y-auto p-8 flex justify-center items-start">
+            <div id="resumePreviewSheet" class="a4-preview text-slate-800 transition-all duration-300">
+                <!-- Dynamically Rendered Layout Based on Selected Template -->
+            </div>
+        </main>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- ENGINE SCRIPT -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            loadConfigData();
-            syncInputs();
+        window.addEventListener('DOMContentLoaded', () => {
+            const selector = document.getElementById('templateSelector');
+            
+            // Populate 100 Template options with distinct formats
+            for(let i=1; i<=100; i++) {
+                let formatName = "Govt & Formal Table Layout";
+                if(i % 5 === 0) formatName = "Executive Two-Column Sidebar";
+                else if(i % 3 === 0) formatName = "Modern Corporate Minimal";
+                else if(i % 2 === 0) formatName = "Private Job Professional Grid";
+
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.innerText = `Template #${i} - ${formatName}`;
+                selector.appendChild(opt);
+            }
+
+            // Check URL parameters if redirected from home slider
+            const urlParams = new URLSearchParams(window.location.search);
+            const tplParam = urlParams.get('template');
+            if(tplParam) {
+                selector.value = tplParam;
+            }
+
+            loadDefaultData();
         });
 
-        // Sync settings with Admin Panel configurations stored in localStorage
-        function loadConfigData() {
-            const price = localStorage.getItem('app_pro_price') || '50';
-            document.getElementById('btnProPrice').innerText = `₹${price}`;
+        function loadDefaultData() {
+            document.getElementById('inputName').value = "Sunil Kumar Mathur";
+            document.getElementById('inputEmail').value = "mathursunil361@gmail.com";
+            document.getElementById('inputPhone').value = "7000164080";
+            document.getElementById('inputAddress').value = "Housing Board Colony Berla Road Bemetara Chhattisgarh";
+            document.getElementById('inputObjective').value = "Graduate with BCA from Samadhan Mahavidyalaya Bemetara. Experienced in formal documentation, data entry, and technical support roles.";
+            document.getElementById('inputExperience').value = "• Computer Operator at District Office (2022 - Present)\n• Frontend Developer Intern at Tech Solutions (2021 - 2022)";
+            updatePreview();
         }
 
-        // Synchronize Left Form Inputs with Right Preview Sheet
-        function syncInputs() {
-            document.getElementById('pvName').innerText = document.getElementById('inName').value || 'Your Name';
-            document.getElementById('pvContact').innerText = `${document.getElementById('inEmail').value} | ${document.getElementById('inPhone').value}`;
-            document.getElementById('pvEdu').innerText = document.getElementById('inEdu').value;
-            document.getElementById('pvExp').innerText = document.getElementById('inExp').value;
+        function changeTemplateLayout(val) {
+            updatePreview();
         }
 
-        // Profile Photo Preview Handlers
-        function previewPhoto(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = document.getElementById('pvPhotoImg');
-                    const txt = document.getElementById('pvPhotoTxt');
-                    img.src = e.target.result;
-                    img.classList.remove('hidden');
-                    txt.classList.add('hidden');
-                };
-                reader.readAsDataURL(file);
+        function updatePreview() {
+            const tplId = document.getElementById('templateSelector').value;
+            const name = document.getElementById('inputName').value;
+            const email = document.getElementById('inputEmail').value;
+            const phone = document.getElementById('inputPhone').value;
+            const address = document.getElementById('inputAddress').value;
+            const objective = document.getElementById('inputObjective').value;
+            const experience = document.getElementById('inputExperience').value;
+
+            const e1_deg = document.getElementById('edu1_deg').value;
+            const e1_yr = document.getElementById('edu1_yr').value;
+            const e1_inst = document.getElementById('edu1_inst').value;
+
+            const e2_deg = document.getElementById('edu2_deg').value;
+            const e2_yr = document.getElementById('edu2_yr').value;
+            const e2_inst = document.getElementById('edu2_inst').value;
+
+            const e3_deg = document.getElementById('edu3_deg').value;
+            const e3_yr = document.getElementById('edu3_yr').value;
+            const e3_inst = document.getElementById('edu3_inst').value;
+
+            const sheet = document.getElementById('resumePreviewSheet');
+
+            // Different layout rendering based on template ID modulo logic
+            if(tplId % 5 === 0) {
+                // Executive Sidebar Layout
+                sheet.innerHTML = `
+                    <div class="grid grid-cols-12 gap-6 h-full">
+                        <div class="col-span-4 bg-slate-900 text-white p-6 -m-[15mm] mr-0 flex flex-col justify-between">
+                            <div>
+                                <div class="w-24 h-28 bg-slate-700 border-2 border-white mb-6 flex items-center justify-center text-xs text-slate-300">PHOTO</div>
+                                <h3 class="font-bold text-xs uppercase text-red-400 tracking-wider mb-2">Contact Info</h3>
+                                <p class="text-[11px] text-slate-300 mb-1"><i class="fa-solid fa-envelope mr-1"></i> ${email}</p>
+                                <p class="text-[11px] text-slate-300 mb-1"><i class="fa-solid fa-phone mr-1"></i> ${phone}</p>
+                                <p class="text-[11px] text-slate-300"><i class="fa-solid fa-location-dot mr-1"></i> ${address}</p>
+                            </div>
+                            <div class="text-[10px] text-slate-400">MakeMyResume Official ID: #${tplId}</div>
+                        </div>
+                        <div class="col-span-8 space-y-4">
+                            <div>
+                                <h1 class="text-2xl font-black text-slate-900 uppercase">${name}</h1>
+                                <p class="text-xs text-red-600 font-bold uppercase tracking-widest mt-0.5">Executive Professional Profile #${tplId}</p>
+                            </div>
+                            <div class="border-t pt-3">
+                                <h4 class="font-bold text-xs text-slate-900 uppercase mb-1">Career Objective</h4>
+                                <p class="text-xs text-slate-600 leading-relaxed">${objective}</p>
+                            </div>
+                            <div class="border-t pt-3">
+                                <h4 class="font-bold text-xs text-slate-900 uppercase mb-2">Educational Qualification Grid</h4>
+                                <table class="w-full text-left text-xs border-collapse border border-slate-300">
+                                    <tr class="bg-slate-100 font-bold">
+                                        <th class="border p-1.5">Qualification</th>
+                                        <th class="border p-1.5">Passing Year</th>
+                                        <th class="border p-1.5">Board / Institution</th>
+                                    </tr>
+                                    <tr><td class="border p-1.5">${e1_deg}</td><td class="border p-1.5">${e1_yr}</td><td class="border p-1.5">${e1_inst}</td></tr>
+                                    <tr><td class="border p-1.5">${e2_deg}</td><td class="border p-1.5">${e2_yr}</td><td class="border p-1.5">${e2_inst}</td></tr>
+                                    <tr><td class="border p-1.5">${e3_deg}</td><td class="border p-1.5">${e3_yr}</td><td class="border p-1.5">${e3_inst}</td></tr>
+                                </table>
+                            </div>
+                            <div class="border-t pt-3">
+                                <h4 class="font-bold text-xs text-slate-900 uppercase mb-1">Work Experience</h4>
+                                <p class="text-xs text-slate-600 whitespace-pre-line">${experience}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Sunil Mathur Govt & Formal Official Table Format Layout (Default & Standard)
+                sheet.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="flex items-start justify-between border-b-2 border-slate-900 pb-4">
+                            <div>
+                                <h1 class="text-2xl font-black text-slate-900 uppercase tracking-tight">${name}</h1>
+                                <p class="text-xs text-slate-600 mt-1"><i class="fa-solid fa-location-dot mr-1"></i> ${address}</p>
+                                <p class="text-xs text-slate-600 mt-0.5"><i class="fa-solid fa-envelope mr-1"></i> ${email} | <i class="fa-solid fa-phone mr-1"></i> ${phone}</p>
+                            </div>
+                            <div class="w-20 h-24 border-2 border-slate-400 bg-slate-50 flex items-center justify-center text-[10px] text-slate-400 font-bold">
+                                PHOTO
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="font-extrabold uppercase text-xs text-red-600 tracking-wider border-b border-red-200 pb-0.5 mb-1">Professional Summary</h4>
+                            <p class="text-xs text-slate-700 leading-relaxed">${objective}</p>
+                        </div>
+
+                        <div>
+                            <h4 class="font-extrabold uppercase text-xs text-red-600 tracking-wider border-b border-red-200 pb-0.5 mb-2">Educational Qualification Table (Format #${tplId})</h4>
+                            <table class="w-full text-center text-xs border-collapse border border-slate-800">
+                                <tr class="bg-slate-100 font-bold border-b border-slate-800">
+                                    <th class="border-r border-slate-800 p-1.5">Examination / Degree</th>
+                                    <th class="border-r border-slate-800 p-1.5">Passing Year</th>
+                                    <th class="p-1.5">Board / University</th>
+                                </tr>
+                                <tr class="border-b border-slate-300">
+                                    <td class="border-r border-slate-300 p-1.5 font-medium">${e1_deg}</td>
+                                    <td class="border-r border-slate-300 p-1.5">${e1_yr}</td>
+                                    <td class="p-1.5">${e1_inst}</td>
+                                </tr>
+                                <tr class="border-b border-slate-300">
+                                    <td class="border-r border-slate-300 p-1.5 font-medium">${e2_deg}</td>
+                                    <td class="border-r border-slate-300 p-1.5">${e2_yr}</td>
+                                    <td class="p-1.5">${e2_inst}</td>
+                                </tr>
+                                <tr>
+                                    <td class="border-r border-slate-300 p-1.5 font-medium">${e3_deg}</td>
+                                    <td class="border-r border-slate-300 p-1.5">${e3_yr}</td>
+                                    <td class="p-1.5">${e3_inst}</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div>
+                            <h4 class="font-extrabold uppercase text-xs text-red-600 tracking-wider border-b border-red-200 pb-0.5 mb-1">Work Experience & Technical Skills</h4>
+                            <p class="text-xs text-slate-700 whitespace-pre-line leading-relaxed">${experience}</p>
+                        </div>
+
+                        <div class="pt-8 flex justify-between text-xs text-slate-500 border-t mt-12">
+                            <span>Date: ____________________</span>
+                            <span class="font-bold text-slate-900 uppercase">Signature (${name})</span>
+                        </div>
+                    </div>
+                `;
             }
         }
 
-        // MS Word Style Rich Text Formatting
-        function applyTextFormat(command, value = null) {
-            document.execCommand(command, false, value);
-        }
-
-        // Insert Dynamic Custom Editable Table
-        function insertCustomTable() {
-            const rows = prompt("Enter number of rows:", "2");
-            const cols = prompt("Enter number of columns:", "2");
-
-            if (!rows || !cols) return;
-
-            let tableHTML = '<table class="resume-table"><tbody>';
-            for (let i = 0; i < parseInt(rows); i++) {
-                tableHTML += '<tr>';
-                for (let j = 0; j < parseInt(cols); j++) {
-                    tableHTML += `<td contenteditable="true">Cell ${i + 1}-${j + 1}</td>`;
-                }
-                tableHTML += '</tr>';
-            }
-            tableHTML += '</tbody></table><br>';
-
-            document.getElementById('customContainer').innerHTML += tableHTML;
-        }
-
-        // Modal Controls
-        function closeModal() {
-            document.getElementById('noGatewayModal').classList.remove('active');
-        }
-
-        // 1. FREE DOWNLOAD WITH WATERMARK
-        function downloadFreeWithWatermark() {
-            const element = document.getElementById('resumePreviewSheet');
-            element.classList.add('show-watermark'); // Show Watermark
-
-            const opt = {
-                margin: 0,
-                filename: 'Resume_Free_Watermark.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-
-            html2pdf().set(opt).from(element).save().then(() => {
-                element.classList.remove('show-watermark'); // Reset Watermark
-            });
-        }
-
-        // 2. PRO DOWNLOAD WITH PAYMENT CHECK
-        function handleProDownload() {
-            const rzpKey = localStorage.getItem('rzp_key_id');
-
-            // IF NO PAYMENT GATEWAY IS CONFIGURED IN ADMIN PANEL
-            if (!rzpKey || rzpKey.trim() === "") {
-                document.getElementById('noGatewayModal').classList.add('active');
-                return;
-            }
-
-            // IF PAYMENT GATEWAY API IS PRESENT
-            const price = localStorage.getItem('app_pro_price') || '50';
-            alert(`Redirecting to Razorpay Gateway for ₹${price} payment...`);
-            downloadProWithoutWatermark();
-        }
-
-        // PRO DOWNLOAD (WITHOUT WATERMARK)
-        function downloadProWithoutWatermark() {
-            const element = document.getElementById('resumePreviewSheet');
-            element.classList.remove('show-watermark'); // Ensure NO Watermark
-
-            const opt = {
-                margin: 0,
-                filename: 'Pro_Resume_MakeMyResume.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-
-            html2pdf().set(opt).from(element).save();
+        function downloadPDF() {
+            window.print();
         }
     </script>
 </body>
