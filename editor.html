@@ -1,119 +1,254 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="hi" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MakeMyResume - Resume Builder</title>
+    <title>MakeMyResume - Resume Editor</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #0f172a; }
+        .watermark-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 28px;
+            font-weight: 800;
+            color: rgba(220, 38, 38, 0.15);
+            white-space: nowrap;
+            pointer-events: none;
+            user-select: none;
+        }
+    </style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col font-sans">
+<body class="antialiased min-h-screen flex flex-col">
 
-    <!-- HEADER -->
-    <header class="bg-white border-b px-6 py-3 flex justify-between items-center sticky top-0 z-40">
-        <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
-            <div class="w-7 h-7 bg-red-600 rounded flex items-center justify-center text-white font-black text-sm">
-                <i class="fa-solid fa-file-invoice"></i>
+    <!-- TOP NAVBAR (CLEAN WHITE) -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex justify-between items-center text-xs">
+            
+            <!-- LOGO -->
+            <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
+                <div class="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center text-white font-black text-base shadow-md shadow-red-600/30">
+                    <i class="fa-solid fa-file-invoice"></i>
+                </div>
+                <div class="leading-none">
+                    <span class="text-base font-extrabold text-slate-900 tracking-tight">MakeMy<span class="text-red-600">Resume</span></span>
+                </div>
             </div>
-            <span class="text-sm font-extrabold text-slate-900">MakeMy<span class="text-red-600">Resume</span></span>
-        </div>
-        <div class="flex gap-3">
-            <a href="index.html" class="px-3 py-1.5 border rounded text-xs font-bold text-slate-600 hover:bg-slate-50">Back to Home</a>
-            <button onclick="downloadPDF()" class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-1.5 rounded text-xs shadow flex items-center gap-1.5">
-                <i class="fa-solid fa-download"></i> Download PDF
-            </button>
+
+            <!-- CONTROLS & DOWNLOAD BUTTONS -->
+            <div class="flex items-center gap-4">
+                
+                <div class="hidden sm:flex items-center gap-2 border-r pr-4 border-slate-200">
+                    <label class="text-[11px] font-bold text-slate-600">Accent Color:</label>
+                    <input type="color" id="accentPicker" value="#dc2626" onchange="changeColor(this.value)" class="w-6 h-6 rounded cursor-pointer border">
+                </div>
+
+                <div class="hidden sm:flex items-center gap-2 border-r pr-4 border-slate-200">
+                    <label class="text-[11px] font-bold text-slate-600">Font Size:</label>
+                    <select id="fontSizeSelect" onchange="changeFontSize(this.value)" class="border bg-slate-50 p-1 rounded text-xs">
+                        <option value="12px">Small (12px)</option>
+                        <option value="14px" selected>Regular (14px)</option>
+                        <option value="16px">Large (16px)</option>
+                    </select>
+                </div>
+
+                <button onclick="downloadPDF(true)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3.5 py-2 rounded-lg transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-download text-slate-500"></i> Free (Watermark)
+                </button>
+
+                <button onclick="downloadPDF(false)" class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-lg shadow-md transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-crown text-amber-300"></i> Pro Download (₹20)
+                </button>
+            </div>
         </div>
     </header>
 
     <!-- EDITOR WORKSPACE -->
-    <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 max-w-7xl mx-auto w-full">
-        <!-- LEFT INPUT FORM -->
-        <div class="lg:col-span-5 bg-white p-5 rounded-xl border shadow-sm space-y-4 max-h-[85vh] overflow-y-auto">
-            <h3 class="font-bold text-sm text-slate-900 border-b pb-2">Fill Resume Details</h3>
+    <div class="flex-1 max-w-7xl mx-auto w-full p-6 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- LEFT INPUT FORM CONTAINER (WHITE CARD) -->
+        <div class="lg:col-span-5 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
             
-            <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase">Full Name</label>
-                <input type="text" id="inName" value="Rohan Kumar" oninput="updatePreview()" class="w-full border p-2 rounded text-xs">
+            <div class="border-b pb-3 mb-2 flex justify-between items-center">
+                <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square text-red-600"></i> Live Resume Details
+                </h3>
             </div>
+
+            <!-- PHOTO UPLOAD -->
             <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase">Job Title</label>
-                <input type="text" id="inTitle" value="Software Engineer" oninput="updatePreview()" class="w-full border p-2 rounded text-xs">
+                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Profile Photo</label>
+                <input type="file" id="inPhoto" accept="image/*" onchange="loadPhoto(event)" class="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-600 hover:file:bg-red-100 cursor-pointer">
             </div>
-            <div class="grid grid-cols-2 gap-2">
+
+            <!-- NAME -->
+            <div>
+                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Full Name *</label>
+                <input type="text" id="inName" value="Your Name" oninput="updatePreview()" class="w-full border border-slate-200 p-2.5 rounded-lg text-xs bg-slate-50 focus:bg-white focus:outline-none focus:border-red-600">
+            </div>
+
+            <!-- EMAIL & MOBILE -->
+            <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="block text-[10px] font-bold text-slate-500 uppercase">Email</label>
-                    <input type="email" id="inEmail" value="rohan.kumar@gmail.com" oninput="updatePreview()" class="w-full border p-2 rounded text-xs">
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Email</label>
+                    <input type="email" id="inEmail" value="email@example.com" oninput="updatePreview()" class="w-full border border-slate-200 p-2.5 rounded-lg text-xs bg-slate-50 focus:bg-white focus:outline-none focus:border-red-600">
                 </div>
                 <div>
-                    <label class="block text-[10px] font-bold text-slate-500 uppercase">Phone</label>
-                    <input type="text" id="inPhone" value="+91 98765 43210" oninput="updatePreview()" class="w-full border p-2 rounded text-xs">
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Mobile</label>
+                    <input type="text" id="inPhone" value="+91 9876543210" oninput="updatePreview()" class="w-full border border-slate-200 p-2.5 rounded-lg text-xs bg-slate-50 focus:bg-white focus:outline-none focus:border-red-600">
                 </div>
             </div>
-            <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase">About Me Summary</label>
-                <textarea id="inAbout" rows="3" oninput="updatePreview()" class="w-full border p-2 rounded text-xs">Software Engineer with 4+ years of experience in building scalable web applications. Passionate about clean code, problem-solving and creating impactful digital solutions.</textarea>
+
+            <!-- LOCATION & ADDRESS -->
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Location</label>
+                    <input type="text" id="inLoc" value="New Delhi, India" oninput="updatePreview()" class="w-full border border-slate-200 p-2.5 rounded-lg text-xs bg-slate-50 focus:bg-white focus:outline-none focus:border-red-600">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Address</label>
+                    <input type="text" id="inAddr" value="Sector 62, Noida" oninput="updatePreview()" class="w-full border border-slate-200 p-2.5 rounded-lg text-xs bg-slate-50 focus:bg-white focus:outline-none focus:border-red-600">
+                </div>
             </div>
+
+            <!-- EDUCATION -->
             <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase">Work Experience</label>
-                <textarea id="inExp" rows="3" oninput="updatePreview()" class="w-full border p-2 rounded text-xs">Senior Software Engineer - Tech Solutions Pvt. Ltd. (Jan 2022 - Present)</textarea>
+                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Education Details</label>
+                <textarea id="inEdu" rows="2" oninput="updatePreview()" class="w-full border border-slate-200 p-2.5 rounded-lg text-xs bg-slate-50 focus:bg-white focus:outline-none focus:border-red-600">Bachelor of Computer Applications (BCA) - 2021</textarea>
             </div>
+
+            <!-- WORK EXPERIENCE -->
             <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase">Education</label>
-                <textarea id="inEdu" rows="2" oninput="updatePreview()" class="w-full border p-2 rounded text-xs">B.Tech in Computer Science - DTU (2017 - 2021)</textarea>
+                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Work Experience</label>
+                <textarea id="inExp" rows="3" oninput="updatePreview()" class="w-full border border-slate-200 p-2.5 rounded-lg text-xs bg-slate-50 focus:bg-white focus:outline-none focus:border-red-600">Frontend Developer - Tech Corp (2021 - Present)</textarea>
+            </div>
+
+            <!-- AUTO REQUEST LETTER -->
+            <div>
+                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Auto Job Request Application Letter</label>
+                <textarea id="inLetter" rows="3" oninput="updatePreview()" class="w-full border border-slate-200 p-2.5 rounded-lg text-xs bg-slate-50 focus:bg-white focus:outline-none focus:border-red-600">Respected Sir/Madam, I am writing to express my strong interest in the software role at your company...</textarea>
             </div>
         </div>
 
-        <!-- RIGHT LIVE RESUME PREVIEW -->
-        <div class="lg:col-span-7 flex justify-center items-start">
-            <div id="resumePreview" class="bg-white border p-8 rounded-lg shadow-xl w-full max-w-xl text-slate-800 text-xs min-h-[600px]">
-                <div class="border-b pb-4 mb-4">
-                    <h1 id="pvName" class="text-2xl font-extrabold text-slate-900">Rohan Kumar</h1>
-                    <p id="pvTitle" class="text-red-600 font-bold text-sm">Software Engineer</p>
-                    <p class="text-[10px] text-slate-500 mt-1"><span id="pvEmail">rohan.kumar@gmail.com</span> | <span id="pvPhone">+91 98765 43210</span></p>
+        <!-- RIGHT LIVE PREVIEW CARD -->
+        <div class="lg:col-span-7 flex justify-center sticky top-20">
+            <div class="bg-white border border-slate-200 rounded-2xl p-2 shadow-xl w-full max-w-xl">
+                
+                <div id="resumePreview" class="relative bg-white p-8 rounded-xl min-h-[650px] text-slate-800 text-xs overflow-hidden">
+                    
+                    <!-- WATERMARK LAYER -->
+                    <div id="watermarkLayer" class="watermark-text">
+                        FREE WATERMARK - MAKEMYRESUME
+                    </div>
+
+                    <!-- RESUME HEADER -->
+                    <div class="flex items-start justify-between border-b-2 pb-4 mb-4" id="headerBorder" style="border-color: #dc2626;">
+                        <div>
+                            <h1 id="pvName" class="text-2xl font-black text-red-600" style="color: #dc2626;">Your Name</h1>
+                            <p id="pvContact" class="text-slate-500 text-[11px] mt-1">email@example.com | +91 9876543210</p>
+                            <p id="pvLocation" class="text-slate-400 text-[10px]">New Delhi, India - Sector 62, Noida</p>
+                        </div>
+                        <img id="pvPhoto" src="" class="w-16 h-16 rounded-lg object-cover border hidden">
+                    </div>
+
+                    <!-- RESUME BODY SECTIONS -->
+                    <div class="space-y-4" id="resumeBodyText" style="font-size: 14px;">
+                        <div>
+                            <h4 class="font-bold text-red-600 uppercase tracking-wider text-[11px] mb-1 section-title" style="color: #dc2626;">EDUCATION</h4>
+                            <p id="pvEdu" class="text-slate-700 whitespace-pre-line leading-relaxed">Bachelor of Computer Applications (BCA) - 2021</p>
+                        </div>
+
+                        <div>
+                            <h4 class="font-bold text-red-600 uppercase tracking-wider text-[11px] mb-1 section-title" style="color: #dc2626;">WORK EXPERIENCE</h4>
+                            <p id="pvExp" class="text-slate-700 whitespace-pre-line leading-relaxed">Frontend Developer - Tech Corp (2021 - Present)</p>
+                        </div>
+
+                        <div>
+                            <h4 class="font-bold text-red-600 uppercase tracking-wider text-[11px] mb-1 section-title" style="color: #dc2626;">APPLICATION / REQUEST LETTER</h4>
+                            <p id="pvLetter" class="text-slate-700 whitespace-pre-line leading-relaxed">Respected Sir/Madam, I am writing to express my strong interest in the software role at your company...</p>
+                        </div>
+                    </div>
+
                 </div>
-                <div class="space-y-4">
-                    <div>
-                        <h4 class="font-bold uppercase text-[10px] text-slate-400 tracking-wider">About Me</h4>
-                        <p id="pvAbout" class="text-slate-600 leading-relaxed mt-1">Software Engineer with 4+ years of experience in building scalable web applications.</p>
-                    </div>
-                    <div>
-                        <h4 class="font-bold uppercase text-[10px] text-slate-400 tracking-wider">Experience</h4>
-                        <p id="pvExp" class="text-slate-700 font-medium whitespace-pre-line mt-1">Senior Software Engineer - Tech Solutions Pvt. Ltd.</p>
-                    </div>
-                    <div>
-                        <h4 class="font-bold uppercase text-[10px] text-slate-400 tracking-wider">Education</h4>
-                        <p id="pvEdu" class="text-slate-700 font-medium whitespace-pre-line mt-1">B.Tech in Computer Science - DTU</p>
-                    </div>
-                </div>
+
             </div>
         </div>
+
     </div>
 
+    <!-- JAVASCRIPT ENGINE -->
     <script>
         function updatePreview() {
-            document.getElementById('pvName').innerText = document.getElementById('inName').value;
-            document.getElementById('pvTitle').innerText = document.getElementById('inTitle').value;
-            document.getElementById('pvEmail').innerText = document.getElementById('inEmail').value;
-            document.getElementById('pvPhone').innerText = document.getElementById('inPhone').value;
-            document.getElementById('pvAbout').innerText = document.getElementById('inAbout').value;
-            document.getElementById('pvExp').innerText = document.getElementById('inExp').value;
+            document.getElementById('pvName').innerText = document.getElementById('inName').value || 'Your Name';
+            document.getElementById('pvContact').innerText = `${document.getElementById('inEmail').value} | ${document.getElementById('inPhone').value}`;
+            document.getElementById('pvLocation').innerText = `${document.getElementById('inLoc').value} - ${document.getElementById('inAddr').value}`;
             document.getElementById('pvEdu').innerText = document.getElementById('inEdu').value;
+            document.getElementById('pvExp').innerText = document.getElementById('inExp').value;
+            document.getElementById('pvLetter').innerText = document.getElementById('inLetter').value;
         }
 
-        function downloadPDF() {
-            const element = document.getElementById('resumePreview');
-            html2pdf().from(element).save('Resume.pdf');
-
-            let user = JSON.parse(localStorage.getItem('current_logged_user'));
-            if(user) {
-                let usersDb = JSON.parse(localStorage.getItem('registered_users_db')) || [];
-                user.downloadsCount = (user.downloadsCount || 0) + 1;
-                localStorage.setItem('current_logged_user', JSON.stringify(user));
-
-                const index = usersDb.findIndex(u => u.id === user.id);
-                if(index !== -1) { usersDb[index] = user; localStorage.setItem('registered_users_db', JSON.stringify(usersDb)); }
+        function loadPhoto(e) {
+            const file = e.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    const photoImg = document.getElementById('pvPhoto');
+                    photoImg.src = evt.target.result;
+                    photoImg.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
             }
+        }
+
+        function changeColor(hexColor) {
+            document.getElementById('pvName').style.color = hexColor;
+            document.getElementById('headerBorder').style.borderColor = hexColor;
+            const titles = document.querySelectorAll('.section-title');
+            titles.forEach(el => el.style.color = hexColor);
+        }
+
+        function changeFontSize(size) {
+            document.getElementById('resumeBodyText').style.fontSize = size;
+        }
+
+        function downloadPDF(isFree) {
+            const watermark = document.getElementById('watermarkLayer');
+            
+            if(isFree) {
+                watermark.style.display = 'block';
+            } else {
+                watermark.style.display = 'none';
+            }
+
+            const element = document.getElementById('resumePreview');
+            
+            const opt = {
+                margin:       0.2,
+                filename:     'My_Resume.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                watermark.style.display = 'block'; // Reset back
+                
+                // Track Download Count
+                let user = JSON.parse(localStorage.getItem('current_logged_user'));
+                if(user) {
+                    let usersDb = JSON.parse(localStorage.getItem('registered_users_db')) || [];
+                    user.downloadsCount = (user.downloadsCount || 0) + 1;
+                    localStorage.setItem('current_logged_user', JSON.stringify(user));
+
+                    const idx = usersDb.findIndex(u => u.id === user.id);
+                    if(idx !== -1) { usersDb[idx] = user; localStorage.setItem('registered_users_db', JSON.stringify(usersDb)); }
+                }
+            });
         }
     </script>
 </body>
