@@ -7,18 +7,20 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- HTML2PDF Library (For PDF Generation) -->
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <!-- HTML2PDF Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
-        /* Anti-Screenshot / Blur Logic on Blur */
+        /* Anti-Screenshot / Blur Logic */
         .blur-protection {
             filter: blur(12px) !important;
             user-select: none !important;
             pointer-events: none !important;
         }
 
-        /* Watermark Pattern */
+        /* Watermark Overlay */
         .watermark-overlay {
             position: absolute;
             inset: 0;
@@ -27,13 +29,58 @@
             justify-content: center;
             pointer-events: none;
             z-index: 20;
-            opacity: 0.15;
-            font-size: 42px;
+            opacity: 0.12;
+            font-size: 38px;
             font-weight: 900;
             color: #dc2626;
             transform: rotate(-30deg);
             white-space: nowrap;
         }
+
+        /* --- TEMPLATE STYLES --- */
+        
+        /* 1. Modern Blue */
+        .tpl-modern-blue { font-family: 'Inter', sans-serif; }
+        .tpl-modern-blue .hdr { border-bottom: 3px solid #2563eb; padding-bottom: 12px; }
+        .tpl-modern-blue .name { color: #1e3a8a; }
+        .tpl-modern-blue .role { color: #2563eb; }
+        .tpl-modern-blue .sec-title { color: #2563eb; font-weight: 700; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; margin-bottom: 8px; }
+
+        /* 2. Clean Green */
+        .tpl-clean-green { font-family: 'Inter', sans-serif; }
+        .tpl-clean-green .hdr { background: #f0fdf4; padding: 16px; border-radius: 8px; border-left: 5px solid #16a34a; }
+        .tpl-clean-green .name { color: #14532d; }
+        .tpl-clean-green .role { color: #16a34a; }
+        .tpl-clean-green .sec-title { color: #16a34a; font-weight: 700; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
+
+        /* 3. Executive Black */
+        .tpl-executive-black { font-family: 'Merriweather', serif; }
+        .tpl-executive-black .hdr { text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 16px; }
+        .tpl-executive-black .name { color: #0f172a; text-transform: uppercase; letter-spacing: 2px; }
+        .tpl-executive-black .role { color: #475569; font-style: italic; }
+        .tpl-executive-black .sec-title { color: #0f172a; font-weight: 700; border-bottom: 1px dashed #0f172a; padding-bottom: 4px; }
+
+        /* 4. Creative Purple */
+        .tpl-creative-purple { font-family: 'Inter', sans-serif; }
+        .tpl-creative-purple .hdr { background: linear-gradient(135deg, #7e22ce, #a855f7); color: white; padding: 20px; border-radius: 8px; }
+        .tpl-creative-purple .name { color: #ffffff; }
+        .tpl-creative-purple .role { color: #f3e8ff; }
+        .tpl-creative-purple .contact-info { color: #f3e8ff !important; }
+        .tpl-creative-purple .sec-title { color: #7e22ce; font-weight: 800; }
+
+        /* 5. Minimal Red */
+        .tpl-minimal-red { font-family: 'Inter', sans-serif; }
+        .tpl-minimal-red .hdr { border-left: 4px solid #dc2626; padding-left: 12px; }
+        .tpl-minimal-red .name { color: #0f172a; }
+        .tpl-minimal-red .role { color: #dc2626; }
+        .tpl-minimal-red .sec-title { color: #dc2626; font-weight: 700; }
+
+        /* 6. Pro Yellow */
+        .tpl-pro-yellow { font-family: 'Inter', sans-serif; }
+        .tpl-pro-yellow .hdr { background: #fefce8; border: 1px solid #fef08a; padding: 16px; border-radius: 8px; }
+        .tpl-pro-yellow .name { color: #713f12; }
+        .tpl-pro-yellow .role { color: #ca8a04; }
+        .tpl-pro-yellow .sec-title { color: #ca8a04; font-weight: 700; border-bottom: 2px solid #fef08a; }
     </style>
 </head>
 <body class="bg-slate-100 font-sans antialiased h-screen flex flex-col">
@@ -44,6 +91,20 @@
             <span class="bg-red-600 text-white p-1.5 rounded"><i class="fa-solid fa-file-invoice"></i></span>
             <span class="font-bold text-slate-900">MakeMy<span class="text-red-600">Resume</span></span>
         </div>
+
+        <!-- TEMPLATE SELECTOR DROPDOWN -->
+        <div class="flex items-center gap-2">
+            <label class="text-xs font-bold text-slate-600 hidden sm:block"><i class="fa-solid fa-palette text-red-600"></i> Select Template:</label>
+            <select id="templateSelect" onchange="changeTemplate(this.value)" class="bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg p-2 font-semibold focus:outline-none focus:border-red-600">
+                <option value="tpl-modern-blue">Modern Blue</option>
+                <option value="tpl-clean-green">Clean Green</option>
+                <option value="tpl-executive-black">Executive Black</option>
+                <option value="tpl-creative-purple">Creative Purple</option>
+                <option value="tpl-minimal-red">Minimal Red</option>
+                <option value="tpl-pro-yellow">Pro Yellow</option>
+            </select>
+        </div>
+
         <div class="flex gap-3">
             <button onclick="downloadPDF()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold px-4 py-2 rounded-lg shadow flex items-center gap-2">
                 <i class="fa-solid fa-download"></i> Download PDF (₹5)
@@ -55,38 +116,53 @@
     <div class="flex-1 flex overflow-hidden">
         
         <!-- LEFT PANEL: FORM INPUTS -->
-        <div class="w-full md:w-1/2 bg-white p-6 overflow-y-auto border-r border-slate-200">
-            <h2 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2">Enter Your Details</h2>
+        <div class="w-full md:w-1/2 bg-white p-6 overflow-y-auto border-r border-slate-200 space-y-6">
+            <h2 class="text-lg font-bold text-slate-800 border-b pb-2">Enter Your Resume Details</h2>
 
-            <form class="space-y-4" oninput="updatePreview()">
+            <!-- Personal Details -->
+            <div class="space-y-3">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Personal Info</h3>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Full Name</label>
-                    <input type="text" id="inputName" value="Rahul Sharma" class="w-full border border-slate-300 p-2 rounded text-sm focus:border-red-600 focus:outline-none">
+                    <input type="text" id="inputName" value="Rahul Sharma" oninput="updatePreview()" class="w-full border border-slate-300 p-2 rounded text-sm focus:border-red-600 focus:outline-none">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Job Title</label>
-                    <input type="text" id="inputRole" value="Full Stack Developer" class="w-full border border-slate-300 p-2 rounded text-sm focus:border-red-600 focus:outline-none">
+                    <input type="text" id="inputRole" value="Software Engineer" oninput="updatePreview()" class="w-full border border-slate-300 p-2 rounded text-sm focus:border-red-600 focus:outline-none">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Email</label>
-                        <input type="email" id="inputEmail" value="rahul@example.com" class="w-full border border-slate-300 p-2 rounded text-sm focus:border-red-600 focus:outline-none">
+                        <input type="email" id="inputEmail" value="rahul@example.com" oninput="updatePreview()" class="w-full border border-slate-300 p-2 rounded text-sm focus:border-red-600 focus:outline-none">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Phone</label>
-                        <input type="text" id="inputPhone" value="+91 9876543210" class="w-full border border-slate-300 p-2 rounded text-sm focus:border-red-600 focus:outline-none">
+                        <input type="text" id="inputPhone" value="+91 9876543210" oninput="updatePreview()" class="w-full border border-slate-300 p-2 rounded text-sm focus:border-red-600 focus:outline-none">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">About / Summary</label>
-                    <textarea id="inputAbout" rows="3" class="w-full border border-slate-300 p-2 rounded text-sm focus:border-red-600 focus:outline-none">Passionate developer with 3+ years experience building web apps.</textarea>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Summary</label>
+                    <textarea id="inputAbout" rows="3" oninput="updatePreview()" class="w-full border border-slate-300 p-2 rounded text-sm focus:border-red-600 focus:outline-none">Passionate developer with 3+ years experience building modern web apps.</textarea>
                 </div>
-            </form>
+            </div>
+
+            <!-- Skills & Experience -->
+            <div class="space-y-3 pt-4 border-t">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Skills & Experience</h3>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Key Skills (Comma separated)</label>
+                    <input type="text" id="inputSkills" value="HTML5, CSS3, JavaScript, React, Node.js, Git" oninput="updatePreview()" class="w-full border border-slate-300 p-2 rounded text-sm focus:border-red-600 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Experience Summary</label>
+                    <textarea id="inputExperience" rows="3" oninput="updatePreview()" class="w-full border border-slate-300 p-2 rounded text-sm focus:border-red-600 focus:outline-none">Senior Developer at Tech Solutions (2022 - Present)&#10;• Developed scalable web applications.&#10;• Led a team of 4 frontend developers.</textarea>
+                </div>
+            </div>
         </div>
 
-        <!-- RIGHT PANEL: LIVE PREVIEW & ANTI-SCREENSHOT ENGINE -->
+        <!-- RIGHT PANEL: LIVE PREVIEW -->
         <div class="hidden md:flex flex-1 bg-slate-200 p-8 overflow-y-auto justify-center items-start">
-            <div id="previewContainer" class="bg-white w-[210mm] min-h-[297mm] p-10 shadow-2xl rounded relative transition-all duration-300">
+            <div id="previewContainer" class="bg-white w-[210mm] min-h-[297mm] p-10 shadow-2xl rounded relative transition-all duration-300 tpl-modern-blue">
                 
                 <!-- UNPAID WATERMARK LAYER -->
                 <div id="watermark" class="watermark-overlay">
@@ -94,19 +170,37 @@
                 </div>
 
                 <!-- RESUME CONTENT DISPLAY -->
-                <div id="resumeCanvas" class="space-y-4">
-                    <div class="border-b-2 border-red-600 pb-4">
-                        <h1 id="prevName" class="text-3xl font-extrabold text-slate-900">Rahul Sharma</h1>
-                        <p id="prevRole" class="text-lg font-semibold text-red-600">Full Stack Developer</p>
-                        <div class="text-xs text-slate-500 flex gap-4 mt-2">
+                <div id="resumeCanvas" class="space-y-6">
+                    <!-- Header -->
+                    <div class="hdr">
+                        <h1 id="prevName" class="name text-3xl font-extrabold">Rahul Sharma</h1>
+                        <p id="prevRole" class="role text-lg font-semibold mt-0.5">Software Engineer</p>
+                        <div class="contact-info text-xs text-slate-600 flex gap-4 mt-2">
                             <span id="prevEmail"><i class="fa-solid fa-envelope"></i> rahul@example.com</span>
                             <span id="prevPhone"><i class="fa-solid fa-phone"></i> +91 9876543210</span>
                         </div>
                     </div>
 
+                    <!-- Summary -->
                     <div>
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Professional Summary</h3>
-                        <p id="prevAbout" class="text-sm text-slate-700 leading-relaxed">Passionate developer with 3+ years experience building web apps.</p>
+                        <h3 class="sec-title text-sm uppercase">Professional Summary</h3>
+                        <p id="prevAbout" class="text-sm text-slate-700 leading-relaxed mt-1">Passionate developer with 3+ years experience building modern web apps.</p>
+                    </div>
+
+                    <!-- Skills -->
+                    <div>
+                        <h3 class="sec-title text-sm uppercase">Technical Skills</h3>
+                        <div id="prevSkills" class="flex flex-wrap gap-2 mt-2">
+                            <span class="bg-slate-100 text-slate-700 px-2.5 py-1 rounded text-xs font-semibold">HTML5</span>
+                            <span class="bg-slate-100 text-slate-700 px-2.5 py-1 rounded text-xs font-semibold">CSS3</span>
+                            <span class="bg-slate-100 text-slate-700 px-2.5 py-1 rounded text-xs font-semibold">JavaScript</span>
+                        </div>
+                    </div>
+
+                    <!-- Experience -->
+                    <div>
+                        <h3 class="sec-title text-sm uppercase">Work Experience</h3>
+                        <p id="prevExperience" class="text-sm text-slate-700 leading-relaxed whitespace-pre-line mt-1">Senior Developer at Tech Solutions (2022 - Present)&#10;• Developed scalable web applications.</p>
                     </div>
                 </div>
 
@@ -114,20 +208,56 @@
         </div>
     </div>
 
-    <!-- SCRIPT FOR REAL-TIME PREVIEW & SECURITY -->
+    <!-- SCRIPT FOR DYNAMIC TEMPLATES, LIVE PREVIEW & SECURITY -->
     <script>
-        let isPaid = false; // User has not paid yet
+        let isPaid = false;
 
-        // 1. Live Input Update
+        // 1. Template Changing Function
+        function changeTemplate(tplClass) {
+            const container = document.getElementById('previewContainer');
+            // Remove old template classes
+            container.className = `bg-white w-[210mm] min-h-[297mm] p-10 shadow-2xl rounded relative transition-all duration-300 ${tplClass}`;
+        }
+
+        // Check URL parameter for template choice (e.g. from homepage)
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tplParam = urlParams.get('template');
+            if (tplParam) {
+                const select = document.getElementById('templateSelect');
+                const matchedOption = Array.from(select.options).find(opt => opt.value.includes(tplParam));
+                if (matchedOption) {
+                    select.value = matchedOption.value;
+                    changeTemplate(matchedOption.value);
+                }
+            }
+            updatePreview();
+        });
+
+        // 2. Real-Time Input Update
         function updatePreview() {
             document.getElementById('prevName').innerText = document.getElementById('inputName').value || 'Your Name';
             document.getElementById('prevRole').innerText = document.getElementById('inputRole').value || 'Your Role';
-            document.getElementById('prevEmail').innerHTML = '<i class="fa-solid fa-envelope"></i> ' + document.getElementById('inputEmail').value;
-            document.getElementById('prevPhone').innerHTML = '<i class="fa-solid fa-phone"></i> ' + document.getElementById('inputPhone').value;
+            document.getElementById('prevEmail').innerHTML = '<i class="fa-solid fa-envelope"></i> ' + (document.getElementById('inputEmail').value || 'email@example.com');
+            document.getElementById('prevPhone').innerHTML = '<i class="fa-solid fa-phone"></i> ' + (document.getElementById('inputPhone').value || '+91 0000000000');
             document.getElementById('prevAbout').innerText = document.getElementById('inputAbout').value;
+            document.getElementById('prevExperience').innerText = document.getElementById('inputExperience').value;
+
+            // Skills Formatting
+            const skillsArray = document.getElementById('inputSkills').value.split(',');
+            const skillsContainer = document.getElementById('prevSkills');
+            skillsContainer.innerHTML = '';
+            skillsArray.forEach(skill => {
+                if(skill.trim()) {
+                    const span = document.createElement('span');
+                    span.className = 'bg-slate-100 text-slate-700 border px-2.5 py-1 rounded text-xs font-semibold';
+                    span.innerText = skill.trim();
+                    skillsContainer.appendChild(span);
+                }
+            });
         }
 
-        // 2. Anti-Screenshot Protection Logic
+        // 3. Anti-Screenshot Protection
         window.addEventListener('blur', () => {
             if(!isPaid) {
                 document.getElementById('previewContainer').classList.add('blur-protection');
@@ -138,17 +268,16 @@
             document.getElementById('previewContainer').classList.remove('blur-protection');
         });
 
-        // Disable Right Click on Preview
         document.getElementById('previewContainer').addEventListener('contextmenu', (e) => e.preventDefault());
 
-        // 3. Fake Payment & Download Logic (₹5 Payment Simulation)
+        // 4. Download & Payment Engine
         function downloadPDF() {
             if(!isPaid) {
-                let pay = confirm("Paid PDF Download Fee: ₹5. Proceed to Pay & Remove Watermark?");
+                let pay = confirm("Fee: ₹5 for clean PDF without watermark. Click OK to proceed.");
                 if(pay) {
                     isPaid = true;
-                    document.getElementById('watermark').style.display = 'none'; // Watermark hide kar do
-                    alert("Payment Successful! Generating PDF...");
+                    document.getElementById('watermark').style.display = 'none';
+                    alert("Payment Received! Generating PDF...");
                     generatePDF();
                 }
             } else {
