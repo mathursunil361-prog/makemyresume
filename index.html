@@ -33,14 +33,14 @@
         .app-view { display: none; }
         .app-view.active-view { display: block; }
 
-        /* Hero Section (Exact Match to Image) */
+        /* Hero Section */
         .hero { display: flex; align-items: center; justify-content: space-between; padding: 60px 48px; background: #fff; gap: 40px; }
         .hero-content { max-width: 580px; }
         .badge { background: #eff6ff; color: #2563eb; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-block; margin-bottom: 20px; }
         .hero h1 { font-size: 48px; margin-bottom: 20px; line-height: 1.15; font-weight: 800; color: #111; }
         .hero p { color: #4b5563; margin-bottom: 28px; font-size: 16px; }
         .hero-images { display: flex; gap: 15px; align-items: center; }
-        .hero-mockup { width: 320px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); border: 1px solid #e5e7eb; }
+        .hero-mockup { width: 320px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; }
 
         /* Features Bar */
         .features-bar { display: grid; grid-template-columns: repeat(6, 1fr); gap: 20px; padding: 30px 48px; background: #f9fafb; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); text-align: center; }
@@ -54,7 +54,7 @@
         .template-card:hover { border-color: var(--primary); transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
         .template-thumb { height: 160px; background: #f3f4f6; border-radius: 6px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #374151; font-size: 12px; border: 1px solid #e5e7eb; }
 
-        /* All Templates Grid View (50 items) */
+        /* All Templates Grid View */
         .all-templates-container { padding: 40px 48px; }
         .all-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 20px; }
 
@@ -96,7 +96,6 @@
         .modal-box { background: #fff; width: 480px; padding: 30px; border-radius: 12px; position: relative; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
         .close-modal { position: absolute; top: 15px; right: 20px; font-size: 20px; cursor: pointer; color: #6b7280; }
 
-        /* Print Preview Config */
         @media print {
             body * { visibility: hidden !important; }
             #activeResumeTemplate, #activeResumeTemplate * { visibility: visible !important; }
@@ -207,7 +206,6 @@
         </div>
 
         <div class="editor-container">
-            <!-- Sidebar with live formatting toolbar targeting the active field -->
             <div class="editor-sidebar">
                 <h3 style="font-size:12px; font-weight:bold; margin-bottom:4px;">Target Text Box Formatting Toolbar</h3>
                 <p style="font-size:10px; color:#6b7280; margin-bottom:8px;">Click inside any input box below and use toolbar to format its font size, style, or color:</p>
@@ -361,7 +359,6 @@
                 <button class="btn btn-outline" onclick="switchView('home-view')">Admin Logout</button>
             </div>
 
-            <!-- Stats Widgets -->
             <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:15px; margin-bottom:30px;">
                 <div style="background:#f9fafb; padding:18px; border-radius:8px; border:1px solid #e5e7eb;"><small>Total Visits</small><h2 id="admTotalVisits">1,245</h2></div>
                 <div style="background:#f9fafb; padding:18px; border-radius:8px; border:1px solid #e5e7eb;"><small>Registered Users</small><h2 id="admTotalUsers">0</h2></div>
@@ -369,7 +366,6 @@
                 <div style="background:#f9fafb; padding:18px; border-radius:8px; border:1px solid #e5e7eb;"><small>Total Revenue</small><h2 id="admTotalRevenue">₹0</h2></div>
             </div>
 
-            <!-- Site Controls & Gateways Widgets -->
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-bottom:30px;">
                 <div style="background:#f9fafb; padding:20px; border-radius:8px; border:1px solid #e5e7eb;">
                     <h3>Site Name & Branding Control</h3>
@@ -386,7 +382,6 @@
                 </div>
             </div>
 
-            <!-- Admin Accounts Management -->
             <div style="background:#f9fafb; padding:20px; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:30px;">
                 <h3>Admin Registration & Management</h3>
                 <div style="display:flex; gap:10px; margin-top:10px;">
@@ -397,7 +392,6 @@
                 <ul id="adminListUl" style="margin-top:12px; font-size:12px; padding-left:20px;"></ul>
             </div>
 
-            <!-- Registered Users Table -->
             <h3>Registered Users Management</h3>
             <table class="res-table" style="margin-top:10px;">
                 <thead><tr><th>Name</th><th>Email / Phone</th><th>Actions</th></tr></thead>
@@ -444,7 +438,6 @@
             currentUser: null
         };
 
-        // Active input tracking for sidebar toolbar styling
         let currentActiveInput = null;
         function setActiveInput(el) { currentActiveInput = el; }
 
@@ -460,7 +453,6 @@
             if(prop === 'color') currentActiveInput.style.color = val;
         }
 
-        // Render Home Slide Templates (6 templates)
         const homeGrid = document.getElementById("homeTemplatesGrid");
         for(let i=1; i<=6; i++) {
             homeGrid.innerHTML += `
@@ -471,7 +463,6 @@
             `;
         }
 
-        // Render All 50 Templates Grid
         function openAllTemplatesView() {
             switchView('all-templates-view');
             const allGrid = document.getElementById("allTemplatesGrid");
@@ -656,14 +647,12 @@
             document.getElementById("admTotalDownloads").innerText = appState.downloads;
             document.getElementById("admTotalRevenue").innerText = "₹" + appState.revenue;
 
-            // Render Admins
             let adminUl = document.getElementById("adminListUl");
             adminUl.innerHTML = "";
             appState.admins.forEach((adm, idx) => {
                 adminUl.innerHTML += `<li>${adm.email} <button onclick="removeAdmin(${idx})" style="color:red; background:none; border:none; cursor:pointer; margin-left:10px;">[Remove]</button></li>`;
             });
 
-            // Render Users
             let tbody = document.getElementById("admUsersTable");
             if(appState.users.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;">No users registered yet.</td></tr>`;
