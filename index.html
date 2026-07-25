@@ -1,490 +1,888 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title id="site-title-tag">MakeMyResume - Professional Resume Builder</title>
+  <title id="dynamic-site-title">Make My Resume - Fast & Professional Resume Builder</title>
 
-  <!-- Tailwind CSS -->
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- React & React DOM -->
+  <!-- React & React DOM via CDN -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   
-  <!-- Babel -->
+  <!-- Babel Compiler for JSX -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-  <!-- Razorpay & HTML2PDF -->
+  <!-- External Libraries for Payments & PDF Export -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans">
+<body class="bg-slate-50 text-slate-800 font-sans antialiased">
 
   <div id="root"></div>
+
+  <!-- Custom Injected Code Container for Admin Extensions -->
+  <div id="admin-custom-code-container"></div>
 
   <script type="text/babel">
     const { useState, useEffect } = React;
 
     function App() {
-      // System Config (Admin Adjustable)
+      // 1. SITE CONFIGURATION (Admin Customizable)
       const [siteConfig, setSiteConfig] = useState({
-        logoText: "MR",
-        siteName: "MakeMyResume",
+        logoText: "MMR",
+        siteName: "Make My Resume",
+        subtitle: "Create ATS-friendly resumes in minutes",
         razorpayKey: "",
-        firebaseConfig: "",
-        premiumPrice: 5
+        customPrice: 5,
+        customCode: ""
       });
 
-      // Navigation & Auth States
-      const [currentPage, setCurrentPage] = useState('home'); // 'home', 'editor', 'login', 'register', 'dashboard', 'admin'
+      // 2. APP STATE & NAVIGATION
+      const [currentPage, setCurrentPage] = useState('home'); // 'home', 'templates', 'editor', 'login', 'register', 'dashboard', 'admin'
       const [currentUser, setCurrentUser] = useState(null);
-      const [showTemplatesModal, setShowTemplatesModal] = useState(false);
+      const [show50TemplatesModal, setShow50TemplatesModal] = useState(false);
 
-      // Admin Stats & Database
-      const [stats, setStats] = useState({ totalVisits: 1240, totalDownloads: 88, totalRevenue: 440 });
+      // 3. ADMIN ANALYTICS & DATABASE
+      const [analytics, setAnalytics] = useState({
+        downloads: 128,
+        totalPayouts: 640,
+        siteTraffic: 3450
+      });
+
       const [users, setUsers] = useState([
-        { id: 1, name: "Rohan Kumar", email: "rohan@gmail.com", phone: "9876543210", password: "123", downloads: 2 }
+        { 
+          id: 1, 
+          name: "Rohan Kumar", 
+          email: "rohan@example.com", 
+          phone: "9876543210", 
+          password: "password123",
+          downloads: 2
+        }
       ]);
 
-      // Form / Resume State
-      const [resumeData, setResumeData] = useState({
-        name: "Rohan Kumar",
-        title: "Software Engineer",
-        email: "rohan.kumar@gmail.com",
-        phone: "+91 98765 43210",
-        address: "Delhi, India",
+      const [admins, setAdmins] = useState([
+        { id: 1, email: "admin@makemyresume.com", password: "adminpassword" }
+      ]);
+
+      const [adminWidgets, setAdminWidgets] = useState([
+        { id: 1, name: "SEO Optimization Widget", code: "<!-- SEO Metadata Active -->" }
+      ]);
+
+      // 4. REGISTRATION FORM STATE (Seq: Qual, %, Year, Inst)
+      const [regForm, setRegForm] = useState({
+        name: "",
+        phone: "",
+        email: "",
         password: "",
-        about: "Seeking a challenging position in a reputed organization where I can learn new skills, expand my knowledge, and leverage my learning’s. To get an opportunity where I can make the best of my potential and contribute to the organization's growth.",
-        education: [{ course: "B.Tech CS", year: "2021", university: "DTU", percentage: "85%" }],
-        experience: [{ company: "Tech Solutions", role: "Senior Engineer", years: "2 Years" }],
-        template: "modern-blue",
-        // Editor Custom Styling
-        titleSize: 24,
-        subTitleSize: 14,
-        textSize: 12,
-        textColor: "#1e293b",
-        alignment: "left"
+        education: [{ qualification: "", percentage: "", passingYear: "", institute: "" }],
+        experience: [{ company: "", profile: "", years: "" }]
       });
 
-      // 1. Template List (6 on slider, 50 in modal)
-      const templatesList = Array.from({ length: 50 }, (_, i) => ({
-        id: `tpl-${i + 1}`,
-        name: i === 0 ? "Modern Blue" : i === 1 ? "Clean Green" : i === 2 ? "Executive Black" : i === 3 ? "Creative Purple" : i === 4 ? "Minimal Red" : i === 5 ? "Professional Yellow" : `Template Format ${i + 1}`,
-        color: i % 6 === 0 ? "border-blue-600 text-blue-600" : i % 6 === 1 ? "border-green-600 text-green-600" : i % 6 === 2 ? "border-slate-800 text-slate-800" : i % 6 === 3 ? "border-purple-600 text-purple-600" : i % 6 === 4 ? "border-red-600 text-red-600" : "border-amber-500 text-amber-500"
-      }));
+      // 5. RESUME EDITOR FORM STATE (Detailed Details)
+      const [resumeForm, setResumeForm] = useState({
+        name: "Rohan Kumar",
+        phone: "+91 9876543210",
+        motherName: "Sunita Devi",
+        fatherName: "Rajesh Kumar",
+        email: "rohan@example.com",
+        address: "Street 4, Main Market",
+        country: "India",
+        district: "Central",
+        city: "New Delhi",
+        village: "N/A",
+        education: [
+          { qualification: "B.Tech Computer Science", percentage: "82%", passingYear: "2022", institute: "Delhi Technological University" }
+        ],
+        experience: [
+          { company: "Tech Solutions Inc.", profile: "Software Developer", years: "2 Years" }
+        ],
+        templateId: "tpl-1"
+      });
 
-      // Dynamic Registration / Auto-Save on Direct Creation
-      const handleSaveAndRegister = (e) => {
-        if (e) e.preventDefault();
-        
-        // Auto register if user doesn't exist
-        let user = currentUser;
-        if (!user) {
-          if (!resumeData.email || !resumeData.password) {
-            alert("Kripya registration/save ke liye Email aur Password bharein!");
-            return;
-          }
-          user = { id: Date.now(), name: resumeData.name, email: resumeData.email, phone: resumeData.phone, password: resumeData.password, downloads: 0 };
-          setUsers([...users, user]);
-          setCurrentUser(user);
-          alert("Aapka account create ho gaya hai aur resume profile me save ho gaya hai!");
+      // 6. ADMIN LOGIN STATE
+      const [adminLoginForm, setAdminLoginForm] = useState({ email: "", password: "" });
+      const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+
+      // Inject custom admin code dynamically
+      useEffect(() => {
+        const container = document.getElementById('admin-custom-code-container');
+        if (container) container.innerHTML = siteConfig.customCode;
+      }, [siteConfig.customCode]);
+
+      // Helper: Dynamic Table Row Management
+      const addRegEduRow = () => setRegForm({...regForm, education: [...regForm.education, { qualification: "", percentage: "", passingYear: "", institute: "" }]});
+      const addRegExpRow = () => setRegForm({...regForm, experience: [...regForm.experience, { company: "", profile: "", years: "" }]});
+
+      const addResumeEduRow = () => setResumeForm({...resumeForm, education: [...resumeForm.education, { qualification: "", percentage: "", passingYear: "", institute: "" }]});
+      const addResumeExpRow = () => setResumeForm({...resumeForm, experience: [...resumeForm.experience, { company: "", profile: "", years: "" }]});
+
+      // User Registration Handler
+      const handleUserRegister = (e) => {
+        e.preventDefault();
+        const newUser = {
+          id: Date.now(),
+          name: regForm.name,
+          email: regForm.email,
+          phone: regForm.phone,
+          password: regForm.password,
+          downloads: 0
+        };
+        setUsers([...users, newUser]);
+        setCurrentUser(newUser);
+
+        // Auto Populate Resume Form with Registration Data
+        setResumeForm({
+          ...resumeForm,
+          name: regForm.name,
+          phone: regForm.phone,
+          email: regForm.email,
+          education: regForm.education.length ? regForm.education : resumeForm.education,
+          experience: regForm.experience.length ? regForm.experience : resumeForm.experience
+        });
+
+        alert("Registration Successful! Your details are saved to your profile.");
+        setCurrentPage('dashboard');
+      };
+
+      // User Login Handler
+      const handleUserLogin = (e) => {
+        e.preventDefault();
+        const found = users.find(u => (u.email === regForm.email || u.phone === regForm.phone) && u.password === regForm.password);
+        if (found) {
+          setCurrentUser(found);
+          alert("Logged in successfully!");
+          setCurrentPage('dashboard');
         } else {
-          alert("Resume successfully aapki profile me update ho gaya hai!");
+          alert("Invalid Email/Phone or Password!");
         }
       };
 
-      // Handle Paid Download
-      const handleDownloadPayment = () => {
-        // If no payment gateway key
+      // Payment & Download Logic
+      const handleDownloadClick = () => {
         if (!siteConfig.razorpayKey) {
-          alert("Payment Gateway Add Nahi Hai! Payment Gateway add karne ke baad hi download unlock hoga.");
+          alert("Payment gateway is not integrated yet. Please contact admin or integrate Razorpay via Admin Panel.");
           return;
         }
 
         const options = {
           key: siteConfig.razorpayKey,
-          amount: siteConfig.premiumPrice * 100,
+          amount: siteConfig.customPrice * 100,
           currency: "INR",
           name: siteConfig.siteName,
-          description: "Resume Download Fee",
+          description: "Resume PDF Download Fee",
           handler: function (response) {
-            alert("Payment Successful! PDF Download shuru ho raha hai.");
-            setStats(prev => ({ ...prev, totalDownloads: prev.totalDownloads + 1, totalRevenue: prev.totalRevenue + siteConfig.premiumPrice }));
-            triggerPDFDownload(false); // Clean PDF Download
+            alert("Payment Successful! Transaction ID: " + response.razorpay_payment_id);
+            setAnalytics(prev => ({
+              ...prev,
+              downloads: prev.downloads + 1,
+              totalPayouts: prev.totalPayouts + siteConfig.customPrice
+            }));
+            generateCleanPDF();
           },
-          prefill: { email: resumeData.email, contact: resumeData.phone },
-          theme: { color: "#DC2626" }
+          prefill: { email: resumeForm.email, contact: resumeForm.phone },
+          theme: { color: "#2563EB" }
         };
+
         const rzp = new window.Razorpay(options);
         rzp.open();
       };
 
-      // PDF Generator
-      const triggerPDFDownload = (isWatermark) => {
-        const element = document.getElementById('resume-preview-area');
+      // Generate Clean PDF (Watermark removal simulation)
+      const generateCleanPDF = () => {
+        const element = document.getElementById('printable-resume');
+        const watermark = document.getElementById('resume-watermark');
+        if (watermark) watermark.style.display = 'none';
+
         const opt = {
-          margin: 0.2,
-          filename: `${resumeData.name}_Resume.pdf`,
+          margin: 0.3,
+          filename: `${resumeForm.name.replace(/\s+/g, '_')}_Resume.pdf`,
           image: { type: 'jpeg', quality: 0.98 },
           html2canvas: { scale: 2 },
           jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
         };
-        html2pdf().set(opt).from(element).save();
+
+        html2pdf().set(opt).from(element).save().then(() => {
+          if (watermark) watermark.style.display = 'flex';
+        });
       };
 
-      // Add Dynamic Education / Experience Columns
-      const addEducation = () => setResumeData({...resumeData, education: [...resumeData.education, { course: "", year: "", university: "", percentage: "" }]});
-      const addExperience = () => setResumeData({...resumeData, experience: [...resumeData.experience, { company: "", role: "", years: "" }]});
+      // 50 Templates Catalog Definition
+      const templatesList = Array.from({ length: 50 }, (_, i) => ({
+        id: `tpl-${i + 1}`,
+        title: `Template Format ${i + 1}`,
+        color: i % 4 === 0 ? "border-blue-600" : i % 4 === 1 ? "border-emerald-600" : i % 4 === 2 ? "border-purple-600" : "border-slate-800"
+      }));
 
       return (
-        <div>
-          {/* Top Navbar */}
-          <nav className="flex justify-between items-center px-6 py-4 bg-white shadow-sm border-b sticky top-0 z-40">
-            <div className="flex items-center gap-2 cursor-pointer" onClick={() => setCurrentPage('home')}>
-              <div className="bg-red-600 text-white font-bold p-2 rounded-lg text-sm">{siteConfig.logoText}</div>
-              <span className="text-xl font-bold tracking-tight text-slate-900">{siteConfig.siteName}</span>
-            </div>
-
-            <div className="hidden md:flex gap-6 font-medium text-slate-600 text-sm">
-              <button onClick={() => setCurrentPage('home')} className={currentPage === 'home' ? "text-red-600 font-bold" : ""}>Home</button>
-              <button onClick={() => setShowTemplatesModal(true)}>Templates</button>
-              <button onClick={() => setCurrentPage('editor')} className={currentPage === 'editor' ? "text-red-600 font-bold" : ""}>Editor</button>
-              {currentUser && <button onClick={() => setCurrentPage('dashboard')} className={currentPage === 'dashboard' ? "text-red-600 font-bold" : ""}>My Profile</button>}
-            </div>
-
-            <div className="flex items-center gap-3">
-              {currentUser ? (
-                <button onClick={() => setCurrentUser(null)} className="text-sm font-semibold text-slate-600">Logout</button>
-              ) : (
-                <>
-                  <button onClick={() => setCurrentPage('login')} className="text-sm font-semibold text-slate-600">Log in</button>
-                  <button onClick={() => setCurrentPage('register')} className="bg-red-600 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-red-700">Get Started</button>
-                </>
-              )}
-              {/* Dedicated Admin Panel Access Button */}
-              <button onClick={() => setCurrentPage('admin')} className="bg-slate-900 text-white text-xs px-3 py-2 rounded-lg font-bold">Admin</button>
-            </div>
-          </nav>
-
-          {/* PAGE 1: HOME PAGE */}
-          {currentPage === 'home' && (
-            <div>
-              <section className="text-center py-12 px-4 max-w-4xl mx-auto">
-                <span className="bg-blue-50 text-blue-600 text-xs font-semibold px-3 py-1 rounded-full border border-blue-200">
-                  ✨ AI POWERED RESUME BUILDER
-                </span>
-                <h1 className="text-4xl md:text-5xl font-extrabold mt-4 text-slate-900 leading-tight">
-                  Create Your <br />
-                  <span className="text-slate-900">Professional Resume </span>
-                  That Gets <span className="text-red-600">You Hired</span>
-                </h1>
-                <p className="text-slate-500 max-w-xl mx-auto mt-3 text-sm">
-                  Choose from 50+ ATS-friendly templates, customize in minutes, and download in PDF.
-                </p>
-                <div className="mt-6 flex justify-center gap-4">
-                  <button onClick={() => setCurrentPage('editor')} className="bg-red-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:bg-red-700">
-                    Create My Resume &rarr;
-                  </button>
-                  <button onClick={() => setShowTemplatesModal(true)} className="bg-white border text-slate-700 px-6 py-3 rounded-xl font-semibold">
-                    View Templates
-                  </button>
+        <div className="min-h-screen flex flex-col">
+          
+          {/* HEADER NAVIGATION BAR */}
+          <header className="bg-white border-b sticky top-0 z-40 shadow-sm">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+              
+              {/* Logo and Name with Subtitle */}
+              <div className="flex items-center gap-3 cursor-pointer" onClick={() => setCurrentPage('home')}>
+                <div className="bg-blue-600 text-white font-extrabold px-3 py-1.5 rounded-lg text-lg">
+                  {siteConfig.logoText}
                 </div>
-              </section>
-
-              {/* Template Slider (Showing First 6 Templates) */}
-              <section className="py-8 bg-white border-t px-6 max-w-6xl mx-auto">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-bold">Professional Resume Templates</h2>
-                  <button onClick={() => setShowTemplatesModal(true)} className="text-red-600 font-bold text-sm hover:underline">View All 50 Templates &rarr;</button>
-                </div>
-                <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-                  {templatesList.slice(0, 6).map((tpl) => (
-                    <div 
-                      key={tpl.id} 
-                      onClick={() => { setResumeData({...resumeData, template: tpl.id}); setCurrentPage('editor'); }} 
-                      className={`border-2 ${tpl.color} rounded-xl p-4 text-center cursor-pointer hover:scale-105 transition bg-slate-50`}
-                    >
-                      <div className="h-28 border border-dashed rounded bg-white mb-2 flex items-center justify-center text-xs font-bold">📄 Visual Format</div>
-                      <p className="text-xs font-bold text-slate-800">{tpl.name}</p>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            </div>
-          )}
-
-          {/* PAGE 2: RESUME EDITOR (MAIN PANEL) */}
-          {currentPage === 'editor' && (
-            <div className="max-w-7xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Form Input Controls */}
-              <div className="bg-white p-6 rounded-2xl shadow-sm border max-h-[85vh] overflow-y-auto">
-                <h2 className="text-lg font-bold mb-4 text-slate-800 border-b pb-2">1. Personal & Contact Info</h2>
-                <div className="space-y-3">
-                  <div>
-                    <label className="text-xs font-semibold block">Full Name</label>
-                    <input type="text" value={resumeData.name} onChange={(e) => setResumeData({...resumeData, name: e.target.value})} className="w-full border p-2 rounded text-sm"/>
-                  </div>
-                  <div>
-                    <label className="text-xs font-semibold block">Job Title / Subtitle</label>
-                    <input type="text" value={resumeData.title} onChange={(e) => setResumeData({...resumeData, title: e.target.value})} className="w-full border p-2 rounded text-sm"/>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="text-xs font-semibold block">Email</label>
-                      <input type="email" value={resumeData.email} onChange={(e) => setResumeData({...resumeData, email: e.target.value})} className="w-full border p-2 rounded text-sm"/>
-                    </div>
-                    <div>
-                      <label className="text-xs font-semibold block">Phone</label>
-                      <input type="text" value={resumeData.phone} onChange={(e) => setResumeData({...resumeData, phone: e.target.value})} className="w-full border p-2 rounded text-sm"/>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-xs font-semibold block">Address</label>
-                    <input type="text" value={resumeData.address} onChange={(e) => setResumeData({...resumeData, address: e.target.value})} className="w-full border p-2 rounded text-sm"/>
-                  </div>
-                  {!currentUser && (
-                    <div>
-                      <label className="text-xs font-semibold block text-red-600">Set Account Password (For Auto Save)</label>
-                      <input type="password" placeholder="Create Password" value={resumeData.password} onChange={(e) => setResumeData({...resumeData, password: e.target.value})} className="w-full border p-2 rounded text-sm"/>
-                    </div>
-                  )}
-                </div>
-
-                <h2 className="text-lg font-bold mt-6 mb-4 text-slate-800 border-b pb-2">2. Objective / About</h2>
-                <textarea value={resumeData.about} onChange={(e) => setResumeData({...resumeData, about: e.target.value})} className="w-full border p-2 rounded text-sm h-24"/>
-
-                {/* Dynamic Education Section */}
-                <div className="flex justify-between items-center mt-6 mb-2 border-b pb-2">
-                  <h2 className="text-lg font-bold text-slate-800">3. Education</h2>
-                  <button onClick={addEducation} className="text-xs bg-slate-900 text-white px-2 py-1 rounded">+ Add Row</button>
-                </div>
-                {resumeData.education.map((edu, idx) => (
-                  <div key={idx} className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-2 bg-slate-50 p-2 rounded">
-                    <input placeholder="Course" value={edu.course} onChange={(e) => { const newEdu = [...resumeData.education]; newEdu[idx].course = e.target.value; setResumeData({...resumeData, education: newEdu}); }} className="border p-1 text-xs rounded"/>
-                    <input placeholder="Passing Year" value={edu.year} onChange={(e) => { const newEdu = [...resumeData.education]; newEdu[idx].year = e.target.value; setResumeData({...resumeData, education: newEdu}); }} className="border p-1 text-xs rounded"/>
-                    <input placeholder="University" value={edu.university} onChange={(e) => { const newEdu = [...resumeData.education]; newEdu[idx].university = e.target.value; setResumeData({...resumeData, education: newEdu}); }} className="border p-1 text-xs rounded"/>
-                    <input placeholder="Percentage" value={edu.percentage} onChange={(e) => { const newEdu = [...resumeData.education]; newEdu[idx].percentage = e.target.value; setResumeData({...resumeData, education: newEdu}); }} className="border p-1 text-xs rounded"/>
-                  </div>
-                ))}
-
-                {/* Dynamic Experience Section */}
-                <div className="flex justify-between items-center mt-6 mb-2 border-b pb-2">
-                  <h2 className="text-lg font-bold text-slate-800">4. Experience</h2>
-                  <button onClick={addExperience} className="text-xs bg-slate-900 text-white px-2 py-1 rounded">+ Add Row</button>
-                </div>
-                {resumeData.experience.map((exp, idx) => (
-                  <div key={idx} className="grid grid-cols-3 gap-2 mb-2 bg-slate-50 p-2 rounded">
-                    <input placeholder="Company Name" value={exp.company} onChange={(e) => { const newExp = [...resumeData.experience]; newExp[idx].company = e.target.value; setResumeData({...resumeData, experience: newExp}); }} className="border p-1 text-xs rounded"/>
-                    <input placeholder="Job Role" value={exp.role} onChange={(e) => { const newExp = [...resumeData.experience]; newExp[idx].role = e.target.value; setResumeData({...resumeData, experience: newExp}); }} className="border p-1 text-xs rounded"/>
-                    <input placeholder="Years of Experience" value={exp.years} onChange={(e) => { const newExp = [...resumeData.experience]; newExp[idx].years = e.target.value; setResumeData({...resumeData, experience: newExp}); }} className="border p-1 text-xs rounded"/>
-                  </div>
-                ))}
-
-                {/* Custom Styling Controls */}
-                <h2 className="text-lg font-bold mt-6 mb-3 text-slate-800 border-b pb-2">5. Style & Custom Editor Tools</h2>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
-                  <div>
-                    <label className="block font-semibold">Title Size</label>
-                    <input type="number" value={resumeData.titleSize} onChange={(e) => setResumeData({...resumeData, titleSize: Number(e.target.value)})} className="border p-1 w-full rounded"/>
-                  </div>
-                  <div>
-                    <label className="block font-semibold">Text Size</label>
-                    <input type="number" value={resumeData.textSize} onChange={(e) => setResumeData({...resumeData, textSize: Number(e.target.value)})} className="border p-1 w-full rounded"/>
-                  </div>
-                  <div>
-                    <label className="block font-semibold">Color</label>
-                    <input type="color" value={resumeData.textColor} onChange={(e) => setResumeData({...resumeData, textColor: e.target.value})} className="border p-1 w-full rounded h-8"/>
-                  </div>
-                  <div>
-                    <label className="block font-semibold">Align</label>
-                    <select value={resumeData.alignment} onChange={(e) => setResumeData({...resumeData, alignment: e.target.value})} className="border p-1 w-full rounded">
-                      <option value="left">Left</option>
-                      <option value="center">Center</option>
-                      <option value="right">Right</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="mt-6 space-y-2">
-                  <button onClick={handleSaveAndRegister} className="w-full bg-slate-900 text-white font-bold py-2.5 rounded-xl text-sm">
-                    💾 Save Resume to Profile
-                  </button>
-                  <button onClick={handleDownloadPayment} className="w-full bg-red-600 text-white font-bold py-3 rounded-xl hover:bg-red-700 shadow-md">
-                    Pay ₹{siteConfig.premiumPrice} & Download Without Watermark
-                  </button>
+                <div>
+                  <h1 className="font-bold text-lg leading-none text-slate-900">{siteConfig.siteName}</h1>
+                  <span className="text-[11px] text-slate-500 block leading-tight">{siteConfig.subtitle}</span>
                 </div>
               </div>
 
-              {/* LIVE PREVIEW AREA WITH WATERMARK */}
-              <div className="relative">
-                <div className="flex justify-between items-center mb-2">
-                  <h2 className="text-lg font-bold text-slate-800">Live Preview (Watermarked Free View)</h2>
-                  <span className="text-xs bg-amber-100 text-amber-800 font-bold px-2.5 py-1 rounded-full">Preview Mode</span>
-                </div>
+              {/* Navigation Links */}
+              <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
+                <button onClick={() => setCurrentPage('home')} className={currentPage === 'home' ? 'text-blue-600 font-bold' : 'hover:text-blue-600'}>Home</button>
+                <button onClick={() => setShow50TemplatesModal(true)} className="hover:text-blue-600">Templates</button>
+                <button onClick={() => setCurrentPage('home')} className="hover:text-blue-600">Pricing</button>
+                <button onClick={() => setCurrentPage('editor')} className={currentPage === 'editor' ? 'text-blue-600 font-bold' : 'hover:text-blue-600'}>Editor</button>
+                <button onClick={() => setCurrentPage('admin')} className={currentPage === 'admin' ? 'text-blue-600 font-bold' : 'hover:text-blue-600'}>Admin Login</button>
+              </nav>
 
-                <div id="resume-preview-area" className="relative p-8 bg-white rounded-xl shadow-lg border min-h-[600px] overflow-hidden" style={{ textAlign: resumeData.alignment }}>
-                  {/* Watermark Overlay */}
-                  <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-10 rotate-45 select-none">
-                    <h1 className="text-6xl font-extrabold text-slate-900 uppercase tracking-widest">WATERMARK PREVIEW</h1>
+              {/* User Authentication Options */}
+              <div className="flex items-center gap-3">
+                {currentUser ? (
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => setCurrentPage('dashboard')} className="text-sm font-semibold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg">My Profile</button>
+                    <button onClick={() => setCurrentUser(null)} className="text-sm font-medium text-slate-500 hover:text-slate-800">Logout</button>
                   </div>
+                ) : (
+                  <>
+                    <button onClick={() => setCurrentPage('login')} className="text-sm font-medium text-slate-600 hover:text-blue-600">Log In</button>
+                    <button onClick={() => setCurrentPage('register')} className="bg-blue-600 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-blue-700 shadow-sm">Register</button>
+                  </>
+                )}
+              </div>
+            </div>
+          </header>
 
-                  <h1 style={{ fontSize: `${resumeData.titleSize}px`, color: resumeData.textColor }} className="font-bold">{resumeData.name || "Your Name"}</h1>
-                  <p style={{ fontSize: `${resumeData.subTitleSize}px` }} className="text-red-600 font-semibold mb-2">{resumeData.title || "Your Title"}</p>
+          {/* MAIN CONTENT AREA */}
+          <main className="flex-1">
+
+            {/* 1. MAIN LANDING PAGE */}
+            {currentPage === 'home' && (
+              <div>
+                {/* Hero Section */}
+                <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                   
-                  <div style={{ fontSize: `${resumeData.textSize}px` }} className="text-slate-500 mb-4 border-b pb-2">
-                    <span>{resumeData.email}</span> | <span>{resumeData.phone}</span> | <span>{resumeData.address}</span>
+                  {/* Left Side: Buttons and Headlines */}
+                  <div className="lg:col-span-6 space-y-6">
+                    <span className="bg-blue-50 text-blue-700 border border-blue-200 text-xs font-semibold px-3 py-1 rounded-full">
+                      ✨ Professional Resume Builder
+                    </span>
+                    <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 leading-tight">
+                      Create Your <br /><span className="text-blue-600">Professional Resume</span> That Gets You Hired
+                    </h1>
+                    <p className="text-slate-600 text-sm md:text-base">
+                      Choose from 50+ ATS-friendly templates, customize details in seconds, and download high-quality PDFs.
+                    </p>
+                    
+                    {/* Action Buttons on Left */}
+                    <div className="flex flex-wrap gap-4 pt-2">
+                      <button onClick={() => setCurrentPage('editor')} className="bg-blue-600 text-white font-semibold px-6 py-3 rounded-xl shadow-md hover:bg-blue-700 transition">
+                        Create Resume &rarr;
+                      </button>
+                      <button onClick={() => setShow50TemplatesModal(true)} className="bg-white border border-slate-300 text-slate-700 font-semibold px-6 py-3 rounded-xl hover:bg-slate-50 transition">
+                        View Templates
+                      </button>
+                    </div>
                   </div>
 
-                  <div className="mb-4">
-                    <h3 className="font-bold border-b pb-1 mb-1 text-slate-700" style={{ fontSize: `${resumeData.textSize + 2}px` }}>CAREER OBJECTIVE</h3>
-                    <p style={{ fontSize: `${resumeData.textSize}px` }} className="text-slate-600">{resumeData.about}</p>
-                  </div>
+                  {/* Right Side: 3 to 4 Resume Cards Display */}
+                  <div className="lg:col-span-6 grid grid-cols-2 gap-4">
+                    <div className="bg-white p-4 rounded-xl border shadow-md space-y-2 border-t-4 border-t-blue-600">
+                      <div className="h-3 bg-blue-600 w-1/2 rounded"></div>
+                      <div className="h-2 bg-slate-200 w-3/4 rounded"></div>
+                      <div className="h-2 bg-slate-100 w-full rounded"></div>
+                      <div className="h-16 bg-slate-50 border border-dashed rounded mt-2"></div>
+                      <span className="text-[10px] text-slate-400 block font-semibold text-center">Modern Blue Format</span>
+                    </div>
 
-                  <div className="mb-4">
-                    <h3 className="font-bold border-b pb-1 mb-1 text-slate-700" style={{ fontSize: `${resumeData.textSize + 2}px` }}>EDUCATION</h3>
-                    {resumeData.education.map((edu, i) => (
-                      <div key={i} className="flex justify-between text-slate-700 py-0.5" style={{ fontSize: `${resumeData.textSize}px` }}>
-                        <span className="font-semibold">{edu.course} - {edu.university}</span>
-                        <span>{edu.percentage} ({edu.year})</span>
+                    <div className="bg-white p-4 rounded-xl border shadow-md space-y-2 border-t-4 border-t-emerald-600 mt-4">
+                      <div className="h-3 bg-emerald-600 w-1/2 rounded"></div>
+                      <div className="h-2 bg-slate-200 w-3/4 rounded"></div>
+                      <div className="h-2 bg-slate-100 w-full rounded"></div>
+                      <div className="h-16 bg-slate-50 border border-dashed rounded mt-2"></div>
+                      <span className="text-[10px] text-slate-400 block font-semibold text-center">Clean Executive</span>
+                    </div>
+
+                    <div className="bg-white p-4 rounded-xl border shadow-md space-y-2 border-t-4 border-t-purple-600">
+                      <div className="h-3 bg-purple-600 w-1/2 rounded"></div>
+                      <div className="h-2 bg-slate-200 w-3/4 rounded"></div>
+                      <div className="h-2 bg-slate-100 w-full rounded"></div>
+                      <div className="h-16 bg-slate-50 border border-dashed rounded mt-2"></div>
+                      <span className="text-[10px] text-slate-400 block font-semibold text-center">Creative Design</span>
+                    </div>
+
+                    <div className="bg-white p-4 rounded-xl border shadow-md space-y-2 border-t-4 border-t-slate-800 mt-4">
+                      <div className="h-3 bg-slate-800 w-1/2 rounded"></div>
+                      <div className="h-2 bg-slate-200 w-3/4 rounded"></div>
+                      <div className="h-2 bg-slate-100 w-full rounded"></div>
+                      <div className="h-16 bg-slate-50 border border-dashed rounded mt-2"></div>
+                      <span className="text-[10px] text-slate-400 block font-semibold text-center">Classic Minimal</span>
+                    </div>
+                  </div>
+                </section>
+
+                {/* SLIDER WITH 6 TEMPLATES & "VIEW ALL TEMPLATES" BUTTON */}
+                <section className="bg-white border-t py-12">
+                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <h2 className="text-2xl font-bold text-center text-slate-900 mb-8">Popular Resume Formats</h2>
+                    
+                    {/* 6 Templates Slider Showcase Grid */}
+                    <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-8">
+                      {templatesList.slice(0, 6).map((tpl) => (
+                        <div 
+                          key={tpl.id}
+                          onClick={() => { setResumeForm({...resumeForm, templateId: tpl.id}); setCurrentPage('editor'); }}
+                          className={`bg-slate-50 border-2 ${tpl.color} rounded-xl p-3 text-center cursor-pointer hover:shadow-lg transition transform hover:-translate-y-1`}
+                        >
+                          <div className="h-28 border border-dashed bg-white rounded mb-2 flex items-center justify-center text-xs font-bold text-slate-400">
+                            Format Preview
+                          </div>
+                          <p className="text-xs font-bold text-slate-800">{tpl.title}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* View All Templates Option Directly Below Slider */}
+                    <div className="text-center">
+                      <button 
+                        onClick={() => setShow50TemplatesModal(true)} 
+                        className="bg-slate-900 text-white font-semibold text-sm px-8 py-3 rounded-xl hover:bg-slate-800 shadow transition"
+                      >
+                        View All 50 Templates
+                      </button>
+                    </div>
+                  </div>
+                </section>
+              </div>
+            )}
+
+            {/* 2. USER REGISTRATION PAGE */}
+            {currentPage === 'register' && (
+              <div className="max-w-3xl mx-auto px-4 py-10">
+                <div className="bg-white p-6 md:p-8 rounded-2xl border shadow-sm">
+                  <h2 className="text-2xl font-bold mb-6 text-slate-900">User Registration</h2>
+                  <form onSubmit={handleUserRegister} className="space-y-6">
+                    
+                    {/* Primary User Details */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-xs font-bold block mb-1">Full Name</label>
+                        <input required type="text" value={regForm.name} onChange={e => setRegForm({...regForm, name: e.target.value})} className="w-full border p-2 rounded-lg text-sm" />
                       </div>
-                    ))}
-                  </div>
-
-                  <div>
-                    <h3 className="font-bold border-b pb-1 mb-1 text-slate-700" style={{ fontSize: `${resumeData.textSize + 2}px` }}>EXPERIENCE</h3>
-                    {resumeData.experience.map((exp, i) => (
-                      <div key={i} className="flex justify-between text-slate-700 py-0.5" style={{ fontSize: `${resumeData.textSize}px` }}>
-                        <span className="font-semibold">{exp.role} at {exp.company}</span>
-                        <span>{exp.years}</span>
+                      <div>
+                        <label className="text-xs font-bold block mb-1">Mobile Number</label>
+                        <input required type="tel" value={regForm.phone} onChange={e => setRegForm({...regForm, phone: e.target.value})} className="w-full border p-2 rounded-lg text-sm" />
                       </div>
-                    ))}
-                  </div>
+                      <div>
+                        <label className="text-xs font-bold block mb-1">Email ID</label>
+                        <input required type="email" value={regForm.email} onChange={e => setRegForm({...regForm, email: e.target.value})} className="w-full border p-2 rounded-lg text-sm" />
+                      </div>
+                      <div>
+                        <label className="text-xs font-bold block mb-1">Password</label>
+                        <input required type="password" value={regForm.password} onChange={e => setRegForm({...regForm, password: e.target.value})} className="w-full border p-2 rounded-lg text-sm" />
+                      </div>
+                    </div>
+
+                    {/* Sequential Education Details Table */}
+                    <div>
+                      <div className="flex justify-between items-center mb-2">
+                        <label className="text-xs font-bold text-slate-700">Education Details</label>
+                        <button type="button" onClick={addRegEduRow} className="text-xs bg-blue-50 text-blue-600 font-bold px-2 py-1 rounded border border-blue-200">+ Add Row</button>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left border-collapse border rounded-lg text-xs">
+                          <thead>
+                            <tr className="bg-slate-100 border-b">
+                              <th className="p-2 border-r">Qualification</th>
+                              <th className="p-2 border-r">Percentage</th>
+                              <th className="p-2 border-r">Passing Year</th>
+                              <th className="p-2">Institute Name</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {regForm.education.map((row, idx) => (
+                              <tr key={idx} className="border-b">
+                                <td className="p-1 border-r"><input type="text" value={row.qualification} onChange={e => { const updated = [...regForm.education]; updated[idx].qualification = e.target.value; setRegForm({...regForm, education: updated}); }} className="w-full p-1 border rounded" /></td>
+                                <td className="p-1 border-r"><input type="text" value={row.percentage} onChange={e => { const updated = [...regForm.education]; updated[idx].percentage = e.target.value; setRegForm({...regForm, education: updated}); }} className="w-full p-1 border rounded" /></td>
+                                <td className="p-1 border-r"><input type="text" value={row.passingYear} onChange={e => { const updated = [...regForm.education]; updated[idx].passingYear = e.target.value; setRegForm({...regForm, education: updated}); }} className="w-full p-1 border rounded" /></td>
+                                <td className="p-1"><input type="text" value={row.institute} onChange={e => { const updated = [...regForm.education]; updated[idx].institute = e.target.value; setRegForm({...regForm, education: updated}); }} className="w-full p-1 border rounded" /></td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    {/* Experience Details Table */}
+                    <div>
+                      <div className="flex justify-between items-center mb-2">
+                        <label className="text-xs font-bold text-slate-700">Experience Details</label>
+                        <button type="button" onClick={addRegExpRow} className="text-xs bg-blue-50 text-blue-600 font-bold px-2 py-1 rounded border border-blue-200">+ Add Row</button>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left border-collapse border rounded-lg text-xs">
+                          <thead>
+                            <tr className="bg-slate-100 border-b">
+                              <th className="p-2 border-r">Company Name</th>
+                              <th className="p-2 border-r">Work Profile</th>
+                              <th className="p-2">Years of Experience</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {regForm.experience.map((row, idx) => (
+                              <tr key={idx} className="border-b">
+                                <td className="p-1 border-r"><input type="text" value={row.company} onChange={e => { const updated = [...regForm.experience]; updated[idx].company = e.target.value; setRegForm({...regForm, experience: updated}); }} className="w-full p-1 border rounded" /></td>
+                                <td className="p-1 border-r"><input type="text" value={row.profile} onChange={e => { const updated = [...regForm.experience]; updated[idx].profile = e.target.value; setRegForm({...regForm, experience: updated}); }} className="w-full p-1 border rounded" /></td>
+                                <td className="p-1"><input type="text" value={row.years} onChange={e => { const updated = [...regForm.experience]; updated[idx].years = e.target.value; setRegForm({...regForm, experience: updated}); }} className="w-full p-1 border rounded" /></td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <button type="submit" className="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition">
+                      Complete Registration
+                    </button>
+                  </form>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* PAGE 3: ADMIN PANEL */}
-          {currentPage === 'admin' && (
-            <div className="max-w-6xl mx-auto p-6">
-              <h1 className="text-2xl font-bold mb-6 text-slate-900 border-b pb-2">Admin Control Center</h1>
-
-              {/* Realtime Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="bg-white p-5 rounded-xl border shadow-sm">
-                  <p className="text-xs text-slate-500 font-bold">LIVE SITE VISITS</p>
-                  <p className="text-2xl font-extrabold mt-1">{stats.totalVisits}</p>
-                </div>
-                <div className="bg-white p-5 rounded-xl border shadow-sm">
-                  <p className="text-xs text-slate-500 font-bold">RESUMES DOWNLOADED</p>
-                  <p className="text-2xl font-extrabold mt-1 text-blue-600">{stats.totalDownloads}</p>
-                </div>
-                <div className="bg-white p-5 rounded-xl border shadow-sm">
-                  <p className="text-xs text-slate-500 font-bold">TOTAL PAYMENTS COLLECTED</p>
-                  <p className="text-2xl font-extrabold text-green-600 mt-1">₹{stats.totalRevenue}</p>
+            {/* 3. USER LOGIN PAGE */}
+            {currentPage === 'login' && (
+              <div className="max-w-md mx-auto px-4 py-16">
+                <div className="bg-white p-6 rounded-2xl border shadow-sm">
+                  <h2 className="text-2xl font-bold mb-4 text-slate-900 text-center">User Login</h2>
+                  <form onSubmit={handleUserLogin} className="space-y-4">
+                    <div>
+                      <label className="text-xs font-bold block mb-1">Email or Mobile Number</label>
+                      <input required type="text" value={regForm.email} onChange={e => setRegForm({...regForm, email: e.target.value})} className="w-full border p-2 rounded-lg text-sm" />
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold block mb-1">Password</label>
+                      <input required type="password" value={regForm.password} onChange={e => setRegForm({...regForm, password: e.target.value})} className="w-full border p-2 rounded-lg text-sm" />
+                    </div>
+                    <button type="submit" className="w-full bg-blue-600 text-white font-bold py-2.5 rounded-xl hover:bg-blue-700 transition">
+                      Log In
+                    </button>
+                  </form>
                 </div>
               </div>
+            )}
 
-              {/* Admin Widgets Settings */}
-              <div className="bg-white p-6 rounded-xl border shadow-sm mb-8 space-y-4">
-                <h3 className="font-bold text-slate-800 border-b pb-2">Website Settings & Integration Widgets</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* 4. USER DASHBOARD / PROFILE */}
+            {currentPage === 'dashboard' && currentUser && (
+              <div className="max-w-4xl mx-auto px-4 py-10 space-y-6">
+                <div className="bg-white p-6 rounded-2xl border shadow-sm flex justify-between items-center">
                   <div>
-                    <label className="text-xs font-semibold block mb-1">Razorpay Key ID Widget</label>
-                    <input type="text" placeholder="rzp_live_xxx" value={siteConfig.razorpayKey} onChange={(e) => setSiteConfig({...siteConfig, razorpayKey: e.target.value})} className="border p-2 rounded text-sm w-full"/>
+                    <h2 className="text-2xl font-bold text-slate-900">Welcome, {currentUser.name}</h2>
+                    <p className="text-xs text-slate-500">{currentUser.email} | {currentUser.phone}</p>
                   </div>
-                  <div>
-                    <label className="text-xs font-semibold block mb-1">Firebase Configuration Widget</label>
-                    <input type="text" placeholder="Firebase Config API" value={siteConfig.firebaseConfig} onChange={(e) => setSiteConfig({...siteConfig, firebaseConfig: e.target.value})} className="border p-2 rounded text-sm w-full"/>
-                  </div>
-                  <div>
-                    <label className="text-xs font-semibold block mb-1">Set Custom Resume Download Fee (₹)</label>
-                    <input type="number" value={siteConfig.premiumPrice} onChange={(e) => setSiteConfig({...siteConfig, premiumPrice: Number(e.target.value)})} className="border p-2 rounded text-sm w-full"/>
-                  </div>
-                  <div>
-                    <label className="text-xs font-semibold block mb-1">Website Title & Logo Name</label>
+                  <button onClick={() => setCurrentPage('editor')} className="bg-blue-600 text-white font-bold text-sm px-4 py-2 rounded-lg">
+                    + Create New Resume
+                  </button>
+                </div>
+
+                {/* Saved Resume Action Card */}
+                <div className="bg-white p-6 rounded-2xl border shadow-sm">
+                  <h3 className="font-bold text-lg mb-4 text-slate-800">Your Saved Profile Resume</h3>
+                  <div className="flex justify-between items-center border p-4 rounded-xl bg-slate-50">
+                    <div>
+                      <p className="font-bold text-sm text-slate-900">{currentUser.name}_Resume.pdf</p>
+                      <p className="text-xs text-slate-500">Auto-saved from your profile details</p>
+                    </div>
                     <div className="flex gap-2">
-                      <input type="text" value={siteConfig.logoText} onChange={(e) => setSiteConfig({...siteConfig, logoText: e.target.value})} className="border p-2 rounded text-sm w-20"/>
-                      <input type="text" value={siteConfig.siteName} onChange={(e) => setSiteConfig({...siteConfig, siteName: e.target.value})} className="border p-2 rounded text-sm w-full"/>
+                      <button onClick={() => setCurrentPage('editor')} className="border bg-white text-slate-700 text-xs font-bold px-3 py-2 rounded-lg">Edit Details</button>
+                      <button onClick={() => setCurrentPage('editor')} className="bg-blue-600 text-white text-xs font-bold px-3 py-2 rounded-lg">Preview / Download</button>
                     </div>
                   </div>
                 </div>
               </div>
+            )}
 
-              {/* Registered Users Management */}
-              <div className="bg-white p-6 rounded-xl border shadow-sm">
-                <h3 className="font-bold mb-4 text-slate-800">User Management Data</h3>
-                <table className="w-full text-left border-collapse text-sm">
-                  <thead>
-                    <tr className="border-b text-slate-400">
-                      <th className="py-2">Name</th>
-                      <th className="py-2">Email</th>
-                      <th className="py-2">Phone</th>
-                      <th className="py-2">Password</th>
-                      <th className="py-2">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {users.map(u => (
-                      <tr key={u.id} className="border-b">
-                        <td className="py-3 font-semibold">{u.name}</td>
-                        <td className="py-3">{u.email}</td>
-                        <td className="py-3">{u.phone}</td>
-                        <td className="py-3">{u.password}</td>
-                        <td className="py-3">
-                          <button onClick={() => setUsers(users.filter(usr => usr.id !== u.id))} className="text-red-600 font-bold hover:underline">Remove User</button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
+            {/* 5. RESUME EDITOR & PRINT PREVIEW AREA */}
+            {currentPage === 'editor' && (
+              <div className="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                {/* Detailed Inputs Form */}
+                <div className="lg:col-span-6 bg-white p-6 rounded-2xl border shadow-sm space-y-6 max-h-[85vh] overflow-y-auto">
+                  <h2 className="text-xl font-bold text-slate-900 border-b pb-2">Enter Resume Details</h2>
 
-          {/* PAGE 4: USER DASHBOARD / PROFILE */}
-          {currentPage === 'dashboard' && currentUser && (
-            <div className="max-w-4xl mx-auto p-6">
-              <h1 className="text-2xl font-bold mb-4">Welcome, {currentUser.name}</h1>
-              <div className="bg-white p-6 rounded-xl border shadow-sm">
-                <h3 className="font-bold mb-2">Saved Resumes</h3>
-                <div className="flex justify-between items-center border p-4 rounded-xl">
+                  {/* Personal Contact Details */}
+                  <div className="grid grid-cols-2 gap-3 text-xs">
+                    <div>
+                      <label className="font-bold block mb-1">Full Name</label>
+                      <input type="text" value={resumeForm.name} onChange={e => setResumeForm({...resumeForm, name: e.target.value})} className="w-full border p-2 rounded" />
+                    </div>
+                    <div>
+                      <label className="font-bold block mb-1">Phone Number</label>
+                      <input type="text" value={resumeForm.phone} onChange={e => setResumeForm({...resumeForm, phone: e.target.value})} className="w-full border p-2 rounded" />
+                    </div>
+                    <div>
+                      <label className="font-bold block mb-1">Mother's Name</label>
+                      <input type="text" value={resumeForm.motherName} onChange={e => setResumeForm({...resumeForm, motherName: e.target.value})} className="w-full border p-2 rounded" />
+                    </div>
+                    <div>
+                      <label className="font-bold block mb-1">Father's Name</label>
+                      <input type="text" value={resumeForm.fatherName} onChange={e => setResumeForm({...resumeForm, fatherName: e.target.value})} className="w-full border p-2 rounded" />
+                    </div>
+                    <div>
+                      <label className="font-bold block mb-1">Email ID</label>
+                      <input type="email" value={resumeForm.email} onChange={e => setResumeForm({...resumeForm, email: e.target.value})} className="w-full border p-2 rounded" />
+                    </div>
+                    <div>
+                      <label className="font-bold block mb-1">Address</label>
+                      <input type="text" value={resumeForm.address} onChange={e => setResumeForm({...resumeForm, address: e.target.value})} className="w-full border p-2 rounded" />
+                    </div>
+                    <div>
+                      <label className="font-bold block mb-1">Country</label>
+                      <input type="text" value={resumeForm.country} onChange={e => setResumeForm({...resumeForm, country: e.target.value})} className="w-full border p-2 rounded" />
+                    </div>
+                    <div>
+                      <label className="font-bold block mb-1">District</label>
+                      <input type="text" value={resumeForm.district} onChange={e => setResumeForm({...resumeForm, district: e.target.value})} className="w-full border p-2 rounded" />
+                    </div>
+                    <div>
+                      <label className="font-bold block mb-1">City</label>
+                      <input type="text" value={resumeForm.city} onChange={e => setResumeForm({...resumeForm, city: e.target.value})} className="w-full border p-2 rounded" />
+                    </div>
+                    <div>
+                      <label className="font-bold block mb-1">Village</label>
+                      <input type="text" value={resumeForm.village} onChange={e => setResumeForm({...resumeForm, village: e.target.value})} className="w-full border p-2 rounded" />
+                    </div>
+                  </div>
+
+                  {/* Education Dynamic Table */}
                   <div>
-                    <p className="font-bold">{resumeData.name}'s Resume</p>
-                    <p className="text-xs text-slate-500">Last updated: Today</p>
-                  </div>
-                  <div className="flex gap-2">
-                    <button onClick={() => setCurrentPage('editor')} className="bg-slate-900 text-white text-xs px-3 py-2 rounded">Edit Resume</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* PAGE 5: ALL 50 TEMPLATES MODAL */}
-          {showTemplatesModal && (
-            <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-              <div className="bg-white rounded-2xl p-6 max-w-4xl w-full max-h-[80vh] overflow-y-auto">
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-xl font-bold">Select From 50 ATS Templates</h2>
-                  <button onClick={() => setShowTemplatesModal(false)} className="text-red-600 font-bold">✕ Close</button>
-                </div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {templatesList.map((tpl) => (
-                    <div 
-                      key={tpl.id}
-                      onClick={() => { setResumeData({...resumeData, template: tpl.id}); setShowTemplatesModal(false); setCurrentPage('editor'); }}
-                      className={`border-2 ${tpl.color} rounded-xl p-3 text-center cursor-pointer hover:bg-slate-50`}
-                    >
-                      <div className="h-20 border border-dashed rounded bg-slate-50 mb-2 flex items-center justify-center text-xs">Visual Design</div>
-                      <p className="text-xs font-bold">{tpl.name}</p>
+                    <div className="flex justify-between items-center mb-2">
+                      <label className="text-xs font-bold text-slate-800">Education Details</label>
+                      <button type="button" onClick={addResumeEduRow} className="text-xs bg-blue-50 text-blue-600 font-bold px-2 py-1 rounded border border-blue-200">+ Add Row</button>
                     </div>
-                  ))}
+                    <div className="space-y-2">
+                      {resumeForm.education.map((row, idx) => (
+                        <div key={idx} className="grid grid-cols-4 gap-1 text-xs bg-slate-50 p-2 rounded border">
+                          <input placeholder="Qual." value={row.qualification} onChange={e => { const updated = [...resumeForm.education]; updated[idx].qualification = e.target.value; setResumeForm({...resumeForm, education: updated}); }} className="border p-1 rounded"/>
+                          <input placeholder="%" value={row.percentage} onChange={e => { const updated = [...resumeForm.education]; updated[idx].percentage = e.target.value; setResumeForm({...resumeForm, education: updated}); }} className="border p-1 rounded"/>
+                          <input placeholder="Year" value={row.passingYear} onChange={e => { const updated = [...resumeForm.education]; updated[idx].passingYear = e.target.value; setResumeForm({...resumeForm, education: updated}); }} className="border p-1 rounded"/>
+                          <input placeholder="Institute" value={row.institute} onChange={e => { const updated = [...resumeForm.education]; updated[idx].institute = e.target.value; setResumeForm({...resumeForm, education: updated}); }} className="border p-1 rounded"/>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Experience Dynamic Table */}
+                  <div>
+                    <div className="flex justify-between items-center mb-2">
+                      <label className="text-xs font-bold text-slate-800">Experience Details</label>
+                      <button type="button" onClick={addResumeExpRow} className="text-xs bg-blue-50 text-blue-600 font-bold px-2 py-1 rounded border border-blue-200">+ Add Row</button>
+                    </div>
+                    <div className="space-y-2">
+                      {resumeForm.experience.map((row, idx) => (
+                        <div key={idx} className="grid grid-cols-3 gap-1 text-xs bg-slate-50 p-2 rounded border">
+                          <input placeholder="Company" value={row.company} onChange={e => { const updated = [...resumeForm.experience]; updated[idx].company = e.target.value; setResumeForm({...resumeForm, experience: updated}); }} className="border p-1 rounded"/>
+                          <input placeholder="Work Profile" value={row.profile} onChange={e => { const updated = [...resumeForm.experience]; updated[idx].profile = e.target.value; setResumeForm({...resumeForm, experience: updated}); }} className="border p-1 rounded"/>
+                          <input placeholder="Years" value={row.years} onChange={e => { const updated = [...resumeForm.experience]; updated[idx].years = e.target.value; setResumeForm({...resumeForm, experience: updated}); }} className="border p-1 rounded"/>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Print Preview Column with Watermark */}
+                <div className="lg:col-span-6 space-y-4">
+                  <div className="flex justify-between items-center bg-white p-4 rounded-xl border shadow-sm">
+                    <div>
+                      <h3 className="font-bold text-slate-900 text-sm">Print Preview</h3>
+                      <p className="text-[11px] text-slate-500">Free preview contains a watermark</p>
+                    </div>
+                    <button onClick={handleDownloadClick} className="bg-blue-600 text-white font-bold text-xs px-5 py-2.5 rounded-xl hover:bg-blue-700 shadow">
+                      Pay ₹{siteConfig.customPrice} & Download Clean PDF
+                    </button>
+                  </div>
+
+                  {/* Printable Resume Container */}
+                  <div id="printable-resume" className="relative bg-white p-8 rounded-xl border shadow-md min-h-[600px]">
+                    
+                    {/* Watermark Element */}
+                    <div id="resume-watermark" className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-10 select-none rotate-45">
+                      <span className="text-5xl font-black text-slate-900 tracking-widest uppercase">WATERMARK PREVIEW</span>
+                    </div>
+
+                    {/* Resume Visual Layout */}
+                    <div className="border-b-2 border-blue-600 pb-3 mb-4">
+                      <h1 className="text-2xl font-bold text-slate-900">{resumeForm.name || "Your Name"}</h1>
+                      <p className="text-xs text-slate-600 mt-1">
+                        {resumeForm.email} | {resumeForm.phone} | {resumeForm.address}, {resumeForm.city}, {resumeForm.district}, {resumeForm.country}
+                      </p>
+                      <p className="text-[11px] text-slate-500">Parents: {resumeForm.fatherName} (Father), {resumeForm.motherName} (Mother)</p>
+                    </div>
+
+                    <div className="space-y-4 text-xs">
+                      <div>
+                        <h3 className="font-bold text-blue-600 border-b mb-2 pb-0.5 uppercase">Education Qualification</h3>
+                        <table className="w-full text-left border-collapse">
+                          <thead>
+                            <tr className="text-slate-400 font-semibold border-b">
+                              <th className="py-1">Qualification</th>
+                              <th className="py-1">Institute</th>
+                              <th className="py-1">Passing Year</th>
+                              <th className="py-1">Percentage</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {resumeForm.education.map((edu, i) => (
+                              <tr key={i} className="border-b border-slate-100">
+                                <td className="py-1 font-semibold text-slate-800">{edu.qualification}</td>
+                                <td className="py-1 text-slate-600">{edu.institute}</td>
+                                <td className="py-1 text-slate-600">{edu.passingYear}</td>
+                                <td className="py-1 text-slate-600">{edu.percentage}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+
+                      <div>
+                        <h3 className="font-bold text-blue-600 border-b mb-2 pb-0.5 uppercase">Work Experience</h3>
+                        <table className="w-full text-left border-collapse">
+                          <thead>
+                            <tr className="text-slate-400 font-semibold border-b">
+                              <th className="py-1">Company</th>
+                              <th className="py-1">Work Profile</th>
+                              <th className="py-1">Duration</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {resumeForm.experience.map((exp, i) => (
+                              <tr key={i} className="border-b border-slate-100">
+                                <td className="py-1 font-semibold text-slate-800">{exp.company}</td>
+                                <td className="py-1 text-slate-600">{exp.profile}</td>
+                                <td className="py-1 text-slate-600">{exp.years}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+
+            {/* 6. ADMIN PANEL AREA */}
+            {currentPage === 'admin' && (
+              <div className="max-w-7xl mx-auto px-4 py-8">
+                
+                {/* Admin Auth Check */}
+                {!isAdminLoggedIn ? (
+                  <div className="max-w-md mx-auto bg-white p-6 rounded-2xl border shadow-sm">
+                    <h2 className="text-2xl font-bold mb-4 text-slate-900 text-center">Admin Panel Authentication</h2>
+                    <form onSubmit={(e) => {
+                      e.preventDefault();
+                      const match = admins.find(a => a.email === adminLoginForm.email && a.password === adminLoginForm.password);
+                      if (match) { setIsAdminLoggedIn(true); } else { alert("Invalid Admin Credentials!"); }
+                    }} className="space-y-4">
+                      <div>
+                        <label className="text-xs font-bold block mb-1">Admin User ID / Email</label>
+                        <input required type="email" value={adminLoginForm.email} onChange={e => setAdminLoginForm({...adminLoginForm, email: e.target.value})} className="w-full border p-2 rounded-lg text-sm" />
+                      </div>
+                      <div>
+                        <label className="text-xs font-bold block mb-1">Password</label>
+                        <input required type="password" value={adminLoginForm.password} onChange={e => setAdminLoginForm({...adminLoginForm, password: e.target.value})} className="w-full border p-2 rounded-lg text-sm" />
+                      </div>
+                      <button type="submit" className="w-full bg-slate-900 text-white font-bold py-2.5 rounded-xl">Access Control Panel</button>
+                    </form>
+                  </div>
+                ) : (
+                  <div className="space-y-8">
+                    <div className="flex justify-between items-center border-b pb-4">
+                      <h1 className="text-2xl font-bold text-slate-900">Admin Control Center</h1>
+                      <button onClick={() => setIsAdminLoggedIn(false)} className="text-xs bg-slate-200 font-bold px-3 py-1.5 rounded-lg">Logout Admin</button>
+                    </div>
+
+                    {/* Analytics Dashboard Display */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div className="bg-white p-5 rounded-xl border shadow-sm">
+                        <p className="text-xs font-bold text-slate-400 uppercase">Resumes Downloaded</p>
+                        <p className="text-3xl font-extrabold text-blue-600 mt-1">{analytics.downloads}</p>
+                      </div>
+                      <div className="bg-white p-5 rounded-xl border shadow-sm">
+                        <p className="text-xs font-bold text-slate-400 uppercase">Total Payouts Received</p>
+                        <p className="text-3xl font-extrabold text-emerald-600 mt-1">₹{analytics.totalPayouts}</p>
+                      </div>
+                      <div className="bg-white p-5 rounded-xl border shadow-sm">
+                        <p className="text-xs font-bold text-slate-400 uppercase">Site Traffic Statistics</p>
+                        <p className="text-3xl font-extrabold text-slate-800 mt-1">{analytics.siteTraffic} Visits</p>
+                      </div>
+                    </div>
+
+                    {/* Configuration Widgets (Razorpay, Pricing, Site Branding) */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      
+                      {/* Razorpay & Pricing Widget */}
+                      <div className="bg-white p-6 rounded-2xl border shadow-sm space-y-4">
+                        <h3 className="font-bold text-slate-800 border-b pb-2">Razorpay & Download Pricing Widget</h3>
+                        <div>
+                          <label className="text-xs font-bold block mb-1">Razorpay Key ID Widget</label>
+                          <input type="text" placeholder="rzp_live_xxxxxxxx" value={siteConfig.razorpayKey} onChange={e => setSiteConfig({...siteConfig, razorpayKey: e.target.value})} className="w-full border p-2 rounded text-sm"/>
+                        </div>
+                        <div>
+                          <label className="text-xs font-bold block mb-1">Custom Download Price (₹)</label>
+                          <input type="number" value={siteConfig.customPrice} onChange={e => setSiteConfig({...siteConfig, customPrice: Number(e.target.value)})} className="w-full border p-2 rounded text-sm"/>
+                        </div>
+                      </div>
+
+                      {/* Site Title & Logo Widget */}
+                      <div className="bg-white p-6 rounded-2xl border shadow-sm space-y-4">
+                        <h3 className="font-bold text-slate-800 border-b pb-2">Website Branding Widget</h3>
+                        <div>
+                          <label className="text-xs font-bold block mb-1">Logo Badge Text</label>
+                          <input type="text" value={siteConfig.logoText} onChange={e => setSiteConfig({...siteConfig, logoText: e.target.value})} className="w-full border p-2 rounded text-sm"/>
+                        </div>
+                        <div>
+                          <label className="text-xs font-bold block mb-1">Website Name</label>
+                          <input type="text" value={siteConfig.siteName} onChange={e => setSiteConfig({...siteConfig, siteName: e.target.value})} className="w-full border p-2 rounded text-sm"/>
+                        </div>
+                        <div>
+                          <label className="text-xs font-bold block mb-1">Website Subtitle</label>
+                          <input type="text" value={siteConfig.subtitle} onChange={e => setSiteConfig({...siteConfig, subtitle: e.target.value})} className="w-full border p-2 rounded text-sm"/>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Custom Code Widget & Widget Manager */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      
+                      {/* Custom Code Paste Widget */}
+                      <div className="bg-white p-6 rounded-2xl border shadow-sm space-y-3">
+                        <h3 className="font-bold text-slate-800 border-b pb-2">Custom Code Injection Widget</h3>
+                        <label className="text-xs text-slate-500 block">Paste custom HTML/JS code below to add new features to the site:</label>
+                        <textarea rows="4" value={siteConfig.customCode} onChange={e => setSiteConfig({...siteConfig, customCode: e.target.value})} className="w-full border p-2 rounded text-xs font-mono" placeholder="<script>console.log('Custom Code');</script>"></textarea>
+                      </div>
+
+                      {/* Create New Widgets Option */}
+                      <div className="bg-white p-6 rounded-2xl border shadow-sm space-y-3">
+                        <h3 className="font-bold text-slate-800 border-b pb-2">Create New Custom Widget</h3>
+                        <input id="new-widget-name" type="text" placeholder="Widget Name" className="w-full border p-2 rounded text-xs"/>
+                        <textarea id="new-widget-code" rows="2" placeholder="Widget Code/Content" className="w-full border p-2 rounded text-xs font-mono"></textarea>
+                        <button onClick={() => {
+                          const name = document.getElementById('new-widget-name').value;
+                          const code = document.getElementById('new-widget-code').value;
+                          if (name) {
+                            setAdminWidgets([...adminWidgets, { id: Date.now(), name, code }]);
+                            alert('New Widget Created Successfully!');
+                          }
+                        }} className="bg-slate-900 text-white font-bold text-xs px-4 py-2 rounded-lg">Create Widget</button>
+                      </div>
+                    </div>
+
+                    {/* Admin User Accounts Management (Add, Delete, Remove) */}
+                    <div className="bg-white p-6 rounded-2xl border shadow-sm space-y-4">
+                      <div className="flex justify-between items-center border-b pb-2">
+                        <h3 className="font-bold text-slate-800">Admin User Accounts Control</h3>
+                        <button onClick={() => {
+                          const email = prompt("Enter New Admin Email:");
+                          const password = prompt("Enter New Admin Password:");
+                          if (email && password) setAdmins([...admins, { id: Date.now(), email, password }]);
+                        }} className="text-xs bg-blue-600 text-white font-bold px-3 py-1.5 rounded-lg">+ Add Admin Account</button>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left border-collapse text-xs">
+                          <thead>
+                            <tr className="border-b text-slate-400">
+                              <th className="py-2">Admin Email</th>
+                              <th className="py-2">Password</th>
+                              <th className="py-2">Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {admins.map(a => (
+                              <tr key={a.id} className="border-b">
+                                <td className="py-2 font-semibold">{a.email}</td>
+                                <td className="py-2">{a.password}</td>
+                                <td className="py-2">
+                                  {admins.length > 1 && (
+                                    <button onClick={() => setAdmins(admins.filter(item => item.id !== a.id))} className="text-red-600 font-bold hover:underline">Remove Admin</button>
+                                  )}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    {/* Registered User Data Table (Details, Delete, Remove) */}
+                    <div className="bg-white p-6 rounded-2xl border shadow-sm space-y-4">
+                      <h3 className="font-bold text-slate-800 border-b pb-2">Registered User Database</h3>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left border-collapse text-xs">
+                          <thead>
+                            <tr className="border-b text-slate-400">
+                              <th className="py-2">Name</th>
+                              <th className="py-2">Email</th>
+                              <th className="py-2">Phone Number</th>
+                              <th className="py-2">Password</th>
+                              <th className="py-2">Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {users.map(u => (
+                              <tr key={u.id} className="border-b">
+                                <td className="py-2 font-semibold text-slate-900">{u.name}</td>
+                                <td className="py-2">{u.email}</td>
+                                <td className="py-2">{u.phone}</td>
+                                <td className="py-2 font-mono text-slate-500">{u.password}</td>
+                                <td className="py-2">
+                                  <button onClick={() => setUsers(users.filter(usr => usr.id !== u.id))} className="text-red-600 font-bold hover:underline">
+                                    Delete User
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* 7. ALL 50 TEMPLATES CATALOG MODAL */}
+            {show50TemplatesModal && (
+              <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                <div className="bg-white rounded-2xl max-w-5xl w-full max-h-[85vh] p-6 overflow-y-auto space-y-4">
+                  <div className="flex justify-between items-center border-b pb-3">
+                    <h3 className="text-lg font-bold text-slate-900">Select From All 50 Resume Formats</h3>
+                    <button onClick={() => setShow50TemplatesModal(false)} className="text-slate-400 font-bold hover:text-slate-800">✕ Close</button>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                    {templatesList.map(tpl => (
+                      <div 
+                        key={tpl.id}
+                        onClick={() => { setResumeForm({...resumeForm, templateId: tpl.id}); setShow50TemplatesModal(false); setCurrentPage('editor'); }}
+                        className={`border-2 ${tpl.color} rounded-xl p-3 text-center cursor-pointer hover:bg-slate-50 transition`}
+                      >
+                        <div className="h-20 border border-dashed rounded bg-slate-50 mb-2 flex items-center justify-center text-[10px] text-slate-400">Layout Preview</div>
+                        <p className="text-xs font-bold text-slate-800">{tpl.title}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+          </main>
         </div>
       );
     }
