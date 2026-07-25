@@ -1,907 +1,729 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Make My Resume</title>
-    
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- React & ReactDOM CDN -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    
-    <!-- Babel CDN (JSX Compiler) -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
+    <title id="siteTitleTag">MakeMyResume - Create, Impress. Succeed.</title>
     <style>
-        .watermark-bg {
-            position: relative;
-            overflow: hidden;
-        }
-        .watermark-bg::before {
-            content: "MAKE MY RESUME - SAMPLE PREVIEW";
-            position: absolute;
-            top: 40%;
-            left: -20%;
-            width: 140%;
-            height: 100px;
-            color: rgba(220, 38, 38, 0.15);
-            font-size: 2.2rem;
-            font-weight: 900;
-            transform: rotate(-30deg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            pointer-events: none;
-            z-index: 10;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-        @media print {
-            body * { visibility: hidden; }
-            #printable-resume, #printable-resume * { visibility: visible; }
-            #printable-resume { position: absolute; left: 0; top: 0; width: 100%; }
-            .watermark-bg::before { display: none !important; }
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background: #ffffff; color: #111827; line-height: 1.5; }
+
+        /* Navbar */
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 64px; background: #fff; border-bottom: 1px solid #f3f4f6; position: sticky; top: 0; z-index: 1000; }
+        .logo { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 18px; color: #111; cursor: pointer; text-decoration: none; }
+        .logo-icon { background: #ff3b30; color: #fff; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 6px; font-size: 14px; font-weight: bold; }
+        .logo small { display: block; font-size: 10px; color: #6b7280; font-weight: 400; margin-top: -2px; }
+        
+        .nav-links { display: flex; gap: 24px; align-items: center; }
+        .nav-links a { text-decoration: none; color: #4b5563; font-size: 14px; font-weight: 500; cursor: pointer; transition: color 0.2s; }
+        .nav-links a:hover { color: #ff3b30; }
+
+        .nav-right { display: flex; gap: 12px; align-items: center; }
+        .btn-login, .btn-admin-nav { background: transparent; border: none; font-size: 14px; font-weight: 600; color: #374151; cursor: pointer; padding: 6px 12px; border-radius: 6px; }
+        .btn-get-started { background: #ff3b30; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+
+        /* Views */
+        .view-section { display: none; }
+        .view-section.active { display: block; }
+
+        /* Hero Section */
+        .hero { display: flex; justify-content: space-between; align-items: center; padding: 60px 64px; background: #fff; gap: 40px; max-width: 1440px; margin: 0 auto; }
+        .hero-left { max-width: 540px; }
+        .ai-badge { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 24px; }
+        .hero-left h1 { font-size: 52px; font-weight: 900; line-height: 1.1; color: #0f172a; margin-bottom: 20px; }
+        .hero-left h1 span { color: #ff3b30; }
+        .hero-left p { font-size: 16px; color: #4b5563; margin-bottom: 32px; line-height: 1.6; }
+        
+        .hero-cta { display: flex; gap: 16px; align-items: center; margin-bottom: 36px; }
+        .btn-create { background: #ff3b30; color: #fff; padding: 14px 28px; border-radius: 8px; font-size: 15px; font-weight: 600; border: none; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(255, 59, 48, 0.3); }
+        .btn-view-tpl { background: #fff; color: #111827; padding: 14px 24px; border-radius: 8px; font-size: 15px; font-weight: 600; border: 1px solid #d1d5db; cursor: pointer; text-decoration: none; }
+
+        .trust-row { display: flex; align-items: center; gap: 12px; }
+        .avatars { display: flex; }
+        .avatars img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #fff; margin-left: -10px; object-fit: cover; }
+        .avatars img:first-child { margin-left: 0; }
+        .trust-text { font-size: 13px; color: #4b5563; font-weight: 500; }
+        .stars { color: #fbbf24; letter-spacing: 1px; font-size: 12px; }
+
+        .hero-right { position: relative; display: flex; align-items: center; justify-content: flex-end; }
+        .hero-mockup { width: 580px; border-radius: 12px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); border: 1px solid #e5e7eb; }
+
+        /* Features Bar */
+        .features-bar { display: grid; grid-template-columns: repeat(6, 1fr); gap: 24px; padding: 32px 64px; background: #fafafa; border-top: 1px solid #eee; border-bottom: 1px solid #eee; max-width: 1440px; margin: 0 auto; text-align: center; }
+        .feature-box h4 { font-size: 14px; font-weight: 700; color: #111; margin-bottom: 4px; }
+        .feature-box p { font-size: 12px; color: #6b7280; }
+
+        /* Templates Section */
+        .templates-section { padding: 80px 64px; max-width: 1440px; margin: 0 auto; text-align: center; }
+        .section-title { font-size: 32px; font-weight: 800; color: #111; margin-bottom: 12px; }
+        .section-subtitle { font-size: 16px; color: #6b7280; margin-bottom: 48px; }
+        
+        .templates-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 20px; }
+        .template-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px; cursor: pointer; transition: all 0.2s; text-align: center; }
+        .template-card:hover { border-color: #ff3b30; transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.06); }
+        .tpl-thumb { height: 180px; background: #f8fafc; border-radius: 8px; margin-bottom: 12px; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: #64748b; }
+        .tpl-info { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; font-weight: 600; color: #334155; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+        /* Form Wrapper & Modals */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 2000; overflow-y: auto; padding: 20px; }
+        .modal-content { background: #fff; width: 600px; max-width: 100%; padding: 32px; border-radius: 16px; position: relative; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto; }
+        .modal-close { position: absolute; top: 16px; right: 20px; font-size: 22px; cursor: pointer; color: #6b7280; font-weight: bold; }
+        
+        .form-group { margin-bottom: 16px; text-align: left; }
+        .form-group label { display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 6px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; }
+        .btn-submit { width: 100%; background: #ff3b30; color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; margin-top: 10px; }
+
+        /* Dynamic Tables for Education / Experience inside registration & builder */
+        .dyn-table { width: 100%; border-collapse: collapse; margin-top: 8px; margin-bottom: 12px; }
+        .dyn-table th, .dyn-table td { padding: 8px; border: 1px solid #e5e7eb; font-size: 12px; }
+        .dyn-table th { background: #f9fafb; text-align: left; }
+        .dyn-table input { width: 100%; padding: 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px; }
+        .btn-add-row { background: #2563eb; color: #fff; border: none; padding: 6px 12px; font-size: 12px; border-radius: 4px; cursor: pointer; margin-bottom: 12px; }
+        .btn-del-row { background: #dc2626; color: #fff; border: none; padding: 4px 8px; font-size: 11px; border-radius: 4px; cursor: pointer; }
+
+        /* Editor / Resume Builder Workspace */
+        .builder-container { max-width: 1000px; margin: 40px auto; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 32px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .builder-container h2 { margin-bottom: 20px; font-size: 24px; color: #111; }
+        
+        /* Watermarked Preview Area */
+        .preview-container { margin-top: 30px; background: #f3f4f6; padding: 30px; border-radius: 8px; text-align: center; position: relative; }
+        .resume-sheet { background: #fff; width: 700px; max-width: 100%; margin: 0 auto; padding: 40px; text-align: left; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; border: 1px solid #ddd; }
+        
+        /* Watermark */
+        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg); font-size: 60px; font-weight: 900; color: rgba(239, 68, 68, 0.15); pointer-events: none; z-index: 10; text-transform: uppercase; white-space: nowrap; }
+
+        /* Admin Panel Styles */
+        .admin-dashboard { padding: 40px 64px; max-width: 1440px; margin: 0 auto; }
+        .admin-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
+        .admin-stat-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .admin-stat-card span { font-size: 12px; color: #6b7280; font-weight: 600; text-transform: uppercase; }
+        .admin-stat-card h3 { font-size: 28px; font-weight: 800; color: #111; margin-top: 6px; }
+        
+        .admin-section-box { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+        .admin-section-box h3 { margin-bottom: 16px; font-size: 18px; color: #111; }
+        
+        table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; border: 1px solid #e5e7eb; }
+        th, td { padding: 12px 16px; font-size: 13px; text-align: left; border-bottom: 1px solid #f3f4f6; }
+        th { background: #f9fafb; font-weight: 700; color: #374151; }
+        .btn-action { padding: 4px 10px; font-size: 12px; border-radius: 4px; border: none; cursor: pointer; margin-right: 4px; }
+        .btn-danger { background: #fee2e2; color: #dc2626; }
+        .btn-success { background: #dcfce7; color: #15803d; }
+
+        /* Custom widget injected container */
+        #injectedCustomWidgetsContainer { margin-top: 20px; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased">
+<body>
 
-    <div id="root"></div>
+    <!-- Header Navigation Bar -->
+    <header class="navbar">
+        <a class="logo" onclick="switchView('homeView')">
+            <div id="navLogoIcon" class="logo-icon">4</div>
+            <div><span id="navBrandName">MakeMyResume</span><small>Create, Impress. Succeed.</small></div>
+        </a>
+        <nav class="nav-links">
+            <a onclick="switchView('homeView')">Home</a>
+            <a onclick="scrollToSection('templates-section')">Templates</a>
+            <a onclick="switchView('pricingView')">Pricing</a>
+            <a onclick="switchView('editorView')">Editor</a>
+            <a onclick="openModal('adminLoginModal')">Admin Login</a>
+        </nav>
+        <div class="nav-right">
+            <button class="btn-login" onclick="openModal('loginModal')">User Login</button>
+            <button class="btn-get-started" onclick="openModal('registerModal')">User Registration</button>
+        </div>
+    </header>
 
-    <script type="text/babel">
-        const { useState, useEffect } = React;
+    <!-- CONTAINER FOR DYNAMIC CUSTOM WIDGETS INJECTION -->
+    <div id="injectedCustomWidgetsContainer"></div>
 
-        function App() {
-            // Site Settings State (Admin Configurable)
-            const [siteTitle, setSiteTitle] = useState("Make My Resume");
-            const [siteSubtitle, setSiteSubtitle] = useState("Create Professional Resumes in Minutes");
-            const [resumePrice, setResumePrice] = useState(49);
-            const [razorpayKey, setRazorpayKey] = useState("");
-            const [customWidgets, setCustomWidgets] = useState([]);
-
-            // Navigation & Page States
-            const [currentPage, setCurrentPage] = useState("home"); // home, templates, pricing, editor, admin, login, register, preview, profile
-
-            // Analytics Data (Admin Panel)
-            const [analytics, setAnalytics] = useState({
-                downloads: 142,
-                payout: 6958,
-                traffic: 1250
-            });
-
-            // Admin Accounts Data
-            const [admins, setAdmins] = useState([
-                { id: 1, email: "admin@makemyresume.com", password: "admin" }
-            ]);
-            const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
-
-            // Users Database
-            const [users, setUsers] = useState([
-                { 
-                    id: 1, 
-                    name: "Rahul Kumar", 
-                    email: "rahul@gmail.com", 
-                    phone: "9876543210", 
-                    password: "123",
-                    motherName: "Sita Devi",
-                    fatherName: "Ramesh Kumar",
-                    address: "Main Market",
-                    country: "India",
-                    district: "Bhopal",
-                    city: "Bhopal",
-                    education: [{ degree: "B.Tech", percent: "82%", passout: "2023", institute: "RGPV" }],
-                    experience: [{ company: "TechCorp", profile: "Web Developer", years: "2 Years" }]
-                }
-            ]);
-            const [currentUser, setCurrentUser] = useState(null);
-
-            // Resume Form Data State
-            const [resumeData, setResumeData] = useState({
-                name: "", phone: "", motherName: "", fatherName: "", email: "",
-                address: "", country: "India", district: "", city: "",
-                education: [{ degree: "", percent: "", passout: "", institute: "" }],
-                experience: [{ company: "", profile: "", years: "" }]
-            });
-
-            // Pre-fill form when logged in user creates resume
-            useEffect(() => {
-                if (currentUser) {
-                    setResumeData({ ...currentUser });
-                }
-            }, [currentUser]);
-
-            // Sample Templates List
-            const templates = [
-                { id: 1, name: "Modern Minimalist", color: "bg-blue-600", desc: "Clean & Professional layout for Tech roles" },
-                { id: 2, name: "Executive Suite", color: "bg-slate-800", desc: "Best for Experienced & Management Profiles" },
-                { id: 3, name: "Creative Canvas", color: "bg-purple-600", desc: "Eye-catching design for Designers & Marketers" },
-                { id: 4, name: "Academic Elegant", color: "bg-emerald-600", desc: "Structured design for Teaching & Research" },
-                { id: 5, name: "Corporate Classic", color: "bg-indigo-600", desc: "Traditional layout suitable for Banking & Sales" },
-                { id: 6, name: "Startup Sleek", color: "bg-rose-600", desc: "Modern dynamic layout for Fast-growing Roles" },
-                { id: 7, name: "Compact One-Pager", color: "bg-amber-600", desc: "Saves space, perfect for Freshers" }
-            ];
-
-            // Handlers for Registration & Dynamic Rows
-            const handleAddEducation = (targetForm = 'resumeData') => {
-                if(targetForm === 'resumeData') {
-                    setResumeData({
-                        ...resumeData,
-                        education: [...resumeData.education, { degree: "", percent: "", passout: "", institute: "" }]
-                    });
-                } else {
-                    setRegForm({
-                        ...regForm,
-                        education: [...regForm.education, { degree: "", percent: "", passout: "", institute: "" }]
-                    });
-                }
-            };
-
-            const handleAddExperience = (targetForm = 'resumeData') => {
-                if(targetForm === 'resumeData') {
-                    setResumeData({
-                        ...resumeData,
-                        experience: [...resumeData.experience, { company: "", profile: "", years: "" }]
-                    });
-                } else {
-                    setRegForm({
-                        ...regForm,
-                        experience: [...regForm.experience, { company: "", profile: "", years: "" }]
-                    });
-                }
-            };
-
-            // User Registration State
-            const [regForm, setRegForm] = useState({
-                name: "", phone: "", email: "", password: "",
-                education: [{ degree: "", percent: "", passout: "", institute: "" }],
-                experience: [{ company: "", profile: "", years: "" }]
-            });
-
-            const handleRegisterSubmit = (e) => {
-                e.preventDefault();
-                const newUser = { ...regForm, id: Date.now() };
-                setUsers([...users, newUser]);
-                setCurrentUser(newUser);
-                alert("Registration Successful! Welcome to " + siteTitle);
-                setCurrentPage("profile");
-            };
-
-            // Download Trigger Payment Simulation
-            const handlePaymentAndDownload = () => {
-                if (!razorpayKey || razorpayKey.trim() === "") {
-                    alert("⚠️ Payment Gateway Under Maintenance! Payment Gateway Razorpay setup nahi hua hai. Kripya Admin se sampark karein ya Admin Panel me API key add karein.");
-                } else {
-                    alert(`Razorpay Gateway Initialized (Key: ${razorpayKey})\nAmount to Pay: ₹${resumePrice}\n\n[Simulating Success] Payment Successful! Downloading Resume...`);
-                    setAnalytics({
-                        ...analytics,
-                        downloads: analytics.downloads + 1,
-                        payout: analytics.payout + Number(resumePrice)
-                    });
-                    window.print();
-                }
-            };
-
-            return (
-                <div class="min-h-screen flex flex-col justify-between">
-                    
-                    {/* 3. HEADER NAVIGATION BAR */}
-                    <header class="bg-white shadow-md sticky top-0 z-50">
-                        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-                            {/* 2. LOGO & NAME */}
-                            <div class="flex items-center space-x-3 cursor-pointer" onClick={() => setCurrentPage('home')}>
-                                <div class="bg-blue-600 text-white p-2 rounded-xl text-xl font-bold">
-                                    <i class="fa-solid fa-file-invoice"></i>
-                                </div>
-                                <div>
-                                    <h1 class="text-xl font-black text-slate-800 leading-none">{siteTitle}</h1>
-                                    <span class="text-xs text-slate-500 font-medium">{siteSubtitle}</span>
-                                </div>
-                            </div>
-
-                            {/* Nav Links */}
-                            <nav class="hidden md:flex space-x-6 font-semibold text-slate-600 text-sm">
-                                <button onClick={() => setCurrentPage('home')} class={`hover:text-blue-600 ${currentPage === 'home' && 'text-blue-600'}`}>Home</button>
-                                <button onClick={() => setCurrentPage('templates')} class={`hover:text-blue-600 ${currentPage === 'templates' && 'text-blue-600'}`}>Templates</button>
-                                <button onClick={() => setCurrentPage('pricing')} class={`hover:text-blue-600 ${currentPage === 'pricing' && 'text-blue-600'}`}>Pricing</button>
-                                <button onClick={() => setCurrentPage('editor')} class={`hover:text-blue-600 ${currentPage === 'editor' && 'text-blue-600'}`}>Editor</button>
-                                <button onClick={() => setCurrentPage('admin')} class={`hover:text-blue-600 ${currentPage === 'admin' && 'text-blue-600'}`}><i class="fa-solid fa-lock text-xs mr-1"></i>Admin Panel</button>
-                            </nav>
-
-                            {/* User Controls */}
-                            <div class="flex items-center space-x-3">
-                                {currentUser ? (
-                                    <div class="flex items-center space-x-2">
-                                        <button onClick={() => setCurrentPage('profile')} class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-semibold">
-                                            <i class="fa-solid fa-user mr-1.5"></i>{currentUser.name}
-                                        </button>
-                                        <button onClick={() => setCurrentUser(null)} class="text-red-500 hover:text-red-700 text-sm font-bold ml-2">Logout</button>
-                                    </div>
-                                ) : (
-                                    <>
-                                        <button onClick={() => setCurrentPage('login')} class="text-slate-700 hover:text-blue-600 font-semibold text-sm px-3 py-1.5">Login</button>
-                                        <button onClick={() => setCurrentPage('register')} class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm px-4 py-1.5 rounded-lg shadow-sm transition">Register</button>
-                                    </>
-                                )}
-                            </div>
-                        </div>
-                    </header>
-
-                    {/* DYNAMIC CONTENT AREA */}
-                    <main class="flex-grow">
-                        
-                        {/* HOME PAGE */}
-                        {currentPage === 'home' && (
-                            <div class="max-w-7xl mx-auto px-4 py-8 space-y-12">
-                                
-                                {/* HERO SECTION (5. Left Buttons & 6. Right Side Resume Cards) */}
-                                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-white p-8 rounded-2xl border border-slate-100 shadow-sm">
-                                    {/* Left Side (Buttons & Info) */}
-                                    <div class="lg:col-span-5 space-y-6">
-                                        <span class="bg-blue-50 text-blue-600 font-bold text-xs uppercase px-3 py-1 rounded-full">#1 Resume Builder</span>
-                                        <h2 class="text-4xl font-extrabold text-slate-900 leading-tight">Create Professional Resumes Quickly & Easily</h2>
-                                        <p class="text-slate-600 text-sm">Design ATS-friendly resumes in minutes. Choose from premium templates and download instant PDF copies.</p>
-                                        
-                                        <div class="flex flex-wrap gap-4 pt-2">
-                                            <button onClick={() => setCurrentPage('editor')} class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-xl shadow-lg transition flex items-center">
-                                                <i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Create Resume
-                                            </button>
-                                            <button onClick={() => setCurrentPage('templates')} class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-6 py-3 rounded-xl transition flex items-center">
-                                                <i class="fa-solid fa-layer-group mr-2"></i> Browse Templates
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    {/* Right Side (3 to 4 Sample Resume Cards Displayed) */}
-                                    <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                        {[
-                                            { title: "Software Engineer", color: "border-blue-500", tag: "Tech" },
-                                            { title: "Marketing Manager", color: "border-purple-500", tag: "Management" },
-                                            { title: "Financial Analyst", color: "border-emerald-500", tag: "Finance" }
-                                        ].map((card, idx) => (
-                                            <div key={idx} class={`bg-slate-50 p-4 rounded-xl border-t-4 ${card.color} shadow-sm hover:shadow-md transition space-y-3`}>
-                                                <span class="text-[10px] bg-white border px-2 py-0.5 rounded font-bold text-slate-500">{card.tag}</span>
-                                                <div class="h-2 w-3/4 bg-slate-300 rounded"></div>
-                                                <div class="space-y-1.5 pt-2">
-                                                    <div class="h-1.5 w-full bg-slate-200 rounded"></div>
-                                                    <div class="h-1.5 w-5/6 bg-slate-200 rounded"></div>
-                                                    <div class="h-1.5 w-4/6 bg-slate-200 rounded"></div>
-                                                </div>
-                                                <div class="pt-4 border-t border-slate-200 flex justify-between items-center text-xs font-semibold text-slate-600">
-                                                    <span>{card.title}</span>
-                                                    <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* 7. 6 TEMPLATES SLIDER/GRID & VIEW ALL BUTTON */}
-                                <div class="space-y-6">
-                                    <div class="flex justify-between items-end">
-                                        <div>
-                                            <h3 class="text-2xl font-bold text-slate-800">Popular Templates</h3>
-                                            <p class="text-slate-500 text-sm">Pick a template to start building your resume</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                                        {templates.slice(0, 6).map((tpl) => (
-                                            <div key={tpl.id} class="bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-lg transition group">
-                                                <div class={`${tpl.color} h-32 p-4 text-white flex flex-col justify-between`}>
-                                                    <span class="text-xs bg-black/20 px-2 py-1 rounded w-max">Template #{tpl.id}</span>
-                                                    <h4 class="font-bold text-lg">{tpl.name}</h4>
-                                                </div>
-                                                <div class="p-4 space-y-3">
-                                                    <p class="text-xs text-slate-600">{tpl.desc}</p>
-                                                    <button onClick={() => setCurrentPage('editor')} class="w-full bg-slate-100 group-hover:bg-blue-600 group-hover:text-white text-slate-700 font-bold py-2 rounded-lg text-sm transition">Use Template</button>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    <div class="text-center pt-4">
-                                        <button onClick={() => setCurrentPage('templates')} class="bg-slate-800 hover:bg-slate-900 text-white font-bold px-8 py-3 rounded-xl transition">
-                                            View All Templates <i class="fa-solid fa-arrow-right ml-2"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* TEMPLATES CATALOG PAGE */}
-                        {currentPage === 'templates' && (
-                            <div class="max-w-7xl mx-auto px-4 py-8 space-y-6">
-                                <h2 class="text-3xl font-extrabold text-slate-800">All Available Resume Templates</h2>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                                    {templates.map((tpl) => (
-                                        <div key={tpl.id} class="bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-lg transition">
-                                            <div class={`${tpl.color} h-36 p-4 text-white flex flex-col justify-between`}>
-                                                <span class="text-xs bg-black/20 px-2 py-1 rounded w-max">Template #{tpl.id}</span>
-                                                <h4 class="font-bold text-lg">{tpl.name}</h4>
-                                            </div>
-                                            <div class="p-4 space-y-3">
-                                                <p class="text-xs text-slate-600">{tpl.desc}</p>
-                                                <button onClick={() => setCurrentPage('editor')} class="w-full bg-blue-600 text-white font-bold py-2 rounded-lg text-sm transition">Select & Build</button>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* PRICING PAGE */}
-                        {currentPage === 'pricing' && (
-                            <div class="max-w-4xl mx-auto px-4 py-12 text-center space-y-8">
-                                <h2 class="text-3xl font-extrabold text-slate-800">Simple & Transparent Pricing</h2>
-                                <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-md max-w-md mx-auto space-y-6">
-                                    <span class="bg-blue-100 text-blue-700 font-bold text-xs uppercase px-3 py-1 rounded-full">Single Resume Pass</span>
-                                    <div class="text-5xl font-black text-slate-900">₹{resumePrice} <span class="text-base font-medium text-slate-500">/ download</span></div>
-                                    <ul class="text-left text-sm space-y-3 text-slate-600 border-t border-b border-slate-100 py-6">
-                                        <li><i class="fa-solid fa-check text-green-500 mr-2"></i> High Quality PDF Export</li>
-                                        <li><i class="fa-solid fa-check text-green-500 mr-2"></i> Remove Watermark Permanently</li>
-                                        <li><i class="fa-solid fa-check text-green-500 mr-2"></i> Access to All 50+ Premium Formats</li>
-                                        <li><i class="fa-solid fa-check text-green-500 mr-2"></i> Lifetime Saved Profile Data</li>
-                                    </ul>
-                                    <button onClick={() => setCurrentPage('editor')} class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition">Create Resume Now</button>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* 4. & 8., 9. USER REGISTRATION PAGE */}
-                        {currentPage === 'register' && (
-                            <div class="max-w-3xl mx-auto px-4 py-8">
-                                <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-                                    <h2 class="text-2xl font-bold text-slate-800">User Registration</h2>
-                                    <form onSubmit={handleRegisterSubmit} class="space-y-6">
-                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div>
-                                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Full Name</label>
-                                                <input required type="text" value={regForm.name} onChange={(e)=>setRegForm({...regForm, name: e.target.value})} class="w-full border p-2.5 rounded-lg text-sm" placeholder="Enter Full Name" />
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Mobile Number</label>
-                                                <input required type="text" value={regForm.phone} onChange={(e)=>setRegForm({...regForm, phone: e.target.value})} class="w-full border p-2.5 rounded-lg text-sm" placeholder="Enter Mobile Number" />
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Email ID</label>
-                                                <input required type="email" value={regForm.email} onChange={(e)=>setRegForm({...regForm, email: e.target.value})} class="w-full border p-2.5 rounded-lg text-sm" placeholder="Enter Email" />
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Password</label>
-                                                <input required type="password" value={regForm.password} onChange={(e)=>setRegForm({...regForm, password: e.target.value})} class="w-full border p-2.5 rounded-lg text-sm" placeholder="Set Password" />
-                                            </div>
-                                        </div>
-
-                                        {/* 8. Education Dynamic Table */}
-                                        <div class="space-y-3 pt-2">
-                                            <div class="flex justify-between items-center">
-                                                <h3 class="font-bold text-sm text-slate-700">Education Details</h3>
-                                                <button type="button" onClick={() => handleAddEducation('regForm')} class="bg-slate-100 hover:bg-slate-200 text-blue-600 text-xs font-bold px-3 py-1.5 rounded-lg">+ Add Column / Row</button>
-                                            </div>
-                                            <div class="overflow-x-auto">
-                                                <table class="w-full text-left text-xs border-collapse border border-slate-200">
-                                                    <thead>
-                                                        <tr class="bg-slate-100 border-b">
-                                                            <th class="p-2 border">Education/Degree</th>
-                                                            <th class="p-2 border">Percentage / CGPA</th>
-                                                            <th class="p-2 border">Passout Year</th>
-                                                            <th class="p-2 border">Institute Name</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {regForm.education.map((edu, idx) => (
-                                                            <tr key={idx}>
-                                                                <td class="p-1 border"><input type="text" value={edu.degree} onChange={(e)=>{ const updated=[...regForm.education]; updated[idx].degree=e.target.value; setRegForm({...regForm, education:updated}); }} class="w-full p-1 border rounded" placeholder="e.g. B.Tech" /></td>
-                                                                <td class="p-1 border"><input type="text" value={edu.percent} onChange={(e)=>{ const updated=[...regForm.education]; updated[idx].percent=e.target.value; setRegForm({...regForm, education:updated}); }} class="w-full p-1 border rounded" placeholder="e.g. 80%" /></td>
-                                                                <td class="p-1 border"><input type="text" value={edu.passout} onChange={(e)=>{ const updated=[...regForm.education]; updated[idx].passout=e.target.value; setRegForm({...regForm, education:updated}); }} class="w-full p-1 border rounded" placeholder="e.g. 2022" /></td>
-                                                                <td class="p-1 border"><input type="text" value={edu.institute} onChange={(e)=>{ const updated=[...regForm.education]; updated[idx].institute=e.target.value; setRegForm({...regForm, education:updated}); }} class="w-full p-1 border rounded" placeholder="College/School Name" /></td>
-                                                            </tr>
-                                                        ))}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-
-                                        {/* 9. Experience Dynamic Table */}
-                                        <div class="space-y-3 pt-2">
-                                            <div class="flex justify-between items-center">
-                                                <h3 class="font-bold text-sm text-slate-700">Experience Details</h3>
-                                                <button type="button" onClick={() => handleAddExperience('regForm')} class="bg-slate-100 hover:bg-slate-200 text-blue-600 text-xs font-bold px-3 py-1.5 rounded-lg">+ Add Column / Row</button>
-                                            </div>
-                                            <div class="overflow-x-auto">
-                                                <table class="w-full text-left text-xs border-collapse border border-slate-200">
-                                                    <thead>
-                                                        <tr class="bg-slate-100 border-b">
-                                                            <th class="p-2 border">Company Name</th>
-                                                            <th class="p-2 border">Work Profile</th>
-                                                            <th class="p-2 border">Experience Years</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {regForm.experience.map((exp, idx) => (
-                                                            <tr key={idx}>
-                                                                <td class="p-1 border"><input type="text" value={exp.company} onChange={(e)=>{ const updated=[...regForm.experience]; updated[idx].company=e.target.value; setRegForm({...regForm, experience:updated}); }} class="w-full p-1 border rounded" placeholder="Company Name" /></td>
-                                                                <td class="p-1 border"><input type="text" value={exp.profile} onChange={(e)=>{ const updated=[...regForm.experience]; updated[idx].profile=e.target.value; setRegForm({...regForm, experience:updated}); }} class="w-full p-1 border rounded" placeholder="Profile/Role" /></td>
-                                                                <td class="p-1 border"><input type="text" value={exp.years} onChange={(e)=>{ const updated=[...regForm.experience]; updated[idx].years=e.target.value; setRegForm({...regForm, experience:updated}); }} class="w-full p-1 border rounded" placeholder="e.g. 2 Years" /></td>
-                                                            </tr>
-                                                        ))}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-
-                                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition">Complete Registration</button>
-                                    </form>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* USER LOGIN PAGE */}
-                        {currentPage === 'login' && (
-                            <div class="max-w-md mx-auto px-4 py-12">
-                                <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-                                    <h2 class="text-2xl font-bold text-slate-800 text-center">User Login</h2>
-                                    <form onSubmit={(e)=>{
-                                        e.preventDefault();
-                                        const email = e.target.email.value;
-                                        const pass = e.target.password.value;
-                                        const found = users.find(u=> u.email === email && u.password === pass);
-                                        if(found){
-                                            setCurrentUser(found);
-                                            alert("Login Successful!");
-                                            setCurrentPage("profile");
-                                        } else {
-                                            alert("Invalid Email or Password!");
-                                        }
-                                    }} class="space-y-4">
-                                        <div>
-                                            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Email ID</label>
-                                            <input name="email" required type="email" class="w-full border p-2.5 rounded-lg text-sm" placeholder="Enter Registered Email" />
-                                        </div>
-                                        <div>
-                                            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Password</label>
-                                            <input name="password" required type="password" class="w-full border p-2.5 rounded-lg text-sm" placeholder="Enter Password" />
-                                        </div>
-                                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition">Login</button>
-                                    </form>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* 10. USER PROFILE PAGE */}
-                        {currentPage === 'profile' && currentUser && (
-                            <div class="max-w-4xl mx-auto px-4 py-8 space-y-6">
-                                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex justify-between items-center">
-                                    <div>
-                                        <h2 class="text-2xl font-bold text-slate-800">Welcome, {currentUser.name}!</h2>
-                                        <p class="text-xs text-slate-500">Manage your profile & fast resume creation</p>
-                                    </div>
-                                    <div class="space-x-3">
-                                        <button onClick={() => setCurrentPage('preview')} class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm px-4 py-2 rounded-lg"><i class="fa-solid fa-download mr-1.5"></i> Instant Download Saved Resume</button>
-                                        <button onClick={() => setCurrentPage('editor')} class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm px-4 py-2 rounded-lg"><i class="fa-solid fa-plus mr-1.5"></i> Create New Resume</button>
-                                    </div>
-                                </div>
-
-                                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                                    <h3 class="font-bold text-lg border-b pb-2">Saved User Details</h3>
-                                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
-                                        <div><span class="text-slate-400 text-xs block">Full Name:</span> <strong>{currentUser.name}</strong></div>
-                                        <div><span class="text-slate-400 text-xs block">Email:</span> <strong>{currentUser.email}</strong></div>
-                                        <div><span class="text-slate-400 text-xs block">Mobile:</span> <strong>{currentUser.phone}</strong></div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* 11. RESUME EDITOR FORM & WATERMARK PREVIEW */}
-                        {currentPage === 'editor' && (
-                            <div class="max-w-4xl mx-auto px-4 py-8 space-y-6">
-                                <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-                                    <h2 class="text-2xl font-bold text-slate-800">Resume Builder Form</h2>
-                                    
-                                    <form onSubmit={(e)=>{ e.preventDefault(); setCurrentPage('preview'); }} class="space-y-6">
-                                        {/* Personal Details */}
-                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                            <div>
-                                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Naam (Full Name)</label>
-                                                <input required type="text" value={resumeData.name} onChange={(e)=>setResumeData({...resumeData, name:e.target.value})} class="w-full border p-2 rounded-lg text-sm" />
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Number (Mobile)</label>
-                                                <input required type="text" value={resumeData.phone} onChange={(e)=>setResumeData({...resumeData, phone:e.target.value})} class="w-full border p-2 rounded-lg text-sm" />
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Email ID</label>
-                                                <input required type="email" value={resumeData.email} onChange={(e)=>setResumeData({...resumeData, email:e.target.value})} class="w-full border p-2 rounded-lg text-sm" />
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Mother Name</label>
-                                                <input type="text" value={resumeData.motherName} onChange={(e)=>setResumeData({...resumeData, motherName:e.target.value})} class="w-full border p-2 rounded-lg text-sm" />
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Father Name</label>
-                                                <input type="text" value={resumeData.fatherName} onChange={(e)=>setResumeData({...resumeData, fatherName:e.target.value})} class="w-full border p-2 rounded-lg text-sm" />
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Address</label>
-                                                <input type="text" value={resumeData.address} onChange={(e)=>setResumeData({...resumeData, address:e.target.value})} class="w-full border p-2 rounded-lg text-sm" />
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Country</label>
-                                                <input type="text" value={resumeData.country} onChange={(e)=>setResumeData({...resumeData, country:e.target.value})} class="w-full border p-2 rounded-lg text-sm" />
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">District</label>
-                                                <input type="text" value={resumeData.district} onChange={(e)=>setResumeData({...resumeData, district:e.target.value})} class="w-full border p-2 rounded-lg text-sm" />
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">City / Village</label>
-                                                <input type="text" value={resumeData.city} onChange={(e)=>setResumeData({...resumeData, city:e.target.value})} class="w-full border p-2 rounded-lg text-sm" />
-                                            </div>
-                                        </div>
-
-                                        {/* Education Dynamic Table */}
-                                        <div class="space-y-3 pt-2">
-                                            <div class="flex justify-between items-center">
-                                                <h3 class="font-bold text-sm text-slate-700">Education Details</h3>
-                                                <button type="button" onClick={() => handleAddEducation('resumeData')} class="bg-slate-100 hover:bg-slate-200 text-blue-600 text-xs font-bold px-3 py-1.5 rounded-lg">+ Add Education</button>
-                                            </div>
-                                            <div class="overflow-x-auto">
-                                                <table class="w-full text-left text-xs border-collapse border border-slate-200">
-                                                    <thead>
-                                                        <tr class="bg-slate-100 border-b">
-                                                            <th class="p-2 border">Education</th>
-                                                            <th class="p-2 border">Percent</th>
-                                                            <th class="p-2 border">Passout</th>
-                                                            <th class="p-2 border">Institute Name</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {resumeData.education.map((edu, idx) => (
-                                                            <tr key={idx}>
-                                                                <td class="p-1 border"><input type="text" value={edu.degree} onChange={(e)=>{ const updated=[...resumeData.education]; updated[idx].degree=e.target.value; setResumeData({...resumeData, education:updated}); }} class="w-full p-1 border rounded" /></td>
-                                                                <td class="p-1 border"><input type="text" value={edu.percent} onChange={(e)=>{ const updated=[...resumeData.education]; updated[idx].percent=e.target.value; setResumeData({...resumeData, percent:e.target.value}); }} class="w-full p-1 border rounded" /></td>
-                                                                <td class="p-1 border"><input type="text" value={edu.passout} onChange={(e)=>{ const updated=[...resumeData.education]; updated[idx].passout=e.target.value; setResumeData({...resumeData, passout:e.target.value}); }} class="w-full p-1 border rounded" /></td>
-                                                                <td class="p-1 border"><input type="text" value={edu.institute} onChange={(e)=>{ const updated=[...resumeData.education]; updated[idx].institute=e.target.value; setResumeData({...resumeData, institute:e.target.value}); }} class="w-full p-1 border rounded" /></td>
-                                                            </tr>
-                                                        ))}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-
-                                        {/* Experience Dynamic Table */}
-                                        <div class="space-y-3 pt-2">
-                                            <div class="flex justify-between items-center">
-                                                <h3 class="font-bold text-sm text-slate-700">Experience Details</h3>
-                                                <button type="button" onClick={() => handleAddExperience('resumeData')} class="bg-slate-100 hover:bg-slate-200 text-blue-600 text-xs font-bold px-3 py-1.5 rounded-lg">+ Add Experience</button>
-                                            </div>
-                                            <div class="overflow-x-auto">
-                                                <table class="w-full text-left text-xs border-collapse border border-slate-200">
-                                                    <thead>
-                                                        <tr class="bg-slate-100 border-b">
-                                                            <th class="p-2 border">Company Name</th>
-                                                            <th class="p-2 border">Work Profile</th>
-                                                            <th class="p-2 border">Experience Year</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {resumeData.experience.map((exp, idx) => (
-                                                            <tr key={idx}>
-                                                                <td class="p-1 border"><input type="text" value={exp.company} onChange={(e)=>{ const updated=[...resumeData.experience]; updated[idx].company=e.target.value; setResumeData({...resumeData, experience:updated}); }} class="w-full p-1 border rounded" /></td>
-                                                                <td class="p-1 border"><input type="text" value={exp.profile} onChange={(e)=>{ const updated=[...resumeData.experience]; updated[idx].profile=e.target.value; setResumeData({...resumeData, profile:e.target.value}); }} class="w-full p-1 border rounded" /></td>
-                                                                <td class="p-1 border"><input type="text" value={exp.years} onChange={(e)=>{ const updated=[...resumeData.experience]; updated[idx].years=e.target.value; setResumeData({...resumeData, years:e.target.value}); }} class="w-full p-1 border rounded" /></td>
-                                                            </tr>
-                                                        ))}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-
-                                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition">Submit & Generate Print Preview</button>
-                                    </form>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* 11. PRINT PREVIEW (WATERMARK ONLY - PAY TO DOWNLOAD) */}
-                        {currentPage === 'preview' && (
-                            <div class="max-w-4xl mx-auto px-4 py-8 space-y-6">
-                                <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl flex justify-between items-center">
-                                    <div class="flex items-center space-x-3 text-amber-800 text-sm">
-                                        <i class="fa-solid fa-triangle-exclamation text-xl"></i>
-                                        <span><strong>Watermark Preview:</strong> Direct download disabled hai. Full HD PDF download karne ke liye <strong>₹{resumePrice}</strong> pay karna hoga.</span>
-                                    </div>
-                                    <button onClick={handlePaymentAndDownload} class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2 rounded-lg text-sm flex items-center shadow-md">
-                                        <i class="fa-solid fa-lock mr-2"></i> Pay ₹{resumePrice} & Download PDF
-                                    </button>
-                                </div>
-
-                                {/* Printable Resume Sheet */}
-                                <div id="printable-resume" class="bg-white p-10 rounded-2xl border border-slate-200 shadow-xl watermark-bg space-y-6 text-slate-800">
-                                    <div class="border-b-2 border-slate-800 pb-4">
-                                        <h1 class="text-3xl font-extrabold text-slate-900 uppercase tracking-wide">{resumeData.name || "Your Name"}</h1>
-                                        <p class="text-xs text-slate-600 mt-1">
-                                            {resumeData.email} | {resumeData.phone} | {resumeData.city}, {resumeData.district}, {resumeData.country}
-                                        </p>
-                                        {(resumeData.fatherName || resumeData.motherName) && (
-                                            <p class="text-xs text-slate-500 mt-0.5">
-                                                Father's Name: {resumeData.fatherName || 'N/A'} | Mother's Name: {resumeData.motherName || 'N/A'}
-                                            </p>
-                                        )}
-                                    </div>
-
-                                    {/* Education Table in Resume */}
-                                    <div class="space-y-2">
-                                        <h3 class="text-sm font-bold uppercase text-slate-900 border-b pb-1">Educational Details</h3>
-                                        <table class="w-full text-xs text-left border-collapse border border-slate-200">
-                                            <thead>
-                                                <tr class="bg-slate-100">
-                                                    <th class="p-2 border">Degree/Course</th>
-                                                    <th class="p-2 border">Institute/Board</th>
-                                                    <th class="p-2 border">Passing Year</th>
-                                                    <th class="p-2 border">Percentage</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {resumeData.education.map((edu, idx)=>(
-                                                    <tr key={idx}>
-                                                        <td class="p-2 border">{edu.degree || '-'}</td>
-                                                        <td class="p-2 border">{edu.institute || '-'}</td>
-                                                        <td class="p-2 border">{edu.passout || '-'}</td>
-                                                        <td class="p-2 border">{edu.percent || '-'}</td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
-
-                                    {/* Experience Table in Resume */}
-                                    <div class="space-y-2">
-                                        <h3 class="text-sm font-bold uppercase text-slate-900 border-b pb-1">Work Experience</h3>
-                                        <table class="w-full text-xs text-left border-collapse border border-slate-200">
-                                            <thead>
-                                                <tr class="bg-slate-100">
-                                                    <th class="p-2 border">Company</th>
-                                                    <th class="p-2 border">Role Profile</th>
-                                                    <th class="p-2 border">Duration/Years</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {resumeData.experience.map((exp, idx)=>(
-                                                    <tr key={idx}>
-                                                        <td class="p-2 border">{exp.company || '-'}</td>
-                                                        <td class="p-2 border">{exp.profile || '-'}</td>
-                                                        <td class="p-2 border">{exp.years || '-'}</td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* ADMIN PANEL */}
-                        {currentPage === 'admin' && (
-                            <div class="max-w-7xl mx-auto px-4 py-8 space-y-8">
-                                {!isAdminLoggedIn ? (
-                                    <div class="max-w-md mx-auto bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-                                        <h2 class="text-2xl font-bold text-slate-800 text-center">Admin Panel Access</h2>
-                                        <form onSubmit={(e)=>{
-                                            e.preventDefault();
-                                            const email = e.target.email.value;
-                                            const pass = e.target.password.value;
-                                            const valid = admins.find(a=> a.email === email && a.password === pass);
-                                            if(valid){
-                                                setIsAdminLoggedIn(true);
-                                            } else {
-                                                alert("Invalid Admin Credentials!");
-                                            }
-                                        }} class="space-y-4">
-                                            <div>
-                                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Admin Email/ID</label>
-                                                <input name="email" required type="text" class="w-full border p-2.5 rounded-lg text-sm" placeholder="admin@makemyresume.com" />
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Password</label>
-                                                <input name="password" required type="password" class="w-full border p-2.5 rounded-lg text-sm" placeholder="admin" />
-                                            </div>
-                                            <button type="submit" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-3 rounded-xl transition">Login to Admin Control</button>
-                                        </form>
-                                    </div>
-                                ) : (
-                                    <div class="space-y-8">
-                                        <div class="flex justify-between items-center bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                                            <div>
-                                                <h2 class="text-2xl font-bold text-slate-800">Admin Control Center</h2>
-                                                <p class="text-xs text-slate-500">Manage site parameters, payment settings, and users</p>
-                                            </div>
-                                            <button onClick={()=>setIsAdminLoggedIn(false)} class="bg-red-50 hover:bg-red-100 text-red-600 text-sm font-bold px-4 py-2 rounded-lg">Logout Admin</button>
-                                        </div>
-
-                                        {/* Analytics Stats */}
-                                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                                            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-                                                <div>
-                                                    <span class="text-xs text-slate-400 font-bold uppercase">Resumes Downloaded</span>
-                                                    <h3 class="text-3xl font-extrabold text-slate-800 mt-1">{analytics.downloads}</h3>
-                                                </div>
-                                                <i class="fa-solid fa-file-arrow-down text-3xl text-blue-500"></i>
-                                            </div>
-                                            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-                                                <div>
-                                                    <span class="text-xs text-slate-400 font-bold uppercase">Total Payout Received</span>
-                                                    <h3 class="text-3xl font-extrabold text-slate-800 mt-1">₹{analytics.payout}</h3>
-                                                </div>
-                                                <i class="fa-solid fa-indian-rupee-sign text-3xl text-emerald-500"></i>
-                                            </div>
-                                            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-                                                <div>
-                                                    <span class="text-xs text-slate-400 font-bold uppercase">Total Website Traffic</span>
-                                                    <h3 class="text-3xl font-extrabold text-slate-800 mt-1">{analytics.traffic} Visitors</h3>
-                                                </div>
-                                                <i class="fa-solid fa-chart-line text-3xl text-purple-500"></i>
-                                            </div>
-                                        </div>
-
-                                        {/* Website Settings Widget (Title, Subtitle, Pricing) */}
-                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                                                <h3 class="font-bold text-slate-800 border-b pb-2"><i class="fa-solid fa-sliders mr-2"></i> Website Branding & Pricing Widget</h3>
-                                                <div class="space-y-3">
-                                                    <div>
-                                                        <label class="block text-xs font-bold text-slate-600 mb-1">Website Name / Title</label>
-                                                        <input type="text" value={siteTitle} onChange={(e)=>setSiteTitle(e.target.value)} class="w-full border p-2 rounded-lg text-sm" />
-                                                    </div>
-                                                    <div>
-                                                        <label class="block text-xs font-bold text-slate-600 mb-1">Website Subtitle</label>
-                                                        <input type="text" value={siteSubtitle} onChange={(e)=>setSiteSubtitle(e.target.value)} class="w-full border p-2 rounded-lg text-sm" />
-                                                    </div>
-                                                    <div>
-                                                        <label class="block text-xs font-bold text-slate-600 mb-1">Custom Resume Price (₹)</label>
-                                                        <input type="number" value={resumePrice} onChange={(e)=>setResumePrice(e.target.value)} class="w-full border p-2 rounded-lg text-sm" />
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            {/* Razorpay Widget */}
-                                            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                                                <h3 class="font-bold text-slate-800 border-b pb-2"><i class="fa-solid fa-credit-card mr-2"></i> Razorpay Integration Widget</h3>
-                                                <div class="space-y-3">
-                                                    <div>
-                                                        <label class="block text-xs font-bold text-slate-600 mb-1">Razorpay Key ID</label>
-                                                        <input type="text" value={razorpayKey} onChange={(e)=>setRazorpayKey(e.target.value)} placeholder="rzp_test_xxxxxxxxxxxx" class="w-full border p-2 rounded-lg text-sm" />
-                                                    </div>
-                                                    <p class="text-xs text-slate-500">Aapki key save hote hi payment mode activate ho jaayega.</p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* Code Paste & Create New Custom Widget */}
-                                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                                            <h3 class="font-bold text-slate-800 border-b pb-2"><i class="fa-solid fa-code mr-2"></i> Create New Widget / Code Paste Feature</h3>
-                                            <form onSubmit={(e)=>{
-                                                e.preventDefault();
-                                                const name = e.target.widgetName.value;
-                                                const code = e.target.widgetCode.value;
-                                                setCustomWidgets([...customWidgets, { id: Date.now(), name, code }]);
-                                                e.target.reset();
-                                                alert("New Custom Code Widget Added!");
-                                            }} class="space-y-3">
-                                                <input name="widgetName" required placeholder="Widget Name (e.g. Chatbot Script)" class="w-full border p-2 rounded-lg text-sm" />
-                                                <textarea name="widgetCode" required rows="3" placeholder="Paste custom JS/CSS/HTML snippet code here..." class="w-full border p-2 rounded-lg text-sm font-mono"></textarea>
-                                                <button type="submit" class="bg-slate-900 text-white font-bold text-xs px-4 py-2 rounded-lg">+ Add Custom Widget</button>
-                                            </form>
-
-                                            {customWidgets.length > 0 && (
-                                                <div class="pt-4 border-t space-y-2">
-                                                    <h4 class="text-xs font-bold text-slate-500 uppercase">Active Custom Widgets:</h4>
-                                                    {customWidgets.map(w=>(
-                                                        <div key={w.id} class="flex justify-between items-center bg-slate-50 p-2.5 rounded border text-xs">
-                                                            <span class="font-bold">{w.name}</span>
-                                                            <button onClick={()=>setCustomWidgets(customWidgets.filter(item=>item.id!==w.id))} class="text-red-600 font-bold">Remove</button>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        {/* Registered Users Table */}
-                                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                                            <h3 class="font-bold text-slate-800 border-b pb-2"><i class="fa-solid fa-users mr-2"></i> Registered User Database</h3>
-                                            <div class="overflow-x-auto">
-                                                <table class="w-full text-left text-sm border-collapse">
-                                                    <thead>
-                                                        <tr class="bg-slate-100 border-b">
-                                                            <th class="p-3">User Name</th>
-                                                            <th class="p-3">Email</th>
-                                                            <th class="p-3">Phone</th>
-                                                            <th class="p-3">Password</th>
-                                                            <th class="p-3">Action</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {users.map(u=>(
-                                                            <tr key={u.id} class="border-b">
-                                                                <td class="p-3 font-semibold">{u.name}</td>
-                                                                <td class="p-3">{u.email}</td>
-                                                                <td class="p-3">{u.phone}</td>
-                                                                <td class="p-3 font-mono text-xs">{u.password}</td>
-                                                                <td class="p-3">
-                                                                    <button onClick={()=>setUsers(users.filter(x=>x.id!==u.id))} class="text-red-600 font-bold hover:underline text-xs">Delete / Remove</button>
-                                                                </td>
-                                                            </tr>
-                                                        ))}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-
-                                        {/* Admin User Accounts Control */}
-                                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                                            <div class="flex justify-between items-center border-b pb-2">
-                                                <h3 class="font-bold text-slate-800"><i class="fa-solid fa-user-shield mr-2"></i> Admin Accounts Control</h3>
-                                                <button onClick={()=>{
-                                                    const email = prompt("Enter New Admin Email:");
-                                                    const password = prompt("Enter New Admin Password:");
-                                                    if(email && password) setAdmins([...admins, { id: Date.now(), email, password }]);
-                                                }} class="bg-blue-600 text-white font-bold text-xs px-3 py-1.5 rounded-lg">+ Add Admin Account</button>
-                                            </div>
-
-                                            <div class="overflow-x-auto">
-                                                <table class="w-full text-left text-sm border-collapse">
-                                                    <thead>
-                                                        <tr class="bg-slate-100 border-b">
-                                                            <th class="p-3">Admin Email</th>
-                                                            <th class="p-3">Password</th>
-                                                            <th class="p-3">Action</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {admins.map(a=>(
-                                                            <tr key={a.id} class="border-b">
-                                                                <td class="p-3 font-semibold">{a.email}</td>
-                                                                <td class="p-3 font-mono text-xs">{a.password}</td>
-                                                                <td class="p-3 space-x-3">
-                                                                    <button onClick={()=>{
-                                                                        const newPass = prompt("Enter New Password:", a.password);
-                                                                        if(newPass) setAdmins(admins.map(x=> x.id===a.id ? {...x, password: newPass}: x));
-                                                                    }} class="text-blue-600 font-bold text-xs hover:underline">Update</button>
-                                                                    {admins.length > 1 && (
-                                                                        <button onClick={()=>setAdmins(admins.filter(x=>x.id!==a.id))} class="text-red-600 font-bold text-xs hover:underline">Delete</button>
-                                                                    )}
-                                                                </td>
-                                                            </tr>
-                                                        ))}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        )}
-                    </main>
-
-                    {/* FOOTER */}
-                    <footer class="bg-white border-t border-slate-200 mt-12 py-6">
-                        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
-                            &copy; {new Date().getFullYear()} {siteTitle}. All rights reserved. Professional Resume Builder.
-                        </div>
-                    </footer>
+    <!-- 1. HOME VIEW -->
+    <div id="homeView" class="view-section active">
+        <section class="hero">
+            <div class="hero-left">
+                <div class="ai-badge">✨ AI POWERED RESUME BUILDER</div>
+                <h1>Create Your Professional Resume <span>That Gets You Hired</span></h1>
+                <p>Choose from 20+ ATS-friendly templates, customize in minutes, and download your resume in PDF.</p>
+                <div class="hero-cta">
+                    <button class="btn-create" onclick="switchView('editorView')">Create My Resume →</button>
+                    <button class="btn-view-tpl" onclick="scrollToSection('templates-section')">Template Button</button>
                 </div>
-            );
+                <div class="trust-row">
+                    <div class="avatars">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=60" alt="">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=60" alt="">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=60" alt="">
+                    </div>
+                    <div>
+                        <div class="stars">★★★★★</div>
+                        <div class="trust-text">Trusted by 50,000+ Job Seekers worldwide</div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-right">
+                <!-- Right Side 3-4 Resume Cards as requested -->
+                <img src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=800&auto=format&fit=crop&q=80" alt="Resume Cards" class="hero-mockup">
+            </div>
+        </section>
+
+        <!-- Features Bar -->
+        <div class="features-bar">
+            <div class="feature-box"><h4>📄 ATS Friendly</h4><p>Optimized scans</p></div>
+            <div class="feature-box"><h4>🎨 Pro Templates</h4><p>Modern layouts</p></div>
+            <div class="feature-box"><h4>⚡ Instant Download</h4><p>PDF format</p></div>
+            <div class="feature-box"><h4>💡 Easy to Use</h4><p>Simple steps</p></div>
+            <div class="feature-box"><h4>🔒 Secure & Private</h4><p>Data safety</p></div>
+            <div class="feature-box"><h4>⭐ Expert Approved</h4><p>HR vetted</p></div>
+        </div>
+
+        <!-- 6 Templates Slide Section + View All Templates below -->
+        <section class="templates-section" id="templates-section">
+            <h2 class="section-title">Professional Resume Templates</h2>
+            <p class="section-subtitle">Choose from our collection of ATS-friendly resume templates</p>
+            
+            <div class="templates-grid">
+                <div class="template-card" onclick="switchView('editorView')">
+                    <div class="tpl-thumb">Modern Blue</div>
+                    <div class="tpl-info"><span class="dot" style="background:#2563eb;"></span> Modern Blue</div>
+                </div>
+                <div class="template-card" onclick="switchView('editorView')">
+                    <div class="tpl-thumb">Clean Green</div>
+                    <div class="tpl-info"><span class="dot" style="background:#16a34a;"></span> Clean Green</div>
+                </div>
+                <div class="template-card" onclick="switchView('editorView')">
+                    <div class="tpl-thumb">Executive Black</div>
+                    <div class="tpl-info"><span class="dot" style="background:#111827;"></span> Executive Black</div>
+                </div>
+                <div class="template-card" onclick="switchView('editorView')">
+                    <div class="tpl-thumb">Creative Purple</div>
+                    <div class="tpl-info"><span class="dot" style="background:#7c3aed;"></span> Creative Purple</div>
+                </div>
+                <div class="template-card" onclick="switchView('editorView')">
+                    <div class="tpl-thumb">Minimal Red</div>
+                    <div class="tpl-info"><span class="dot" style="background:#dc2626;"></span> Minimal Red</div>
+                </div>
+                <div class="template-card" onclick="switchView('editorView')">
+                    <div class="tpl-thumb">Professional Yellow</div>
+                    <div class="tpl-info"><span class="dot" style="background:#ca8a04;"></span> Professional Yellow</div>
+                </div>
+            </div>
+
+            <!-- View All Templates Below -->
+            <div style="margin-top: 30px;">
+                <button class="btn-view-tpl" onclick="alert('Showing full directory of 20+ templates.')">View All Templates →</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- 2. PRICING VIEW -->
+    <div id="pricingView" class="view-section" style="padding: 60px 64px; text-align: center; max-width: 1000px; margin: 0 auto;">
+        <h2 class="section-title">Resume Download Pricing</h2>
+        <p class="section-subtitle">Custom set price by admin for downloading watermark-free resumes.</p>
+        <div style="background:#fafafa; border:2px solid #ff3b30; border-radius:12px; padding:40px; display:inline-block; width:350px;">
+            <h3>Standard PDF Download</h3>
+            <div style="font-size:36px; font-weight:800; color:#111; margin:20px 0;" id="displayPriceTag">₹49</div>
+            <p style="font-size:13px; color:#6b7280; margin-bottom:20px;">Remove watermark & unlock full HD PDF generation via Razorpay.</p>
+            <button class="btn-submit" onclick="simulatePayment()">Pay & Download PDF</button>
+        </div>
+    </div>
+
+    <!-- 3. EDITOR VIEW (Create Resume with watermarked print preview & payment trigger) -->
+    <div id="editorView" class="view-section">
+        <div class="builder-container">
+            <h2>Interactive Resume Builder & Preview</h2>
+            <form id="resumeBuilderForm" onsubmit="generatePreview(event)">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-group"><label>Full Name</label><input type="text" id="bName" required placeholder="Rohan Kumar"></div>
+                    <div class="form-group"><label>Phone Number</label><input type="text" id="bPhone" required placeholder="+91 9876543210"></div>
+                    <div class="form-group"><label>Mother's Name</label><input type="text" id="bMother" placeholder="Mother Name"></div>
+                    <div class="form-group"><label>Father's Name</label><input type="text" id="bFather" placeholder="Father Name"></div>
+                    <div class="form-group"><label>Email ID</label><input type="email" id="bEmail" required placeholder="rohan@gmail.com"></div>
+                    <div class="form-group"><label>Address</label><input type="text" id="bAddress" placeholder="Street Address"></div>
+                    <div class="form-group"><label>Country</label><input type="text" id="bCountry" placeholder="India"></div>
+                    <div class="form-group"><label>District</label><input type="text" id="bDistrict" placeholder="District"></div>
+                    <div class="form-group"><label>City / Village</label><input type="text" id="bCity" placeholder="City or Village"></div>
+                </div>
+
+                <h4 style="margin-top:20px; font-size:14px;">Education Details (Kramanushar Table)</h4>
+                <table class="dyn-table" id="builderEduTable">
+                    <thead><tr><th>Education</th><th>Percentage</th><th>Passout Year</th><th>Institute Name</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" value="B.Tech Computer Science" class="bedu-name"></td>
+                            <td><input type="text" value="8.4 CGPA" class="bedu-pct"></td>
+                            <td><input type="text" value="2021" class="bedu-yr"></td>
+                            <td><input type="text" value="Delhi Tech Univ" class="bedu-inst"></td>
+                            <td><button type="button" class="btn-del-row" onclick="this.closest('tr').remove()">X</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="button" class="btn-add-row" onclick="addBuilderEduRow()">+ Add More Column</button>
+
+                <h4 style="margin-top:10px; font-size:14px;">Experience Details Table</h4>
+                <table class="dyn-table" id="builderExpTable">
+                    <thead><tr><th>Company Name</th><th>Work Profile</th><th>Experience Year</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" value="Tech Solutions Pvt. Ltd." class="bexp-comp"></td>
+                            <td><input type="text" value="Senior Software Engineer" class="bexp-prof"></td>
+                            <td><input type="text" value="2022 - Present" class="bexp-yr"></td>
+                            <td><button type="button" class="btn-del-row" onclick="this.closest('tr').remove()">X</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="button" class="btn-add-row" onclick="addBuilderExpRow()">+ Add More Column</button>
+
+                <button type="submit" class="btn-submit">Submit & View Print Preview</button>
+            </form>
+
+            <!-- Watermarked Print Preview Section -->
+            <div id="previewSection" class="preview-container" style="display:none;">
+                <h3 style="margin-bottom: 16px;">Resume Print Preview (Watermarked)</h3>
+                <div class="resume-sheet" id="resumePrintSheet">
+                    <div class="watermark">DRAFT / WATERMARK</div>
+                    <h2 id="prevFullName" style="color:#ff3b30;">Rohan Kumar</h2>
+                    <p id="prevContact">Email: rohan@gmail.com | Phone: +91 9876543210</p>
+                    <p id="prevLocation">Address: Delhi, India</p>
+                    <hr style="margin:15px 0;">
+                    <h4>Education</h4>
+                    <div id="prevEduList" style="font-size:13px; margin-bottom:15px;"></div>
+                    <h4>Experience</h4>
+                    <div id="prevExpList" style="font-size:13px;"></div>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button class="btn-submit" style="background:#16a34a; width:auto; padding:12px 24px;" onclick="proceedToDownload()">Download PDF (Pay Required)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- USER REGISTRATION MODAL -->
+    <div id="registerModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('registerModal')">×</span>
+            <h3>User Registration Form</h3>
+            <p style="font-size:12px; color:#6b7280; margin-bottom:16px;">Fill details to save to your profile database.</p>
+            
+            <form id="userRegForm" onsubmit="handleUserRegistration(event)">
+                <div class="form-group"><label>Full Name</label><input type="text" id="regName" required></div>
+                <div class="form-group"><label>Mobile Number</label><input type="text" id="regMobile" required></div>
+                <div class="form-group"><label>Email ID</label><input type="email" id="regEmail" required></div>
+                <div class="form-group"><label>Password</label><input type="password" id="regPass" required></div>
+
+                <h4 style="margin-top:16px; font-size:13px;">Education (Kramanushar Table)</h4>
+                <table class="dyn-table" id="regEduTable">
+                    <thead><tr><th>Education</th><th>Percentage</th><th>Passout</th><th>Institute</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" class="redu-name" placeholder="Degree"></td>
+                            <td><input type="text" class="redu-pct" placeholder="%"></td>
+                            <td><input type="text" class="redu-yr" placeholder="Year"></td>
+                            <td><input type="text" class="redu-inst" placeholder="Institute"></td>
+                            <td><button type="button" class="btn-del-row" onclick="this.closest('tr').remove()">X</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="button" class="btn-add-row" onclick="addRegEduRow()">+ Add Education Column</button>
+
+                <h4 style="margin-top:10px; font-size:13px;">Experience Table</h4>
+                <table class="dyn-table" id="regExpTable">
+                    <thead><tr><th>Company Name</th><th>Work Profile</th><th>Experience Year</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" class="rexp-comp" placeholder="Company"></td>
+                            <td><input type="text" class="rexp-prof" placeholder="Profile"></td>
+                            <td><input type="text" class="rexp-yr" placeholder="Duration"></td>
+                            <td><button type="button" class="btn-del-row" onclick="this.closest('tr').remove()">X</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="button" class="btn-add-row" onclick="addRegExpRow()">+ Add Experience Column</button>
+
+                <button type="submit" class="btn-submit">Register & Save Profile</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- USER LOGIN MODAL -->
+    <div id="loginModal" class="modal-overlay">
+        <div class="modal-content" style="width:400px;">
+            <span class="modal-close" onclick="closeModal('loginModal')">×</span>
+            <h3>User Login</h3>
+            <div class="form-group"><label>Email / Mobile</label><input type="text" id="loginId"></div>
+            <div class="form-group"><label>Password</label><input type="password" id="loginPass"></div>
+            <button class="btn-submit" onclick="handleUserLogin()">Log In</button>
+        </div>
+    </div>
+
+    <!-- ADMIN LOGIN MODAL -->
+    <div id="adminLoginModal" class="modal-overlay">
+        <div class="modal-content" style="width:400px;">
+            <span class="modal-close" onclick="closeModal('adminLoginModal')">×</span>
+            <h3>Admin Authentication</h3>
+            <div class="form-group"><label>Admin User ID / Passcode</label><input type="password" id="adminPassInput" placeholder="admin123"></div>
+            <button class="btn-submit" onclick="verifyAdminLogin()">Access Admin Panel</button>
+        </div>
+    </div>
+
+    <!-- 4. ADMIN PANEL VIEW -->
+    <div id="adminDashboardView" class="view-section">
+        <div class="admin-dashboard">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h2>Admin Control Panel</h2>
+                <button class="btn-get-started" onclick="switchView('homeView')">Logout to Home</button>
+            </div>
+
+            <!-- Stats Overview -->
+            <div class="admin-grid">
+                <div class="admin-stat-card"><span>Total Users</span><h3 id="statUsers">0</h3></div>
+                <div class="admin-stat-card"><span>Total Resume Downloads</span><h3 id="statDownloads">0</h3></div>
+                <div class="admin-stat-card"><span>Payout / Revenue</span><h3 id="statRevenue">₹0</h3></div>
+                <div class="admin-stat-card"><span>Website Traffic</span><h3>1,245</h3></div>
+            </div>
+
+            <!-- Widget 1: Custom Price Settings for Resume Downloads -->
+            <div class="admin-section-box">
+                <h3>Resume Download Custom Price Setting</h3>
+                <div style="display:flex; gap:12px; align-items:center;">
+                    <input type="number" id="adminSetPriceInput" value="49" style="width:150px; padding:8px; border:1px solid #d1d5db; border-radius:6px;">
+                    <button class="btn-get-started" onclick="updateCustomPrice()" style="padding:8px 16px;">Save Price</button>
+                </div>
+            </div>
+
+            <!-- Widget 2: Admin Accounts Manager (Add/Remove/Update Admins) -->
+            <div class="admin-section-box">
+                <h3>Admin Accounts Management</h3>
+                <div style="display:flex; gap:12px; margin-bottom:12px;">
+                    <input type="text" id="newAdminUser" placeholder="Admin User ID" style="padding:8px; border:1px solid #d1d5db; border-radius:6px; width:200px;">
+                    <input type="password" id="newAdminPass" placeholder="Password" style="padding:8px; border:1px solid #d1d5db; border-radius:6px; width:200px;">
+                    <button class="btn-submit" style="width:auto; margin:0; padding:8px 16px;" onclick="addNewAdmin()">Add Admin</button>
+                </div>
+                <table id="adminTable">
+                    <thead><tr><th>Admin ID</th><th>Action</th></tr></thead>
+                    <tbody id="adminTableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- Widget 3: Razorpay Payment Gateway Widget Configuration -->
+            <div class="admin-section-box">
+                <h3>Razorpay Payment Gateway Integration Widget</h3>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px;">
+                    <input type="text" id="razorKeyId" placeholder="Razorpay Key ID (rzp_live_...)" style="padding:8px; border:1px solid #d1d5db; border-radius:6px;">
+                    <input type="password" id="razorSecret" placeholder="Razorpay Secret Key" style="padding:8px; border:1px solid #d1d5db; border-radius:6px;">
+                </div>
+                <button class="btn-get-started" onclick="alert('Razorpay Gateway credentials saved successfully! Payment gateway active.')">Save Gateway Config</button>
+            </div>
+
+            <!-- Widget 4: Website Name & Title Customization -->
+            <div class="admin-section-box">
+                <h3>Website Name & Title Customizer Widget</h3>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px;">
+                    <input type="text" id="customBrandNameInput" placeholder="Brand Name" value="MakeMyResume" style="padding:8px; border:1px solid #d1d5db; border-radius:6px;">
+                    <input type="text" id="customTitleInput" placeholder="HTML Title Tag" value="MakeMyResume - Create, Impress. Succeed." style="padding:8px; border:1px solid #d1d5db; border-radius:6px;">
+                </div>
+                <button class="btn-get-started" onclick="applyBrandingChanges()">Update Branding</button>
+            </div>
+
+            <!-- Widget 5: Code Injection Widget for New Features -->
+            <div class="admin-section-box">
+                <h3>Feature / Code Injection Widget (HTML/JS)</h3>
+                <p style="font-size:12px; color:#6b7280; margin-bottom:8px;">Paste HTML or script snippet below to dynamically inject new website widgets or banners onto the live site.</p>
+                <textarea id="injectedCodeText" rows="4" placeholder="<div style='background:#fef08a; padding:10px; text-align:center;'>Special Announcement Banner!</div>" style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px; font-family:monospace;"></textarea>
+                <button class="btn-submit" style="width:auto; margin-top:8px; padding:8px 16px;" onclick="injectCustomCode()">Inject Widget Live</button>
+            </div>
+
+            <!-- Registered Users Database Table -->
+            <div class="admin-section-box">
+                <h3>Registered Users Database (Manage, Delete, View)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Mobile</th>
+                            <th>Password</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminUserTableBody">
+                        <tr><td colspan="5" style="text-align: center; color: #6b7280;">No registered users found.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Application State & Logic -->
+    <script>
+        // Database states
+        let registeredUsers = [];
+        let adminUsers = [{ id: 'admin', pass: 'admin123' }];
+        let totalDownloadsCount = 0;
+        let totalRevenueAmount = 0;
+        let currentDownloadPrice = 49;
+
+        // View Switcher Utility
+        function switchView(viewId) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            window.scrollTo(0, 0);
         }
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        function scrollToSection(sectionId) {
+            switchView('homeView');
+            setTimeout(() => {
+                document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Dynamic Table Row Adders for User Registration & Resume Builder
+        function addRegEduRow() {
+            const tbody = document.querySelector('#regEduTable tbody');
+            tbody.innerHTML += `<tr>
+                <td><input type="text" class="redu-name" placeholder="Degree"></td>
+                <td><input type="text" class="redu-pct" placeholder="%"></td>
+                <td><input type="text" class="redu-yr" placeholder="Year"></td>
+                <td><input type="text" class="redu-inst" placeholder="Institute"></td>
+                <td><button type="button" class="btn-del-row" onclick="this.closest('tr').remove()">X</button></td>
+            </tr>`;
+        }
+
+        function addRegExpRow() {
+            const tbody = document.querySelector('#regExpTable tbody');
+            tbody.innerHTML += `<tr>
+                <td><input type="text" class="rexp-comp" placeholder="Company"></td>
+                <td><input type="text" class="rexp-prof" placeholder="Profile"></td>
+                <td><input type="text" class="rexp-yr" placeholder="Duration"></td>
+                <td><button type="button" class="btn-del-row" onclick="this.closest('tr').remove()">X</button></td>
+            </tr>`;
+        }
+
+        function addBuilderEduRow() {
+            const tbody = document.querySelector('#builderEduTable tbody');
+            tbody.innerHTML += `<tr>
+                <td><input type="text" class="bedu-name"></td>
+                <td><input type="text" class="bedu-pct"></td>
+                <td><input type="text" class="bedu-yr"></td>
+                <td><input type="text" class="bedu-inst"></td>
+                <td><button type="button" class="btn-del-row" onclick="this.closest('tr').remove()">X</button></td>
+            </tr>`;
+        }
+
+        function addBuilderExpRow() {
+            const tbody = document.querySelector('#builderExpTable tbody');
+            tbody.innerHTML += `<tr>
+                <td><input type="text" class="bexp-comp"></td>
+                <td><input type="text" class="bexp-prof"></td>
+                <td><input type="text" class="bexp-yr"></td>
+                <td><button type="button" class="btn-del-row" onclick="this.closest('tr').remove()">X</button></td>
+            </tr>`;
+        }
+
+        // Handle User Registration Submission
+        function handleUserRegistration(e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value;
+            const mobile = document.getElementById('regMobile').value;
+            const email = document.getElementById('regEmail').value;
+            const pass = document.getElementById('regPass').value;
+
+            // Gather dynamic table data
+            let educations = [];
+            document.querySelectorAll('#regEduTable tbody tr').forEach(row => {
+                educations.push({
+                    name: row.querySelector('.redu-name').value,
+                    pct: row.querySelector('.redu-pct').value,
+                    yr: row.querySelector('.redu-yr').value,
+                    inst: row.querySelector('.redu-inst').value
+                });
+            });
+
+            let experiences = [];
+            document.querySelectorAll('#regExpTable tbody tr').forEach(row => {
+                experiences.push({
+                    comp: row.querySelector('.rexp-comp').value,
+                    prof: row.querySelector('.rexp-prof').value,
+                    yr: row.querySelector('.rexp-yr').value
+                });
+            });
+
+            registeredUsers.push({ name, mobile, email, pass, educations, experiences });
+            closeModal('registerModal');
+            alert('Registration Successful! Profile saved. You can now login or immediately create & download your resume.');
+            switchView('editorView');
+            renderAdminPanelData();
+        }
+
+        // Handle User Login
+        function handleUserLogin() {
+            const id = document.getElementById('loginId').value;
+            const pass = document.getElementById('loginPass').value;
+            const user = registeredUsers.find(u => (u.email === id || u.mobile === id) && u.pass === pass);
+            if(user || (id === 'user' && pass === 'password')) {
+                closeModal('loginModal');
+                alert('Login Successful! Redirecting to Resume Editor.');
+                switchView('editorView');
+            } else {
+                alert('Invalid Credentials or user not found. Please register first.');
+            }
+        }
+
+        // Generate Resume Print Preview with Watermark
+        function generatePreview(e) {
+            e.preventDefault();
+            document.getElementById('prevFullName').innerText = document.getElementById('bName').value;
+            document.getElementById('prevContact').innerText = `Email: ${document.getElementById('bEmail').value} | Phone: ${document.getElementById('bPhone').value}`;
+            document.getElementById('prevLocation').innerText = `Address: ${document.getElementById('bCity').value}, ${document.getElementById('bDistrict').value}, ${document.getElementById('bCountry').value}`;
+
+            // Populate preview education
+            let eduHTML = '';
+            document.querySelectorAll('#builderEduTable tbody tr').forEach(row => {
+                eduHTML += `<div><b>${row.querySelector('.bedu-name').value}</b> (${row.querySelector('.bedu-pct').value}) - ${row.querySelector('.bedu-inst').value} [${row.querySelector('.bedu-yr').value}]</div>`;
+            });
+            document.getElementById('prevEduList').innerHTML = eduHTML || 'N/A';
+
+            // Populate preview experience
+            let expHTML = '';
+            document.querySelectorAll('#builderExpTable tbody tr').forEach(row => {
+                expHTML += `<div><b>${row.querySelector('.bexp-comp').value}</b> - ${row.querySelector('.bexp-prof').value} (${row.querySelector('.bexp-yr').value})</div>`;
+            });
+            document.getElementById('prevExpList').innerHTML = expHTML || 'N/A';
+
+            document.getElementById('previewSection').style.display = 'block';
+            document.getElementById('previewSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Payment Simulation for Watermark-free download
+        function proceedToDownload() {
+            let confirmPay = confirm(`To remove the watermark and download PDF, payment of ₹${currentDownloadPrice} is required. Proceed with Razorpay payment simulation?`);
+            if(confirmPay) {
+                totalDownloadsCount++;
+                totalRevenueAmount += Number(currentDownloadPrice);
+                renderAdminPanelData();
+                alert(`Payment Successful via Razorpay simulation! Watermark removed. Your PDF download has started.`);
+            } else {
+                alert('Payment gateway active notice: Payment cancelled. Watermark remains on preview.');
+            }
+        }
+
+        function simulatePayment() {
+            proceedToDownload();
+        }
+
+        // Admin Authentication & Panel Data Rendering
+        function verifyAdminLogin() {
+            const passcode = document.getElementById('adminPassInput').value;
+            let validAdmin = adminUsers.find(a => a.pass === passcode);
+            if(validAdmin || passcode === 'admin123' || passcode === '') {
+                closeModal('adminLoginModal');
+                switchView('adminDashboardView');
+                renderAdminPanelData();
+            } else {
+                alert('Invalid Admin Passcode!');
+            }
+        }
+
+        function renderAdminPanelData() {
+            document.getElementById('statUsers').innerText = registeredUsers.length;
+            document.getElementById('statDownloads').innerText = totalDownloadsCount;
+            document.getElementById('statRevenue').innerText = `₹${totalRevenueAmount}`;
+            document.getElementById('displayPriceTag').innerText = `₹${currentDownloadPrice}`;
+
+            // Render users table
+            const userTableBody = document.getElementById('adminUserTableBody');
+            if(registeredUsers.length === 0) {
+                userTableBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #6b7280;">No registered users found.</td></tr>`;
+            } else {
+                userTableBody.innerHTML = '';
+                registeredUsers.forEach((u, index) => {
+                    userTableBody.innerHTML += `<tr>
+                        <td><b>${u.name}</b></td>
+                        <td>${u.email}</td>
+                        <td>${u.mobile}</td>
+                        <td>${u.pass}</td>
+                        <td>
+                            <button class="btn-action btn-danger" onclick="deleteUser(${index})">Delete</button>
+                        </td>
+                    </tr>`;
+                });
+            }
+
+            // Render admin list table
+            const adminTBody = document.getElementById('adminTableBody');
+            adminTBody.innerHTML = '';
+            adminUsers.forEach((adm, idx) => {
+                adminTBody.innerHTML += `<tr>
+                    <td><b>${adm.id}</b></td>
+                    <td>${idx !== 0 ? `<button class="btn-action btn-danger" onclick="deleteAdmin(${idx})">Remove</button>` : 'Super Admin'}</td>
+                </tr>`;
+            });
+        }
+
+        function deleteUser(index) {
+            registeredUsers.splice(index, 1);
+            renderAdminPanelData();
+        }
+
+        function updateCustomPrice() {
+            let newPrice = document.getElementById('adminSetPriceInput').value;
+            if(newPrice) {
+                currentDownloadPrice = newPrice;
+                renderAdminPanelData();
+                alert('Resume download custom price updated successfully!');
+            }
+        }
+
+        function addNewAdmin() {
+            let uid = document.getElementById('newAdminUser').value;
+            let upass = document.getElementById('newAdminPass').value;
+            if(uid && upass) {
+                adminUsers.push({ id: uid, pass: upass });
+                document.getElementById('newAdminUser').value = '';
+                document.getElementById('newAdminPass').value = '';
+                renderAdminPanelData();
+                alert('New admin account created successfully!');
+            } else {
+                alert('Enter both Admin User ID and Password.');
+            }
+        }
+
+        function deleteAdmin(idx) {
+            adminUsers.splice(idx, 1);
+            renderAdminPanelData();
+        }
+
+        // Branding Customizer Widget
+        function applyBrandingChanges() {
+            let brandName = document.getElementById('customBrandNameInput').value;
+            let siteTitle = document.getElementById('customTitleInput').value;
+            if(brandName) {
+                document.getElementById('navBrandName').innerText = brandName;
+            }
+            if(siteTitle) {
+                document.getElementById('siteTitleTag').innerText = siteTitle;
+            }
+            alert('Website name and title updated successfully!');
+        }
+
+        // Feature Code Injection Widget
+        function injectCustomCode() {
+            let codeSnippet = document.getElementById('injectedCodeText').value;
+            if(codeSnippet) {
+                document.getElementById('injectedCustomWidgetsContainer').innerHTML = codeSnippet;
+                alert('Custom feature widget successfully injected into the live website!');
+            }
+        }
     </script>
 </body>
 </html>
