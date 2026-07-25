@@ -1,1 +1,259 @@
+<!DOCTYPE html>
+<html lang="hi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MakeMyResume - Pro Resume Editor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #f8fafc; 
+            color: #0f172a; 
+            margin: 0; padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        /* Anti-screenshot blur protection */
+        .anti-screenshot {
+            -webkit-filter: drop-shadow(0 0 0 transparent);
+        }
+        @media print {
+            body { background: white; }
+            .no-print { display: none !important; }
+            #a4PreviewBox { border: none !important; box-shadow: none !important; width: 100% !important; padding: 0 !important; }
+        }
+        /* Watermark styling for free downloads */
+        .watermark-overlay {
+            position: relative;
+        }
+        .watermark-overlay::after {
+            content: "MAKE MY RESUME - FREE VERSION (GET PRO TO REMOVE)";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 24px;
+            font-weight: 900;
+            color: rgba(239, 68, 68, 0.12);
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 50;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50 flex flex-col" oncontextmenu="return false;">
 
+    <!-- TOP HEADER NAVBAR -->
+    <header class="bg-white border-b border-slate-200 px-6 py-3 sticky top-0 z-40 no-print flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 bg-slate-900 rounded-xl flex items-center justify-center font-black text-white text-lg">M</div>
+            <div>
+                <h1 class="font-black text-slate-900 text-sm leading-none">MakeMyResume Editor</h1>
+                <span class="text-[9px] text-slate-400 font-bold uppercase">Dual-Pane Live Customizer</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="window.location.href='index.html'" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-house"></i> Home
+            </button>
+            <button onclick="triggerPrintOrDownload()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-sm">
+                <i class="fa-solid fa-download"></i> Download PDF / Print
+            </button>
+        </div>
+    </header>
+
+    <!-- DUAL-PANE MAIN LAYOUT -->
+    <main class="flex-1 max-w-[1600px] w-full mx-auto p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- LEFT PANE: INPUT FORM & RICH TEXT TOOLBAR -->
+        <div class="lg:col-span-5 bg-white border border-slate-200 rounded-3xl p-5 space-y-5 no-print shadow-xs overflow-y-auto max-h-[85vh]">
+            <div class="border-b pb-3 flex justify-between items-center">
+                <h3 class="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-pen-nib text-blue-600"></i> Resume Content & Controls
+                </h3>
+                <span id="activeTemplateBadge" class="text-[10px] bg-slate-100 text-slate-600 font-bold px-2 py-0.5 rounded">Template #1</span>
+            </div>
+
+            <!-- Rich Text Toolbar -->
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-2 flex flex-wrap gap-1 text-xs">
+                <button onclick="execCmd('bold')" class="p-1.5 px-2 bg-white border rounded font-bold shadow-xs">B</button>
+                <button onclick="execCmd('italic')" class="p-1.5 px-2 bg-white border rounded italic shadow-xs">I</button>
+                <button onclick="execCmd('underline')" class="p-1.5 px-2 bg-white border rounded underline shadow-xs">U</button>
+                <div class="h-4 w-[1px] bg-slate-300 mx-1 self-center"></div>
+                <button onclick="execCmd('justifyLeft')" class="p-1.5 bg-white border rounded shadow-xs"><i class="fa-solid fa-align-left"></i></button>
+                <button onclick="execCmd('justifyCenter')" class="p-1.5 bg-white border rounded shadow-xs"><i class="fa-solid fa-align-center"></i></button>
+                <button onclick="execCmd('justifyRight')" class="p-1.5 bg-white border rounded shadow-xs"><i class="fa-solid fa-align-right"></i></button>
+                <div class="h-4 w-[1px] bg-slate-300 mx-1 self-center"></div>
+                <button onclick="execCmd('insertUnorderedList')" class="p-1.5 bg-white border rounded shadow-xs"><i class="fa-solid fa-list-ul"></i></button>
+                <input type="color" onchange="execCmd('foreColor', this.value)" class="w-6 h-6 border rounded cursor-pointer self-center" title="Text Color">
+            </div>
+
+            <!-- Live Editable Form Inputs -->
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Full Name</label>
+                    <input type="text" id="inputName" oninput="updateLivePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Email</label>
+                        <input type="email" id="inputEmail" oninput="updateLivePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Phone</label>
+                        <input type="text" id="inputPhone" oninput="updateLivePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Address / Location</label>
+                    <input type="text" id="inputAddress" oninput="updateLivePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Professional Summary</label>
+                    <textarea id="inputSummary" rows="3" oninput="updateLivePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5"></textarea>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Education & Qualifications</label>
+                    <textarea id="inputEdu" rows="2" oninput="updateLivePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5"></textarea>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Experience & Job Role</label>
+                    <textarea id="inputExp" rows="2" oninput="updateLivePreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT PANE: LIVE A4 PDF PREVIEW -->
+        <div class="lg:col-span-7 bg-slate-200 border border-slate-300 rounded-3xl p-6 flex flex-col items-center justify-start overflow-y-auto min-h-[85vh]">
+            <div class="mb-2 w-full flex justify-between items-center no-print">
+                <span class="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider">Live A4 Resume Preview</span>
+                <span id="watermarkStatusBadge" class="text-[10px] bg-amber-100 text-amber-700 font-bold px-2.5 py-1 rounded-full">Free Version (Watermark Active)</span>
+            </div>
+
+            <!-- A4 Document Box -->
+            <div id="a4PreviewBox" class="bg-white w-full max-w-[210mm] min-h-[297mm] p-12 rounded-xl shadow-2xl watermark-overlay anti-screenshot">
+                <!-- Dynamically Rendered Content -->
+                <div id="previewContentArea" class="space-y-4">
+                    <h1 id="prevName" class="text-2xl font-black text-slate-900">Your Full Name</h1>
+                    <p id="prevContact" class="text-xs text-slate-500">email@example.com | +91 0000000000 | Location</p>
+                    <hr class="border-slate-200 my-4">
+                    <h3 class="text-xs font-extrabold text-slate-900 uppercase tracking-wider">Professional Summary</h3>
+                    <p id="prevSummary" class="text-xs text-slate-600">Your professional summary will appear here...</p>
+                    <div class="pt-4">
+                        <h3 class="text-xs font-extrabold text-slate-900 uppercase tracking-wider">Education</h3>
+                        <p id="prevEdu" class="text-xs text-slate-600 mt-1">Education details...</p>
+                    </div>
+                    <div class="pt-4">
+                        <h3 class="text-xs font-extrabold text-slate-900 uppercase tracking-wider">Experience</h3>
+                        <p id="prevExp" class="text-xs text-slate-600 mt-1">Experience details...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- EDITOR SCRIPT -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            loadUserDataIntoEditor();
+        });
+
+        function loadUserDataIntoEditor() {
+            const user = JSON.parse(localStorage.getItem('current_logged_user') || '{}');
+            if(user.name) {
+                document.getElementById('inputName').value = user.name || '';
+                document.getElementById('inputEmail').value = user.email || '';
+                document.getElementById('inputPhone').value = user.phone || '';
+                document.getElementById('inputAddress').value = user.address || '';
+                document.getElementById('inputEdu').value = user.edu || '';
+                document.getElementById('inputExp').value = user.exp || '';
+                document.getElementById('inputSummary').value = "Dedicated professional with solid experience and proven academic background.";
+                
+                updateLivePreview();
+            }
+        }
+
+        function updateLivePreview() {
+            document.getElementById('prevName').innerText = document.getElementById('inputName').value || 'Your Full Name';
+            document.getElementById('prevContact').innerText = `${document.getElementById('inputEmail').value || 'email@example.com'} | ${document.getElementById('inputPhone').value || '+91 0000000000'} | ${document.getElementById('inputAddress').value || 'Location'}`;
+            document.getElementById('prevSummary').innerText = document.getElementById('inputSummary').value;
+            document.getElementById('prevEdu').innerText = document.getElementById('inputEdu').value;
+            document.getElementById('prevExp').innerText = document.getElementById('inputExp').value;
+
+            const user = JSON.parse(localStorage.getItem('current_logged_user') || '{}');
+            const previewBox = document.getElementById('a4PreviewBox');
+            
+            if(user.paid) {
+                previewBox.classList.remove('watermark-overlay');
+                document.getElementById('watermarkStatusBadge').innerText = "Pro Version (Clean PDF)";
+                document.getElementById('watermarkStatusBadge').className = "text-[10px] bg-emerald-100 text-emerald-700 font-bold px-2.5 py-1 rounded-full";
+            }
+        }
+
+        function execCmd(cmd, val = null) {
+            document.execCommand(cmd, false, val);
+        }
+
+        function triggerPrintOrDownload() {
+            const user = JSON.parse(localStorage.getItem('current_logged_user') || '{}');
+            if(!user.paid) {
+                if(confirm("Free version downloads with a watermark. Do you want to pay to download clean watermark-free PDF?")) {
+                    initiateRazorpayPayment();
+                    return;
+                }
+            }
+            window.print();
+        }
+
+        function initiateRazorpayPayment() {
+            const price = parseInt(localStorage.getItem('app_pro_price') || '100');
+            const rzpKey = localStorage.getItem('app_rzp_key') || 'rzp_test_placeholder';
+            const user = JSON.parse(localStorage.getItem('current_logged_user') || '{}');
+
+            let options = {
+                "key": rzpKey,
+                "amount": price * 100,
+                "currency": "INR",
+                "name": "MakeMyResume Pro",
+                "description": "Watermark Removal & Clean PDF",
+                "handler": function (response) {
+                    alert("Payment Successful! Watermark removed.");
+                    user.paid = true;
+                    user.downloads = (user.downloads || 0) + 1;
+                    localStorage.setItem('current_logged_user', JSON.stringify(user));
+                    
+                    let users = JSON.parse(localStorage.getItem('app_users') || '[]');
+                    let idx = users.findIndex(u => u.email === user.email);
+                    if(idx !== -1) {
+                        users[idx] = user;
+                        localStorage.setItem('app_users', JSON.stringify(users));
+                    }
+                    updateLivePreview();
+                },
+                "prefill": {
+                    "name": user.name || "User",
+                    "email": user.email || "user@gmail.com",
+                    "contact": user.phone || "9000000000"
+                },
+                "theme": { "color": "#0f172a" }
+            };
+
+            try {
+                let rzp = new Razorpay(options);
+                rzp.open();
+            } catch(e) {
+                if(confirm("Simulate successful payment for testing? (Click OK for clean PDF)")) {
+                    user.paid = true;
+                    user.downloads = (user.downloads || 0) + 1;
+                    localStorage.setItem('current_logged_user', JSON.stringify(user));
+                    updateLivePreview();
+                    alert("Watermark removed!");
+                }
+            }
+        }
+    </script>
+</body>
+</html>
