@@ -1,1 +1,453 @@
+<!DOCTYPE html>
+<html lang="hi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MakeMyResume - Professional AI Resume Builder & 50+ Templates</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #f8fafc; 
+            color: #0f172a; 
+            margin: 0; padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        /* Watermark styling for free downloads */
+        .watermark-overlay {
+            position: relative;
+        }
+        .watermark-overlay::after {
+            content: "MAKE MY RESUME - FREE VERSION (GET PRO TO REMOVE)";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 28px;
+            font-weight: 900;
+            color: rgba(239, 68, 68, 0.15);
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 50;
+        }
+        /* Print mode: Hide everything except resume container */
+        @media print {
+            body * { visibility: hidden; }
+            #printableResumeArea, #printableResumeArea * { visibility: visible; }
+            #printableResumeArea { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 20px; box-shadow: none; border: none; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50" oncontextmenu="return false;">
 
+    <!-- TOP NAVIGATION -->
+    <header class="bg-white border-b border-slate-200 px-6 py-4 sticky top-0 z-40 no-print">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-slate-900 rounded-2xl flex items-center justify-center font-black text-white text-xl">M</div>
+                <div>
+                    <h1 class="font-black text-slate-900 text-lg leading-none">MakeMyResume</h1>
+                    <span class="text-[10px] text-slate-400 font-bold uppercase">50+ Professional Templates</span>
+                </div>
+            </div>
+            <div id="navAuthArea" class="flex items-center gap-3">
+                <button onclick="openAuthModal('login')" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-4 py-2 rounded-xl text-xs transition">Login</button>
+                <button onclick="openAuthModal('register')" class="bg-slate-900 hover:bg-slate-800 text-white font-bold px-4 py-2 rounded-xl text-xs transition">Register & Auto-Resume</button>
+                <a href="admin.html" class="text-xs text-slate-500 hover:text-slate-900 font-bold ml-2"><i class="fa-solid fa-lock"></i> Admin</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO & TEMPLATES EXPLORER SECTION -->
+    <main class="max-w-7xl mx-auto p-6 space-y-8 no-print">
+        <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-8 rounded-3xl shadow-xl flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="space-y-3 max-w-xl">
+                <span class="bg-blue-600 text-white text-[10px] font-extrabold px-3 py-1 rounded-full uppercase">AI Resume Engine</span>
+                <h2 class="text-3xl font-black">Create, Customize & Download Pro Resumes Instantly</h2>
+                <p class="text-xs text-slate-300 leading-relaxed">Register with your complete education & experience details, and our system automatically generates your tailored resume across 50+ professional formats!</p>
+            </div>
+            <button onclick="openAuthModal('register')" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold px-6 py-3.5 rounded-2xl text-xs shadow-lg transition whitespace-nowrap">
+                <i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Build Free Resume Now
+            </button>
+        </div>
+
+        <!-- TEMPLATES CATALOG GRID (50+ Templates) -->
+        <div class="space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="text-sm font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-layer-group text-blue-600"></i> Select From 50+ Professional Resume Templates
+                </h3>
+                <span id="templateCountBadge" class="text-xs font-bold text-slate-500 bg-white border px-3 py-1 rounded-xl">50 Templates Active</span>
+            </div>
+            <div id="templatesGrid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <!-- Dynamically loaded templates -->
+            </div>
+        </div>
+    </main>
+
+    <!-- USER DASHBOARD / AUTO-RESUME PREVIEW MODAL (Hidden by default, shown upon login) -->
+    <div id="userDashboardModal" class="hidden fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-4xl w-full p-8 space-y-6 shadow-2xl my-8 relative">
+            <div class="flex justify-between items-center border-b pb-4 no-print">
+                <div>
+                    <h2 class="text-xl font-extrabold text-slate-900">Your Auto-Generated Resume Profile</h2>
+                    <p class="text-xs text-slate-500">Edit details or download in PDF (Free with Watermark / Pro Clean).</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="triggerCleanPrint()" class="bg-slate-100 hover:bg-slate-200 text-slate-800 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5"><i class="fa-solid fa-print"></i> Print Resume</button>
+                    <button onclick="handleDownloadPDF()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5"><i class="fa-solid fa-download"></i> Download PDF</button>
+                    <button onclick="closeUserDashboard()" class="text-slate-400 hover:text-slate-700 text-lg font-bold p-2"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            </div>
+
+            <!-- RESUME RENDER AREA (With Watermark toggle) -->
+            <div id="printableResumeArea" class="bg-white border border-slate-200 p-8 rounded-2xl shadow-sm watermark-overlay" id="resumeBox">
+                <!-- Content dynamically filled from user profile & selected template -->
+            </div>
+        </div>
+    </div>
+
+    <!-- AUTHENTICATION MODAL (Login / Detailed Registration) -->
+    <div id="authModal" class="hidden fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-8 space-y-6 shadow-2xl my-8 relative">
+            <div class="flex justify-between items-center border-b pb-4">
+                <h3 id="authModalTitle" class="text-lg font-extrabold text-slate-900">Register & Auto-Generate Resume</h3>
+                <button onclick="closeAuthModal()" class="text-slate-400 hover:text-slate-700 font-bold"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <!-- LOGIN FORM -->
+            <form id="loginForm" onsubmit="handleUserLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-[11px] font-extrabold uppercase text-slate-500 mb-1">Email ID</label>
+                    <input type="email" id="loginEmail" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-extrabold uppercase text-slate-500 mb-1">Password</label>
+                    <input type="password" id="loginPass" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs">
+                </div>
+                <button type="submit" class="w-full bg-slate-900 text-white font-extrabold py-3 rounded-xl text-xs">Login to Resume Profile</button>
+                <div class="text-center pt-2">
+                    <button type="button" onclick="switchAuthTab('register')" class="text-xs text-blue-600 underline font-semibold">New user? Register with complete details</button>
+                </div>
+            </form>
+
+            <!-- DETAILED REGISTRATION FORM (Point 5 Requirement) -->
+            <form id="registerForm" onsubmit="handleUserRegister(event)" class="space-y-4 hidden max-h-[70vh] overflow-y-auto pr-2">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Full Name</label>
+                        <input type="text" id="regName" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Mobile Number</label>
+                        <input type="text" id="regPhone" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Email ID</label>
+                        <input type="email" id="regEmail" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Password</label>
+                        <input type="password" id="regPass" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Address / Location</label>
+                    <input type="text" id="regAddress" placeholder="e.g. Bhopal, Madhya Pradesh" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs">
+                </div>
+
+                <!-- Education Details -->
+                <div class="border-t pt-3">
+                    <h4 class="text-xs font-bold text-slate-900 mb-2">Education Details (10th, 12th, Diploma, Graduation, Post-Graduation)</h4>
+                    <textarea id="regEdu" rows="2" placeholder="10th Board (2018), 12th Board (2020), Graduation B.Tech (2024) - RGPV Bhopal" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs"></textarea>
+                </div>
+
+                <!-- Experience Details -->
+                <div class="border-t pt-3">
+                    <h4 class="text-xs font-bold text-slate-900 mb-2">Previous Experience (Company Name, Years, Job Role)</h4>
+                    <textarea id="regExp" rows="2" placeholder="Company: Tech Solutions, Years: 2 Years, Role: Software Developer" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs"></textarea>
+                </div>
+
+                <!-- Optional Photo Upload -->
+                <div class="border-t pt-3">
+                    <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Upload Profile Photo (Optional)</label>
+                    <input type="file" id="regPhoto" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200">
+                </div>
+
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-3 rounded-xl text-xs shadow-md">Complete Registration & Generate Resume</button>
+                <div class="text-center pt-2">
+                    <button type="button" onclick="switchAuthTab('login')" class="text-xs text-blue-600 underline font-semibold">Already registered? Login here</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN SCRIPT LOGIC -->
+    <script>
+        let selectedTemplateIndex = 0;
+        let currentUser = null;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderTemplatesCatalog();
+            checkSession();
+        });
+
+        function renderTemplatesCatalog() {
+            const tpls = JSON.parse(localStorage.getItem('app_templates') || '[]');
+            const grid = document.getElementById('templatesGrid');
+            document.getElementById('templateCountBadge').innerText = `${tpls.length} Templates Active`;
+            
+            grid.innerHTML = '';
+            tpls.forEach((t, i) => {
+                grid.innerHTML += `
+                    <div onclick="selectTemplateAndOpen(${i})" class="bg-white border border-slate-200 hover:border-slate-800 p-4 rounded-2xl cursor-pointer shadow-xs transition space-y-2 group">
+                        <div class="h-32 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-slate-900 group-hover:text-white transition">
+                            <i class="fa-solid fa-file-lines text-3xl"></i>
+                        </div>
+                        <h4 class="font-bold text-xs text-slate-900 truncate">${t.title}</h4>
+                        <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-bold uppercase">${t.category}</span>
+                    </div>
+                `;
+            });
+        }
+
+        function selectTemplateAndOpen(index) {
+            selectedTemplateIndex = index;
+            if(!currentUser) {
+                openAuthModal('register');
+            } else {
+                generateUserResumePreview();
+                document.getElementById('userDashboardModal').classList.remove('hidden');
+            }
+        }
+
+        function openAuthModal(mode) {
+            document.getElementById('authModal').classList.remove('hidden');
+            switchAuthTab(mode);
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.add('hidden');
+        }
+
+        function switchAuthTab(mode) {
+            if(mode === 'login') {
+                document.getElementById('loginForm').classList.remove('hidden');
+                document.getElementById('registerForm').classList.add('hidden');
+                document.getElementById('authModalTitle').innerText = "Login to Resume Profile";
+            } else {
+                document.getElementById('loginForm').classList.add('hidden');
+                document.getElementById('registerForm').classList.remove('hidden');
+                document.getElementById('authModalTitle').innerText = "Register & Auto-Generate Resume";
+            }
+        }
+
+        function handleUserRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value;
+            const phone = document.getElementById('regPhone').value;
+            const email = document.getElementById('regEmail').value;
+            const pass = document.getElementById('regPass').value;
+            const address = document.getElementById('regAddress').value;
+            const edu = document.getElementById('regEdu').value;
+            const exp = document.getElementById('regExp').value;
+            
+            const photoInput = document.getElementById('regPhoto');
+            let photoUrl = "";
+            
+            if(photoInput.files && photoInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    saveUserAndProceed({ name, phone, email, pass, address, edu, exp, photo: e.target.result, downloads: 0, paid: false });
+                };
+                reader.readAsDataURL(photoInput.files[0]);
+            } else {
+                saveUserAndProceed({ name, phone, email, pass, address, edu, exp, photo: "", downloads: 0, paid: false });
+            }
+        }
+
+        function saveUserAndProceed(userObj) {
+            let users = JSON.parse(localStorage.getItem('app_users') || '[]');
+            users.push(userObj);
+            localStorage.setItem('app_users', JSON.stringify(users));
+            
+            currentUser = userObj;
+            localStorage.setItem('current_logged_user', JSON.stringify(currentUser));
+            
+            closeAuthModal();
+            updateNavAfterLogin();
+            generateUserResumePreview();
+            document.getElementById('userDashboardModal').classList.remove('hidden');
+            alert("Registration Successful! Your auto-generated resume is ready.");
+        }
+
+        function handleUserLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const pass = document.getElementById('loginPass').value;
+
+            let users = JSON.parse(localStorage.getItem('app_users') || '[]');
+            const found = users.find(u => u.email === email && u.pass === pass);
+
+            if(found) {
+                currentUser = found;
+                localStorage.setItem('current_logged_user', JSON.stringify(currentUser));
+                closeAuthModal();
+                updateNavAfterLogin();
+                generateUserResumePreview();
+                document.getElementById('userDashboardModal').classList.remove('hidden');
+            } else {
+                alert("Invalid Email or Password!");
+            }
+        }
+
+        function checkSession() {
+            const saved = localStorage.getItem('current_logged_user');
+            if(saved) {
+                currentUser = JSON.parse(saved);
+                updateNavAfterLogin();
+            }
+        }
+
+        function updateNavAfterLogin() {
+            if(currentUser) {
+                document.getElementById('navAuthArea').innerHTML = `
+                    <span class="text-xs font-bold text-slate-700">Hi, ${currentUser.name}</span>
+                    <button onclick="openUserDashboard()" class="bg-blue-600 text-white px-3 py-2 rounded-xl text-xs font-bold">My Resume</button>
+                    <button onclick="logoutUser()" class="bg-red-50 text-red-600 px-3 py-2 rounded-xl text-xs font-bold">Logout</button>
+                `;
+            }
+        }
+
+        function openUserDashboard() {
+            generateUserResumePreview();
+            document.getElementById('userDashboardModal').classList.remove('hidden');
+        }
+
+        function closeUserDashboard() {
+            document.getElementById('userDashboardModal').classList.add('hidden');
+        }
+
+        function logoutUser() {
+            localStorage.removeItem('current_logged_user');
+            currentUser = null;
+            location.reload();
+        }
+
+        function generateUserResumePreview() {
+            if(!currentUser) return;
+            const tpls = JSON.parse(localStorage.getItem('app_templates') || '[]');
+            const tpl = tpls[selectedTemplateIndex] || tpls[0];
+            
+            // Apply global styling if set by admin
+            const styling = JSON.parse(localStorage.getItem('app_global_styling') || '{}');
+
+            let html = tpl ? tpl.htmlContent : `<h1>{{FULL_NAME}}</h1>`;
+            
+            // Replace tags with user details
+            html = html.replace(/{{FULL_NAME}}/g, currentUser.name);
+            html = html.replace(/{{EMAIL}}/g, currentUser.email);
+            html = html.replace(/{{PHONE}}/g, currentUser.phone);
+            html = html.replace(/{{LOCATION}}/g, currentUser.address);
+            html = html.replace(/{{SUMMARY}}/g, "Dedicated professional with rich academic background and hands-on corporate experience.");
+            html = html.replace(/{{COMPANY_NAME}}/g, currentUser.exp);
+            html = html.replace(/{{JOB_ROLE}}/g, "Experienced Professional");
+            html = html.replace(/{{EXPERIENCE_YEARS}}/g, "2+");
+
+            const resumeBox = document.getElementById('printableResumeArea');
+            resumeBox.innerHTML = `
+                <div style="font-family: ${styling.font || 'sans-serif'}; font-size: ${styling.size || '14px'}; color: ${styling.color || '#0f172a'}; text-align: ${styling.align || 'left'};">
+                    ${currentUser.photo ? `<img src="${currentUser.photo}" class="w-24 h-24 rounded-xl object-cover mb-4 float-right">` : ''}
+                    ${html}
+                    <div class="mt-6 pt-4 border-t">
+                        <h4 style="font-weight:bold;">EDUCATION HISTORY</h4>
+                        <p>${currentUser.edu}</p>
+                    </div>
+                </div>
+            `;
+
+            // Check watermark status (Free vs Paid)
+            if(currentUser.paid) {
+                resumeBox.classList.remove('watermark-overlay');
+            } else {
+                resumeBox.classList.add('watermark-overlay');
+            }
+        }
+
+        function triggerCleanPrint() {
+            if(!currentUser.paid) {
+                if(confirm("Free version contains watermark and footer notice. Do you want to pay to download clean watermark-free PDF and print?")) {
+                    initiateRazorpayPayment();
+                    return;
+                }
+            }
+            window.print();
+        }
+
+        function handleDownloadPDF() {
+            if(!currentUser.paid) {
+                initiateRazorpayPayment();
+            } else {
+                alert("Downloading clean PDF version...");
+                window.print();
+            }
+        }
+
+        function initiateRazorpayPayment() {
+            const price = parseInt(localStorage.getItem('app_pro_price') || '100');
+            const rzpKey = localStorage.getItem('app_rzp_key') || 'rzp_test_placeholder';
+
+            let options = {
+                "key": rzpKey,
+                "amount": price * 100, // paise
+                "currency": "INR",
+                "name": "MakeMyResume Pro",
+                "description": "Watermark Removal & Clean PDF Download",
+                "handler": function (response) {
+                    alert("Payment Successful! Watermark removed.");
+                    currentUser.paid = true;
+                    currentUser.downloads = (currentUser.downloads || 0) + 1;
+                    
+                    // Update storage
+                    localStorage.setItem('current_logged_user', JSON.stringify(currentUser));
+                    let users = JSON.parse(localStorage.getItem('app_users') || '[]');
+                    let idx = users.findIndex(u => u.email === currentUser.email);
+                    if(idx !== -1) {
+                        users[idx] = currentUser;
+                        localStorage.setItem('app_users', JSON.stringify(users));
+                    }
+                    generateUserResumePreview();
+                },
+                "prefill": {
+                    "name": currentUser.name,
+                    "email": currentUser.email,
+                    "contact": currentUser.phone
+                },
+                "theme": { "color": "#0f172a" }
+            };
+
+            try {
+                let rzp = new Razorpay(options);
+                rzp.open();
+            } catch(e) {
+                // Fallback simulation if test key is inactive
+                if(confirm("Simulate successful payment for testing? (Click OK to get clean PDF)")) {
+                    currentUser.paid = true;
+                    currentUser.downloads = (currentUser.downloads || 0) + 1;
+                    localStorage.setItem('current_logged_user', JSON.stringify(currentUser));
+                    generateUserResumePreview();
+                    alert("Watermark removed successfully!");
+                }
+            }
+        }
+    </script>
+</body>
+</html>
