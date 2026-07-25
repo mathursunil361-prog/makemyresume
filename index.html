@@ -1,204 +1,901 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Make My Resume</title>
-
-    <!-- Tailwind CSS (Styling ke liye) -->
+    
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- React and ReactDOM CDN -->
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- React & ReactDOM CDN -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-
-    <!-- Babel CDN (JSX ko compile karne ke liye) -->
+    
+    <!-- Babel CDN (JSX Compiler) -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-</head>
-<body class="bg-slate-100 p-6">
 
-    <!-- React App Container -->
+    <style>
+        .watermark-bg {
+            position: relative;
+            overflow: hidden;
+        }
+        .watermark-bg::before {
+            content: "MAKE MY RESUME - SAMPLE PREVIEW";
+            position: absolute;
+            top: 40%;
+            left: -20%;
+            width: 140%;
+            height: 100px;
+            color: rgba(220, 38, 38, 0.15);
+            font-size: 2.2rem;
+            font-weight: 900;
+            transform: rotate(-30deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            z-index: 10;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        @media print {
+            body * { visibility: hidden; }
+            #printable-resume, #printable-resume * { visibility: visible; }
+            #printable-resume { position: absolute; left: 0; top: 0; width: 100%; }
+            .watermark-bg::before { display: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased">
+
     <div id="root"></div>
 
-    <!-- Script tag me type="text/babel" zaroori hai -->
     <script type="text/babel">
-        const { useState } = React;
+        const { useState, useEffect } = React;
 
         function App() {
-            // Initial States
-            const [adminWidgets, setAdminWidgets] = useState([]);
-            const [admins, setAdmins] = useState([
-                { id: 1, email: 'admin@example.com', password: 'pass' }
-            ]);
-            const [users, setUsers] = useState([
-                { id: 1, name: 'Rahul', email: 'rahul@test.com', phone: '9876543210', password: '123' }
-            ]);
-            const [show50TemplatesModal, setShow50TemplatesModal] = useState(false);
-            const [currentPage, setCurrentPage] = useState('home');
-            const [resumeForm, setResumeForm] = useState({ templateId: null });
+            // Site Settings State (Admin Configurable)
+            const [siteTitle, setSiteTitle] = useState("Make My Resume");
+            const [siteSubtitle, setSiteSubtitle] = useState("Create Professional Resumes in Minutes");
+            const [resumePrice, setResumePrice] = useState(49);
+            const [razorpayKey, setRazorpayKey] = useState("");
+            const [customWidgets, setCustomWidgets] = useState([]);
 
-            const templatesList = [
-                { id: 1, title: 'Modern Resume', color: 'slate' },
-                { id: 2, title: 'Professional Resume', color: 'blue' }
+            // Navigation & Page States
+            const [currentPage, setCurrentPage] = useState("home"); // home, templates, pricing, editor, admin, login, register, preview, profile
+
+            // Analytics Data (Admin Panel)
+            const [analytics, setAnalytics] = useState({
+                downloads: 142,
+                payout: 6958,
+                traffic: 1250
+            });
+
+            // Admin Accounts Data
+            const [admins, setAdmins] = useState([
+                { id: 1, email: "admin@makemyresume.com", password: "admin" }
+            ]);
+            const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+
+            // Users Database
+            const [users, setUsers] = useState([
+                { 
+                    id: 1, 
+                    name: "Rahul Kumar", 
+                    email: "rahul@gmail.com", 
+                    phone: "9876543210", 
+                    password: "123",
+                    motherName: "Sita Devi",
+                    fatherName: "Ramesh Kumar",
+                    address: "Main Market",
+                    country: "India",
+                    district: "Bhopal",
+                    city: "Bhopal",
+                    education: [{ degree: "B.Tech", percent: "82%", passout: "2023", institute: "RGPV" }],
+                    experience: [{ company: "TechCorp", profile: "Web Developer", years: "2 Years" }]
+                }
+            ]);
+            const [currentUser, setCurrentUser] = useState(null);
+
+            // Resume Form Data State
+            const [resumeData, setResumeData] = useState({
+                name: "", phone: "", motherName: "", fatherName: "", email: "",
+                address: "", country: "India", district: "", city: "",
+                education: [{ degree: "", percent: "", passout: "", institute: "" }],
+                experience: [{ company: "", profile: "", years: "" }]
+            });
+
+            // Pre-fill form when logged in user creates resume
+            useEffect(() => {
+                if (currentUser) {
+                    setResumeData({ ...currentUser });
+                }
+            }, [currentUser]);
+
+            // Sample Templates List
+            const templates = [
+                { id: 1, name: "Modern Minimalist", color: "bg-blue-600", desc: "Clean & Professional layout for Tech roles" },
+                { id: 2, name: "Executive Suite", color: "bg-slate-800", desc: "Best for Experienced & Management Profiles" },
+                { id: 3, name: "Creative Canvas", color: "bg-purple-600", desc: "Eye-catching design for Designers & Marketers" },
+                { id: 4, name: "Academic Elegant", color: "bg-emerald-600", desc: "Structured design for Teaching & Research" },
+                { id: 5, name: "Corporate Classic", color: "bg-indigo-600", desc: "Traditional layout suitable for Banking & Sales" },
+                { id: 6, name: "Startup Sleek", color: "bg-rose-600", desc: "Modern dynamic layout for Fast-growing Roles" },
+                { id: 7, name: "Compact One-Pager", color: "bg-amber-600", desc: "Saves space, perfect for Freshers" }
             ];
 
+            // Handlers for Registration & Dynamic Rows
+            const handleAddEducation = (targetForm = 'resumeData') => {
+                if(targetForm === 'resumeData') {
+                    setResumeData({
+                        ...resumeData,
+                        education: [...resumeData.education, { degree: "", percent: "", passout: "", institute: "" }]
+                    });
+                } else {
+                    setRegForm({
+                        ...regForm,
+                        education: [...regForm.education, { degree: "", percent: "", passout: "", institute: "" }]
+                    });
+                }
+            };
+
+            const handleAddExperience = (targetForm = 'resumeData') => {
+                if(targetForm === 'resumeData') {
+                    setResumeData({
+                        ...resumeData,
+                        experience: [...resumeData.experience, { company: "", profile: "", years: "" }]
+                    });
+                } else {
+                    setRegForm({
+                        ...regForm,
+                        experience: [...regForm.experience, { company: "", profile: "", years: "" }]
+                    });
+                }
+            };
+
+            // User Registration State
+            const [regForm, setRegForm] = useState({
+                name: "", phone: "", email: "", password: "",
+                education: [{ degree: "", percent: "", passout: "", institute: "" }],
+                experience: [{ company: "", profile: "", years: "" }]
+            });
+
+            const handleRegisterSubmit = (e) => {
+                e.preventDefault();
+                const newUser = { ...regForm, id: Date.now() };
+                setUsers([...users, newUser]);
+                setCurrentUser(newUser);
+                alert("Registration Successful! Welcome to " + siteTitle);
+                setCurrentPage("profile");
+            };
+
+            // Download Trigger Payment Simulation
+            const handlePaymentAndDownload = () => {
+                if (!razorpayKey || razorpayKey.trim() === "") {
+                    alert("⚠️ Payment Gateway Under Maintenance! Payment Gateway Razorpay setup nahi hua hai. Kripya Admin se sampark karein ya Admin Panel me API key add karein.");
+                } else {
+                    alert(`Razorpay Gateway Initialized (Key: ${razorpayKey})\nAmount to Pay: ₹${resumePrice}\n\n[Simulating Success] Payment Successful! Downloading Resume...`);
+                    setAnalytics({
+                        ...analytics,
+                        downloads: analytics.downloads + 1,
+                        payout: analytics.payout + Number(resumePrice)
+                    });
+                    window.print();
+                }
+            };
+
             return (
-                <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md space-y-6">
-                    {/* Create New Widgets Option */}
-                    <div>
-                        <h2 class="text-xl font-bold mb-2">Create New Custom Widget</h2>
-                        <div class="space-y-2">
-                            <input 
-                                id="new-widget-name" 
-                                type="text" 
-                                placeholder="Widget Name" 
-                                class="border p-2 rounded w-full" 
-                            />
-                            <textarea 
-                                id="new-widget-code" 
-                                placeholder="Widget Code/Content" 
-                                class="border p-2 rounded w-full"
-                            ></textarea>
-                            <button 
-                                onClick={() => {
-                                    const name = document.getElementById('new-widget-name').value;
-                                    const code = document.getElementById('new-widget-code').value;
-                                    if (name) { 
-                                        setAdminWidgets([...adminWidgets, { id: Date.now(), name, code }]); 
-                                        alert('New Widget Created Successfully!'); 
-                                    }
-                                }} 
-                                class="bg-slate-900 text-white font-bold text-xs px-4 py-2 rounded-lg"
-                            >
-                                Create Widget
-                            </button>
-                        </div>
-                    </div>
-
-                    <hr />
-
-                    {/* Admin User Accounts Management */}
-                    <div>
-                        <h2 class="text-xl font-bold mb-2">Admin User Accounts Control</h2>
-                        <button 
-                            onClick={() => {
-                                const email = prompt("Enter New Admin Email:");
-                                const password = prompt("Enter New Admin Password:");
-                                if (email && password) {
-                                    setAdmins([...admins, { id: Date.now(), email, password }]);
-                                }
-                            }}
-                            class="text-xs bg-blue-600 text-white font-bold px-3 py-1.5 rounded-lg mb-4"
-                        >
-                            + Add Admin Account
-                        </button>
-
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="border-b">
-                                    <th class="py-2">Admin Email</th>
-                                    <th class="py-2">Password</th>
-                                    <th class="py-2">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {admins.map(a => (
-                                    <tr key={a.id} class="border-b">
-                                        <td class="py-2">{a.email}</td>
-                                        <td class="py-2">{a.password}</td>
-                                        <td class="py-2">
-                                            {admins.length > 1 && (
-                                                <button 
-                                                    onClick={() => setAdmins(admins.filter(item => item.id !== a.id))} 
-                                                    class="text-red-600 font-bold hover:underline"
-                                                >
-                                                    Remove Admin
-                                                </button>
-                                            )}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <hr />
-
-                    {/* Registered User Data Table */}
-                    <div>
-                        <h2 class="text-xl font-bold mb-2">Registered User Database</h2>
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="border-b">
-                                    <th class="py-2">Name</th>
-                                    <th class="py-2">Email</th>
-                                    <th class="py-2">Phone Number</th>
-                                    <th class="py-2">Password</th>
-                                    <th class="py-2">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {users.map(u => (
-                                    <tr key={u.id} class="border-b">
-                                        <td class="py-2">{u.name}</td>
-                                        <td class="py-2">{u.email}</td>
-                                        <td class="py-2">{u.phone}</td>
-                                        <td class="py-2">{u.password}</td>
-                                        <td class="py-2">
-                                            <button 
-                                                onClick={() => setUsers(users.filter(usr => usr.id !== u.id))} 
-                                                class="text-red-600 font-bold hover:underline"
-                                            >
-                                                Delete User
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <hr />
-
-                    {/* Modal Toggle Button */}
-                    <button 
-                        onClick={() => setShow50TemplatesModal(true)} 
-                        class="bg-green-600 text-white font-bold px-4 py-2 rounded-lg"
-                    >
-                        Open 50 Templates Catalog
-                    </button>
-
-                    {/* ALL 50 TEMPLATES CATALOG MODAL */}
-                    {show50TemplatesModal && (
-                        <div class="fixed inset-0 bg-black/50 flex items-center justify-center p-4">
-                            <div class="bg-white p-6 rounded-xl max-w-2xl w-full">
-                                <div class="flex justify-between items-center mb-4">
-                                    <h3 class="text-lg font-bold">Select From All 50 Resume Formats</h3>
-                                    <button 
-                                        onClick={() => setShow50TemplatesModal(false)} 
-                                        class="text-slate-400 font-bold hover:text-slate-800"
-                                    >
-                                        ✕ Close
-                                    </button>
+                <div class="min-h-screen flex flex-col justify-between">
+                    
+                    {/* 3. HEADER NAVIGATION BAR */}
+                    <header class="bg-white shadow-md sticky top-0 z-50">
+                        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+                            {/* 2. LOGO & NAME */}
+                            <div class="flex items-center space-x-3 cursor-pointer" onClick={() => setCurrentPage('home')}>
+                                <div class="bg-blue-600 text-white p-2 rounded-xl text-xl font-bold">
+                                    <i class="fa-solid fa-file-invoice"></i>
                                 </div>
-                                <div class="grid grid-cols-2 gap-4">
-                                    {templatesList.map(tpl => (
-                                        <div 
-                                            key={tpl.id}
-                                            onClick={() => {
-                                                setResumeForm({ ...resumeForm, templateId: tpl.id });
-                                                setShow50TemplatesModal(false);
-                                                setCurrentPage('editor');
-                                            }} 
-                                            class={`border-2 rounded-xl p-3 text-center cursor-pointer hover:bg-slate-50 transition`}
-                                        >
-                                            <p class="font-semibold">{tpl.title}</p>
+                                <div>
+                                    <h1 class="text-xl font-black text-slate-800 leading-none">{siteTitle}</h1>
+                                    <span class="text-xs text-slate-500 font-medium">{siteSubtitle}</span>
+                                </div>
+                            </div>
+
+                            {/* Nav Links */}
+                            <nav class="hidden md:flex space-x-6 font-semibold text-slate-600 text-sm">
+                                <button onClick={() => setCurrentPage('home')} class={`hover:text-blue-600 ${currentPage === 'home' && 'text-blue-600'}`}>Home</button>
+                                <button onClick={() => setCurrentPage('templates')} class={`hover:text-blue-600 ${currentPage === 'templates' && 'text-blue-600'}`}>Templates</button>
+                                <button onClick={() => setCurrentPage('pricing')} class={`hover:text-blue-600 ${currentPage === 'pricing' && 'text-blue-600'}`}>Pricing</button>
+                                <button onClick={() => setCurrentPage('editor')} class={`hover:text-blue-600 ${currentPage === 'editor' && 'text-blue-600'}`}>Editor</button>
+                                <button onClick={() => setCurrentPage('admin')} class={`hover:text-blue-600 ${currentPage === 'admin' && 'text-blue-600'}`}><i class="fa-solid fa-lock text-xs mr-1"></i>Admin Panel</button>
+                            </nav>
+
+                            {/* User Controls */}
+                            <div class="flex items-center space-x-3">
+                                {currentUser ? (
+                                    <div class="flex items-center space-x-2">
+                                        <button onClick={() => setCurrentPage('profile')} class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-semibold">
+                                            <i class="fa-solid fa-user mr-1.5"></i>{currentUser.name}
+                                        </button>
+                                        <button onClick={() => setCurrentUser(null)} class="text-red-500 hover:text-red-700 text-sm font-bold ml-2">Logout</button>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <button onClick={() => setCurrentPage('login')} class="text-slate-700 hover:text-blue-600 font-semibold text-sm px-3 py-1.5">Login</button>
+                                        <button onClick={() => setCurrentPage('register')} class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm px-4 py-1.5 rounded-lg shadow-sm transition">Register</button>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* DYNAMIC CONTENT AREA */}
+                    <main class="flex-grow">
+                        
+                        {/* HOME PAGE */}
+                        {currentPage === 'home' && (
+                            <div class="max-w-7xl mx-auto px-4 py-8 space-y-12">
+                                
+                                {/* HERO SECTION (5. Left Buttons & 6. Right Side Resume Cards) */}
+                                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-white p-8 rounded-2xl border border-slate-100 shadow-sm">
+                                    {/* Left Side (Buttons & Info) */}
+                                    <div class="lg:col-span-5 space-y-6">
+                                        <span class="bg-blue-50 text-blue-600 font-bold text-xs uppercase px-3 py-1 rounded-full">#1 Resume Builder</span>
+                                        <h2 class="text-4xl font-extrabold text-slate-900 leading-tight">Create Professional Resumes Quickly & Easily</h2>
+                                        <p class="text-slate-600 text-sm">Design ATS-friendly resumes in minutes. Choose from premium templates and download instant PDF copies.</p>
+                                        
+                                        <div class="flex flex-wrap gap-4 pt-2">
+                                            <button onClick={() => setCurrentPage('editor')} class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-xl shadow-lg transition flex items-center">
+                                                <i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Create Resume
+                                            </button>
+                                            <button onClick={() => setCurrentPage('templates')} class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-6 py-3 rounded-xl transition flex items-center">
+                                                <i class="fa-solid fa-layer-group mr-2"></i> Browse Templates
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Right Side (3 to 4 Sample Resume Cards Displayed) */}
+                                    <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                        {[
+                                            { title: "Software Engineer", color: "border-blue-500", tag: "Tech" },
+                                            { title: "Marketing Manager", color: "border-purple-500", tag: "Management" },
+                                            { title: "Financial Analyst", color: "border-emerald-500", tag: "Finance" }
+                                        ].map((card, idx) => (
+                                            <div key={idx} class={`bg-slate-50 p-4 rounded-xl border-t-4 ${card.color} shadow-sm hover:shadow-md transition space-y-3`}>
+                                                <span class="text-[10px] bg-white border px-2 py-0.5 rounded font-bold text-slate-500">{card.tag}</span>
+                                                <div class="h-2 w-3/4 bg-slate-300 rounded"></div>
+                                                <div class="space-y-1.5 pt-2">
+                                                    <div class="h-1.5 w-full bg-slate-200 rounded"></div>
+                                                    <div class="h-1.5 w-5/6 bg-slate-200 rounded"></div>
+                                                    <div class="h-1.5 w-4/6 bg-slate-200 rounded"></div>
+                                                </div>
+                                                <div class="pt-4 border-t border-slate-200 flex justify-between items-center text-xs font-semibold text-slate-600">
+                                                    <span>{card.title}</span>
+                                                    <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* 7. 6 TEMPLATES SLIDER/GRID & VIEW ALL BUTTON */}
+                                <div class="space-y-6">
+                                    <div class="flex justify-between items-end">
+                                        <div>
+                                            <h3 class="text-2xl font-bold text-slate-800">Popular Templates</h3>
+                                            <p class="text-slate-500 text-sm">Pick a template to start building your resume</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                                        {templates.slice(0, 6).map((tpl) => (
+                                            <div key={tpl.id} class="bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-lg transition group">
+                                                <div class={`${tpl.color} h-32 p-4 text-white flex flex-col justify-between`}>
+                                                    <span class="text-xs bg-black/20 px-2 py-1 rounded w-max">Template #{tpl.id}</span>
+                                                    <h4 class="font-bold text-lg">{tpl.name}</h4>
+                                                </div>
+                                                <div class="p-4 space-y-3">
+                                                    <p class="text-xs text-slate-600">{tpl.desc}</p>
+                                                    <button onClick={() => setCurrentPage('editor')} class="w-full bg-slate-100 group-hover:bg-blue-600 group-hover:text-white text-slate-700 font-bold py-2 rounded-lg text-sm transition">Use Template</button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div class="text-center pt-4">
+                                        <button onClick={() => setCurrentPage('templates')} class="bg-slate-800 hover:bg-slate-900 text-white font-bold px-8 py-3 rounded-xl transition">
+                                            View All Templates <i class="fa-solid fa-arrow-right ml-2"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* TEMPLATES CATALOG PAGE */}
+                        {currentPage === 'templates' && (
+                            <div class="max-w-7xl mx-auto px-4 py-8 space-y-6">
+                                <h2 class="text-3xl font-extrabold text-slate-800">All Available Resume Templates</h2>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                                    {templates.map((tpl) => (
+                                        <div key={tpl.id} class="bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-lg transition">
+                                            <div class={`${tpl.color} h-36 p-4 text-white flex flex-col justify-between`}>
+                                                <span class="text-xs bg-black/20 px-2 py-1 rounded w-max">Template #{tpl.id}</span>
+                                                <h4 class="font-bold text-lg">{tpl.name}</h4>
+                                            </div>
+                                            <div class="p-4 space-y-3">
+                                                <p class="text-xs text-slate-600">{tpl.desc}</p>
+                                                <button onClick={() => setCurrentPage('editor')} class="w-full bg-blue-600 text-white font-bold py-2 rounded-lg text-sm transition">Select & Build</button>
+                                            </div>
                                         </div>
                                     ))}
                                 </div>
                             </div>
+                        )}
+
+                        {/* PRICING PAGE */}
+                        {currentPage === 'pricing' && (
+                            <div class="max-w-4xl mx-auto px-4 py-12 text-center space-y-8">
+                                <h2 class="text-3xl font-extrabold text-slate-800">Simple & Transparent Pricing</h2>
+                                <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-md max-w-md mx-auto space-y-6">
+                                    <span class="bg-blue-100 text-blue-700 font-bold text-xs uppercase px-3 py-1 rounded-full">Single Resume Pass</span>
+                                    <div class="text-5xl font-black text-slate-900">₹{resumePrice} <span class="text-base font-medium text-slate-500">/ download</span></div>
+                                    <ul class="text-left text-sm space-y-3 text-slate-600 border-t border-b border-slate-100 py-6">
+                                        <li><i class="fa-solid fa-check text-green-500 mr-2"></i> High Quality PDF Export</li>
+                                        <li><i class="fa-solid fa-check text-green-500 mr-2"></i> Remove Watermark Permanently</li>
+                                        <li><i class="fa-solid fa-check text-green-500 mr-2"></i> Access to All 50+ Premium Formats</li>
+                                        <li><i class="fa-solid fa-check text-green-500 mr-2"></i> Lifetime Saved Profile Data</li>
+                                    </ul>
+                                    <button onClick={() => setCurrentPage('editor')} class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition">Create Resume Now</button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* 4. & 8., 9. USER REGISTRATION PAGE */}
+                        {currentPage === 'register' && (
+                            <div class="max-w-3xl mx-auto px-4 py-8">
+                                <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+                                    <h2 class="text-2xl font-bold text-slate-800">User Registration</h2>
+                                    <form onSubmit={handleRegisterSubmit} class="space-y-6">
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Full Name</label>
+                                                <input required type="text" value={regForm.name} onChange={(e)=>setRegForm({...regForm, name: e.target.value})} class="w-full border p-2.5 rounded-lg text-sm" placeholder="Enter Full Name" />
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Mobile Number</label>
+                                                <input required type="text" value={regForm.phone} onChange={(e)=>setRegForm({...regForm, phone: e.target.value})} class="w-full border p-2.5 rounded-lg text-sm" placeholder="Enter Mobile Number" />
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Email ID</label>
+                                                <input required type="email" value={regForm.email} onChange={(e)=>setRegForm({...regForm, email: e.target.value})} class="w-full border p-2.5 rounded-lg text-sm" placeholder="Enter Email" />
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Password</label>
+                                                <input required type="password" value={regForm.password} onChange={(e)=>setRegForm({...regForm, password: e.target.value})} class="w-full border p-2.5 rounded-lg text-sm" placeholder="Set Password" />
+                                            </div>
+                                        </div>
+
+                                        {/* 8. Education Dynamic Table */}
+                                        <div class="space-y-3 pt-2">
+                                            <div class="flex justify-between items-center">
+                                                <h3 class="font-bold text-sm text-slate-700">Education Details</h3>
+                                                <button type="button" onClick={() => handleAddEducation('regForm')} class="bg-slate-100 hover:bg-slate-200 text-blue-600 text-xs font-bold px-3 py-1.5 rounded-lg">+ Add Column / Row</button>
+                                            </div>
+                                            <div class="overflow-x-auto">
+                                                <table class="w-full text-left text-xs border-collapse border border-slate-200">
+                                                    <thead>
+                                                        <tr class="bg-slate-100 border-b">
+                                                            <th class="p-2 border">Education/Degree</th>
+                                                            <th class="p-2 border">Percentage / CGPA</th>
+                                                            <th class="p-2 border">Passout Year</th>
+                                                            <th class="p-2 border">Institute Name</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {regForm.education.map((edu, idx) => (
+                                                            <tr key={idx}>
+                                                                <td class="p-1 border"><input type="text" value={edu.degree} onChange={(e)=>{ const updated=[...regForm.education]; updated[idx].degree=e.target.value; setRegForm({...regForm, education:updated}); }} class="w-full p-1 border rounded" placeholder="e.g. B.Tech" /></td>
+                                                                <td class="p-1 border"><input type="text" value={edu.percent} onChange={(e)=>{ const updated=[...regForm.education]; updated[idx].percent=e.target.value; setRegForm({...regForm, education:updated}); }} class="w-full p-1 border rounded" placeholder="e.g. 80%" /></td>
+                                                                <td class="p-1 border"><input type="text" value={edu.passout} onChange={(e)=>{ const updated=[...regForm.education]; updated[idx].passout=e.target.value; setRegForm({...regForm, education:updated}); }} class="w-full p-1 border rounded" placeholder="e.g. 2022" /></td>
+                                                                <td class="p-1 border"><input type="text" value={edu.institute} onChange={(e)=>{ const updated=[...regForm.education]; updated[idx].institute=e.target.value; setRegForm({...regForm, education:updated}); }} class="w-full p-1 border rounded" placeholder="College/School Name" /></td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                        {/* 9. Experience Dynamic Table */}
+                                        <div class="space-y-3 pt-2">
+                                            <div class="flex justify-between items-center">
+                                                <h3 class="font-bold text-sm text-slate-700">Experience Details</h3>
+                                                <button type="button" onClick={() => handleAddExperience('regForm')} class="bg-slate-100 hover:bg-slate-200 text-blue-600 text-xs font-bold px-3 py-1.5 rounded-lg">+ Add Column / Row</button>
+                                            </div>
+                                            <div class="overflow-x-auto">
+                                                <table class="w-full text-left text-xs border-collapse border border-slate-200">
+                                                    <thead>
+                                                        <tr class="bg-slate-100 border-b">
+                                                            <th class="p-2 border">Company Name</th>
+                                                            <th class="p-2 border">Work Profile</th>
+                                                            <th class="p-2 border">Experience Years</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {regForm.experience.map((exp, idx) => (
+                                                            <tr key={idx}>
+                                                                <td class="p-1 border"><input type="text" value={exp.company} onChange={(e)=>{ const updated=[...regForm.experience]; updated[idx].company=e.target.value; setRegForm({...regForm, experience:updated}); }} class="w-full p-1 border rounded" placeholder="Company Name" /></td>
+                                                                <td class="p-1 border"><input type="text" value={exp.profile} onChange={(e)=>{ const updated=[...regForm.experience]; updated[idx].profile=e.target.value; setRegForm({...regForm, experience:updated}); }} class="w-full p-1 border rounded" placeholder="Profile/Role" /></td>
+                                                                <td class="p-1 border"><input type="text" value={exp.years} onChange={(e)=>{ const updated=[...regForm.experience]; updated[idx].years=e.target.value; setRegForm({...regForm, experience:updated}); }} class="w-full p-1 border rounded" placeholder="e.g. 2 Years" /></td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition">Complete Registration</button>
+                                    </form>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* USER LOGIN PAGE */}
+                        {currentPage === 'login' && (
+                            <div class="max-w-md mx-auto px-4 py-12">
+                                <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+                                    <h2 class="text-2xl font-bold text-slate-800 text-center">User Login</h2>
+                                    <form onSubmit={(e)=>{
+                                        e.preventDefault();
+                                        const email = e.target.email.value;
+                                        const pass = e.target.password.value;
+                                        const found = users.find(u=> u.email === email && u.password === pass);
+                                        if(found){
+                                            setCurrentUser(found);
+                                            alert("Login Successful!");
+                                            setCurrentPage("profile");
+                                        } else {
+                                            alert("Invalid Email or Password!");
+                                        }
+                                    }} class="space-y-4">
+                                        <div>
+                                            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Email ID</label>
+                                            <input name="email" required type="email" class="w-full border p-2.5 rounded-lg text-sm" placeholder="Enter Registered Email" />
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Password</label>
+                                            <input name="password" required type="password" class="w-full border p-2.5 rounded-lg text-sm" placeholder="Enter Password" />
+                                        </div>
+                                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition">Login</button>
+                                    </form>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* 10. USER PROFILE PAGE */}
+                        {currentPage === 'profile' && currentUser && (
+                            <div class="max-w-4xl mx-auto px-4 py-8 space-y-6">
+                                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex justify-between items-center">
+                                    <div>
+                                        <h2 class="text-2xl font-bold text-slate-800">Welcome, {currentUser.name}!</h2>
+                                        <p class="text-xs text-slate-500">Manage your profile & fast resume creation</p>
+                                    </div>
+                                    <div class="space-x-3">
+                                        <button onClick={() => setCurrentPage('preview')} class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm px-4 py-2 rounded-lg"><i class="fa-solid fa-download mr-1.5"></i> Instant Download Saved Resume</button>
+                                        <button onClick={() => setCurrentPage('editor')} class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm px-4 py-2 rounded-lg"><i class="fa-solid fa-plus mr-1.5"></i> Create New Resume</button>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                                    <h3 class="font-bold text-lg border-b pb-2">Saved User Details</h3>
+                                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
+                                        <div><span class="text-slate-400 text-xs block">Full Name:</span> <strong>{currentUser.name}</strong></div>
+                                        <div><span class="text-slate-400 text-xs block">Email:</span> <strong>{currentUser.email}</strong></div>
+                                        <div><span class="text-slate-400 text-xs block">Mobile:</span> <strong>{currentUser.phone}</strong></div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* 11. RESUME EDITOR FORM & WATERMARK PREVIEW */}
+                        {currentPage === 'editor' && (
+                            <div class="max-w-4xl mx-auto px-4 py-8 space-y-6">
+                                <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+                                    <h2 class="text-2xl font-bold text-slate-800">Resume Builder Form</h2>
+                                    
+                                    <form onSubmit={(e)=>{ e.preventDefault(); setCurrentPage('preview'); }} class="space-y-6">
+                                        {/* Personal Details */}
+                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <div>
+                                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Naam (Full Name)</label>
+                                                <input required type="text" value={resumeData.name} onChange={(e)=>setResumeData({...resumeData, name:e.target.value})} class="w-full border p-2 rounded-lg text-sm" />
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Number (Mobile)</label>
+                                                <input required type="text" value={resumeData.phone} onChange={(e)=>setResumeData({...resumeData, phone:e.target.value})} class="w-full border p-2 rounded-lg text-sm" />
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Email ID</label>
+                                                <input required type="email" value={resumeData.email} onChange={(e)=>setResumeData({...resumeData, email:e.target.value})} class="w-full border p-2 rounded-lg text-sm" />
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Mother Name</label>
+                                                <input type="text" value={resumeData.motherName} onChange={(e)=>setResumeData({...resumeData, motherName:e.target.value})} class="w-full border p-2 rounded-lg text-sm" />
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Father Name</label>
+                                                <input type="text" value={resumeData.fatherName} onChange={(e)=>setResumeData({...resumeData, fatherName:e.target.value})} class="w-full border p-2 rounded-lg text-sm" />
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Address</label>
+                                                <input type="text" value={resumeData.address} onChange={(e)=>setResumeData({...resumeData, address:e.target.value})} class="w-full border p-2 rounded-lg text-sm" />
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Country</label>
+                                                <input type="text" value={resumeData.country} onChange={(e)=>setResumeData({...resumeData, country:e.target.value})} class="w-full border p-2 rounded-lg text-sm" />
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">District</label>
+                                                <input type="text" value={resumeData.district} onChange={(e)=>setResumeData({...resumeData, district:e.target.value})} class="w-full border p-2 rounded-lg text-sm" />
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">City / Village</label>
+                                                <input type="text" value={resumeData.city} onChange={(e)=>setResumeData({...resumeData, city:e.target.value})} class="w-full border p-2 rounded-lg text-sm" />
+                                            </div>
+                                        </div>
+
+                                        {/* Education Dynamic Table */}
+                                        <div class="space-y-3 pt-2">
+                                            <div class="flex justify-between items-center">
+                                                <h3 class="font-bold text-sm text-slate-700">Education Details</h3>
+                                                <button type="button" onClick={() => handleAddEducation('resumeData')} class="bg-slate-100 hover:bg-slate-200 text-blue-600 text-xs font-bold px-3 py-1.5 rounded-lg">+ Add Education</button>
+                                            </div>
+                                            <div class="overflow-x-auto">
+                                                <table class="w-full text-left text-xs border-collapse border border-slate-200">
+                                                    <thead>
+                                                        <tr class="bg-slate-100 border-b">
+                                                            <th class="p-2 border">Education</th>
+                                                            <th class="p-2 border">Percent</th>
+                                                            <th class="p-2 border">Passout</th>
+                                                            <th class="p-2 border">Institute Name</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {resumeData.education.map((edu, idx) => (
+                                                            <tr key={idx}>
+                                                                <td class="p-1 border"><input type="text" value={edu.degree} onChange={(e)=>{ const updated=[...resumeData.education]; updated[idx].degree=e.target.value; setResumeData({...resumeData, education:updated}); }} class="w-full p-1 border rounded" /></td>
+                                                                <td class="p-1 border"><input type="text" value={edu.percent} onChange={(e)=>{ const updated=[...resumeData.education]; updated[idx].percent=e.target.value; setResumeData({...resumeData, percent:e.target.value}); }} class="w-full p-1 border rounded" /></td>
+                                                                <td class="p-1 border"><input type="text" value={edu.passout} onChange={(e)=>{ const updated=[...resumeData.education]; updated[idx].passout=e.target.value; setResumeData({...resumeData, passout:e.target.value}); }} class="w-full p-1 border rounded" /></td>
+                                                                <td class="p-1 border"><input type="text" value={edu.institute} onChange={(e)=>{ const updated=[...resumeData.education]; updated[idx].institute=e.target.value; setResumeData({...resumeData, institute:e.target.value}); }} class="w-full p-1 border rounded" /></td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                        {/* Experience Dynamic Table */}
+                                        <div class="space-y-3 pt-2">
+                                            <div class="flex justify-between items-center">
+                                                <h3 class="font-bold text-sm text-slate-700">Experience Details</h3>
+                                                <button type="button" onClick={() => handleAddExperience('resumeData')} class="bg-slate-100 hover:bg-slate-200 text-blue-600 text-xs font-bold px-3 py-1.5 rounded-lg">+ Add Experience</button>
+                                            </div>
+                                            <div class="overflow-x-auto">
+                                                <table class="w-full text-left text-xs border-collapse border border-slate-200">
+                                                    <thead>
+                                                        <tr class="bg-slate-100 border-b">
+                                                            <th class="p-2 border">Company Name</th>
+                                                            <th class="p-2 border">Work Profile</th>
+                                                            <th class="p-2 border">Experience Year</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {resumeData.experience.map((exp, idx) => (
+                                                            <tr key={idx}>
+                                                                <td class="p-1 border"><input type="text" value={exp.company} onChange={(e)=>{ const updated=[...resumeData.experience]; updated[idx].company=e.target.value; setResumeData({...resumeData, experience:updated}); }} class="w-full p-1 border rounded" /></td>
+                                                                <td class="p-1 border"><input type="text" value={exp.profile} onChange={(e)=>{ const updated=[...resumeData.experience]; updated[idx].profile=e.target.value; setResumeData({...resumeData, profile:e.target.value}); }} class="w-full p-1 border rounded" /></td>
+                                                                <td class="p-1 border"><input type="text" value={exp.years} onChange={(e)=>{ const updated=[...resumeData.experience]; updated[idx].years=e.target.value; setResumeData({...resumeData, years:e.target.value}); }} class="w-full p-1 border rounded" /></td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition">Submit & Generate Print Preview</button>
+                                    </form>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* 11. PRINT PREVIEW (WATERMARK ONLY - PAY TO DOWNLOAD) */}
+                        {currentPage === 'preview' && (
+                            <div class="max-w-4xl mx-auto px-4 py-8 space-y-6">
+                                <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl flex justify-between items-center">
+                                    <div class="flex items-center space-x-3 text-amber-800 text-sm">
+                                        <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+                                        <span><strong>Watermark Preview:</strong> Direct download disabled hai. Full HD PDF download karne ke liye <strong>₹{resumePrice}</strong> pay karna hoga.</span>
+                                    </div>
+                                    <button onClick={handlePaymentAndDownload} class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2 rounded-lg text-sm flex items-center shadow-md">
+                                        <i class="fa-solid fa-lock mr-2"></i> Pay ₹{resumePrice} & Download PDF
+                                    </button>
+                                </div>
+
+                                {/* Printable Resume Sheet */}
+                                <div id="printable-resume" class="bg-white p-10 rounded-2xl border border-slate-200 shadow-xl watermark-bg space-y-6 text-slate-800">
+                                    <div class="border-b-2 border-slate-800 pb-4">
+                                        <h1 class="text-3xl font-extrabold text-slate-900 uppercase tracking-wide">{resumeData.name || "Your Name"}</h1>
+                                        <p class="text-xs text-slate-600 mt-1">
+                                            {resumeData.email} | {resumeData.phone} | {resumeData.city}, {resumeData.district}, {resumeData.country}
+                                        </p>
+                                        {(resumeData.fatherName || resumeData.motherName) && (
+                                            <p class="text-xs text-slate-500 mt-0.5">
+                                                Father's Name: {resumeData.fatherName || 'N/A'} | Mother's Name: {resumeData.motherName || 'N/A'}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    {/* Education Table in Resume */}
+                                    <div class="space-y-2">
+                                        <h3 class="text-sm font-bold uppercase text-slate-900 border-b pb-1">Educational Details</h3>
+                                        <table class="w-full text-xs text-left border-collapse border border-slate-200">
+                                            <thead>
+                                                <tr class="bg-slate-100">
+                                                    <th class="p-2 border">Degree/Course</th>
+                                                    <th class="p-2 border">Institute/Board</th>
+                                                    <th class="p-2 border">Passing Year</th>
+                                                    <th class="p-2 border">Percentage</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {resumeData.education.map((edu, idx)=>(
+                                                    <tr key={idx}>
+                                                        <td class="p-2 border">{edu.degree || '-'}</td>
+                                                        <td class="p-2 border">{edu.institute || '-'}</td>
+                                                        <td class="p-2 border">{edu.passout || '-'}</td>
+                                                        <td class="p-2 border">{edu.percent || '-'}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    {/* Experience Table in Resume */}
+                                    <div class="space-y-2">
+                                        <h3 class="text-sm font-bold uppercase text-slate-900 border-b pb-1">Work Experience</h3>
+                                        <table class="w-full text-xs text-left border-collapse border border-slate-200">
+                                            <thead>
+                                                <tr class="bg-slate-100">
+                                                    <th class="p-2 border">Company</th>
+                                                    <th class="p-2 border">Role Profile</th>
+                                                    <th class="p-2 border">Duration/Years</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {resumeData.experience.map((exp, idx)=>(
+                                                    <tr key={idx}>
+                                                        <td class="p-2 border">{exp.company || '-'}</td>
+                                                        <td class="p-2 border">{exp.profile || '-'}</td>
+                                                        <td class="p-2 border">{exp.years || '-'}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* ADMIN PANEL */}
+                        {currentPage === 'admin' && (
+                            <div class="max-w-7xl mx-auto px-4 py-8 space-y-8">
+                                {!isAdminLoggedIn ? (
+                                    <div class="max-w-md mx-auto bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+                                        <h2 class="text-2xl font-bold text-slate-800 text-center">Admin Panel Access</h2>
+                                        <form onSubmit={(e)=>{
+                                            e.preventDefault();
+                                            const email = e.target.email.value;
+                                            const pass = e.target.password.value;
+                                            const valid = admins.find(a=> a.email === email && a.password === pass);
+                                            if(valid){
+                                                setIsAdminLoggedIn(true);
+                                            } else {
+                                                alert("Invalid Admin Credentials!");
+                                            }
+                                        }} class="space-y-4">
+                                            <div>
+                                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Admin Email/ID</label>
+                                                <input name="email" required type="text" class="w-full border p-2.5 rounded-lg text-sm" placeholder="admin@makemyresume.com" />
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Password</label>
+                                                <input name="password" required type="password" class="w-full border p-2.5 rounded-lg text-sm" placeholder="admin" />
+                                            </div>
+                                            <button type="submit" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-3 rounded-xl transition">Login to Admin Control</button>
+                                        </form>
+                                    </div>
+                                ) : (
+                                    <div class="space-y-8">
+                                        <div class="flex justify-between items-center bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                                            <div>
+                                                <h2 class="text-2xl font-bold text-slate-800">Admin Control Center</h2>
+                                                <p class="text-xs text-slate-500">Manage site parameters, payment settings, and users</p>
+                                            </div>
+                                            <button onClick={()=>setIsAdminLoggedIn(false)} class="bg-red-50 hover:bg-red-100 text-red-600 text-sm font-bold px-4 py-2 rounded-lg">Logout Admin</button>
+                                        </div>
+
+                                        {/* Analytics Stats */}
+                                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                                            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                                                <div>
+                                                    <span class="text-xs text-slate-400 font-bold uppercase">Resumes Downloaded</span>
+                                                    <h3 class="text-3xl font-extrabold text-slate-800 mt-1">{analytics.downloads}</h3>
+                                                </div>
+                                                <i class="fa-solid fa-file-arrow-down text-3xl text-blue-500"></i>
+                                            </div>
+                                            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                                                <div>
+                                                    <span class="text-xs text-slate-400 font-bold uppercase">Total Payout Received</span>
+                                                    <h3 class="text-3xl font-extrabold text-slate-800 mt-1">₹{analytics.payout}</h3>
+                                                </div>
+                                                <i class="fa-solid fa-indian-rupee-sign text-3xl text-emerald-500"></i>
+                                            </div>
+                                            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                                                <div>
+                                                    <span class="text-xs text-slate-400 font-bold uppercase">Total Website Traffic</span>
+                                                    <h3 class="text-3xl font-extrabold text-slate-800 mt-1">{analytics.traffic} Visitors</h3>
+                                                </div>
+                                                <i class="fa-solid fa-chart-line text-3xl text-purple-500"></i>
+                                            </div>
+                                        </div>
+
+                                        {/* Website Settings Widget (Title, Subtitle, Pricing) */}
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                                                <h3 class="font-bold text-slate-800 border-b pb-2"><i class="fa-solid fa-sliders mr-2"></i> Website Branding & Pricing Widget</h3>
+                                                <div class="space-y-3">
+                                                    <div>
+                                                        <label class="block text-xs font-bold text-slate-600 mb-1">Website Name / Title</label>
+                                                        <input type="text" value={siteTitle} onChange={(e)=>setSiteTitle(e.target.value)} class="w-full border p-2 rounded-lg text-sm" />
+                                                    </div>
+                                                    <div>
+                                                        <label class="block text-xs font-bold text-slate-600 mb-1">Website Subtitle</label>
+                                                        <input type="text" value={siteSubtitle} onChange={(e)=>setSiteSubtitle(e.target.value)} class="w-full border p-2 rounded-lg text-sm" />
+                                                    </div>
+                                                    <div>
+                                                        <label class="block text-xs font-bold text-slate-600 mb-1">Custom Resume Price (₹)</label>
+                                                        <input type="number" value={resumePrice} onChange={(e)=>setResumePrice(e.target.value)} class="w-full border p-2 rounded-lg text-sm" />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Razorpay Widget */}
+                                            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                                                <h3 class="font-bold text-slate-800 border-b pb-2"><i class="fa-solid fa-credit-card mr-2"></i> Razorpay Integration Widget</h3>
+                                                <div class="space-y-3">
+                                                    <div>
+                                                        <label class="block text-xs font-bold text-slate-600 mb-1">Razorpay Key ID</label>
+                                                        <input type="text" value={razorpayKey} onChange={(e)=>setRazorpayKey(e.target.value)} placeholder="rzp_test_xxxxxxxxxxxx" class="w-full border p-2 rounded-lg text-sm" />
+                                                    </div>
+                                                    <p class="text-xs text-slate-500">Aapki key save hote hi payment mode activate ho jaayega.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Code Paste & Create New Custom Widget */}
+                                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                                            <h3 class="font-bold text-slate-800 border-b pb-2"><i class="fa-solid fa-code mr-2"></i> Create New Widget / Code Paste Feature</h3>
+                                            <form onSubmit={(e)=>{
+                                                e.preventDefault();
+                                                const name = e.target.widgetName.value;
+                                                const code = e.target.widgetCode.value;
+                                                setCustomWidgets([...customWidgets, { id: Date.now(), name, code }]);
+                                                e.target.reset();
+                                                alert("New Custom Code Widget Added!");
+                                            }} class="space-y-3">
+                                                <input name="widgetName" required placeholder="Widget Name (e.g. Chatbot Script)" class="w-full border p-2 rounded-lg text-sm" />
+                                                <textarea name="widgetCode" required rows="3" placeholder="Paste custom JS/CSS/HTML snippet code here..." class="w-full border p-2 rounded-lg text-sm font-mono"></textarea>
+                                                <button type="submit" class="bg-slate-900 text-white font-bold text-xs px-4 py-2 rounded-lg">+ Add Custom Widget</button>
+                                            </form>
+
+                                            {customWidgets.length > 0 && (
+                                                <div class="pt-4 border-t space-y-2">
+                                                    <h4 class="text-xs font-bold text-slate-500 uppercase">Active Custom Widgets:</h4>
+                                                    {customWidgets.map(w=>(
+                                                        <div key={w.id} class="flex justify-between items-center bg-slate-50 p-2.5 rounded border text-xs">
+                                                            <span class="font-bold">{w.name}</span>
+                                                            <button onClick={()=>setCustomWidgets(customWidgets.filter(item=>item.id!==w.id))} class="text-red-600 font-bold">Remove</button>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Registered Users Table */}
+                                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                                            <h3 class="font-bold text-slate-800 border-b pb-2"><i class="fa-solid fa-users mr-2"></i> Registered User Database</h3>
+                                            <div class="overflow-x-auto">
+                                                <table class="w-full text-left text-sm border-collapse">
+                                                    <thead>
+                                                        <tr class="bg-slate-100 border-b">
+                                                            <th class="p-3">User Name</th>
+                                                            <th class="p-3">Email</th>
+                                                            <th class="p-3">Phone</th>
+                                                            <th class="p-3">Password</th>
+                                                            <th class="p-3">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {users.map(u=>(
+                                                            <tr key={u.id} class="border-b">
+                                                                <td class="p-3 font-semibold">{u.name}</td>
+                                                                <td class="p-3">{u.email}</td>
+                                                                <td class="p-3">{u.phone}</td>
+                                                                <td class="p-3 font-mono text-xs">{u.password}</td>
+                                                                <td class="p-3">
+                                                                    <button onClick={()=>setUsers(users.filter(x=>x.id!==u.id))} class="text-red-600 font-bold hover:underline text-xs">Delete / Remove</button>
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                        {/* Admin User Accounts Control */}
+                                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                                            <div class="flex justify-between items-center border-b pb-2">
+                                                <h3 class="font-bold text-slate-800"><i class="fa-solid fa-user-shield mr-2"></i> Admin Accounts Control</h3>
+                                                <button onClick={()=>{
+                                                    const email = prompt("Enter New Admin Email:");
+                                                    const password = prompt("Enter New Admin Password:");
+                                                    if(email && password) setAdmins([...admins, { id: Date.now(), email, password }]);
+                                                }} class="bg-blue-600 text-white font-bold text-xs px-3 py-1.5 rounded-lg">+ Add Admin Account</button>
+                                            </div>
+
+                                            <div class="overflow-x-auto">
+                                                <table class="w-full text-left text-sm border-collapse">
+                                                    <thead>
+                                                        <tr class="bg-slate-100 border-b">
+                                                            <th class="p-3">Admin Email</th>
+                                                            <th class="p-3">Password</th>
+                                                            <th class="p-3">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {admins.map(a=>(
+                                                            <tr key={a.id} class="border-b">
+                                                                <td class="p-3 font-semibold">{a.email}</td>
+                                                                <td class="p-3 font-mono text-xs">{a.password}</td>
+                                                                <td class="p-3 space-x-3">
+                                                                    <button onClick={()=>{
+                                                                        const newPass = prompt("Enter New Password:", a.password);
+                                                                        if(newPass) setAdmins(admins.map(x=> x.id===a.id ? {...x, password: newPass}: x));
+                                                                    }} class="text-blue-600 font-bold text-xs hover:underline">Update</button>
+                                                                    {admins.length > 1 && (
+                                                                        <button onClick={()=>setAdmins(admins.filter(x=>x.id!==a.id))} class="text-red-600 font-bold text-xs hover:underline">Delete</button>
+                                                                    )}
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </main>
+
+                    {/* FOOTER */}
+                    <footer class="bg-white border-t border-slate-200 mt-12 py-6">
+                        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
+                            &copy; {new Date().getFullYear()} {siteTitle}. All rights reserved. Professional Resume Builder.
                         </div>
-                    )}
+                    </footer>
                 </div>
             );
         }
