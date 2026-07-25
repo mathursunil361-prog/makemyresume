@@ -3,192 +3,228 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MakeMyResume - Admin Control Panel</title>
+    <title>MakeMyResume - Free Professional Resume Builder</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f1f5f9; color: #0f172a; }</style>
+    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #0f172a; }</style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="bg-slate-50 min-h-screen flex flex-col justify-between">
 
-    <!-- ADMIN NAVBAR -->
-    <header class="bg-slate-900 text-white px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+    <!-- Top Navigation -->
+    <header class="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center sticky top-0 z-40">
         <div class="flex items-center gap-3">
-            <div class="w-8 h-8 bg-red-600 rounded-lg flex items-center font-bold justify-center">A</div>
-            <h1 class="font-black text-sm uppercase tracking-wider">Admin Control Panel</h1>
+            <div class="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center font-black text-white text-lg shadow-md shadow-red-500/20">M</div>
+            <span class="font-extrabold text-base text-slate-900 tracking-tight">Make<span class="text-red-600">My</span>Resume</span>
         </div>
-        <button onclick="window.location.href='index.html'" class="bg-slate-800 hover:bg-slate-700 text-xs font-bold px-4 py-2 rounded-xl transition">
-            <i class="fa-solid fa-house"></i> Exit to Website
-        </button>
+        <div class="flex items-center gap-4 text-xs font-bold">
+            <a href="admin.html" class="text-slate-600 hover:text-red-600 transition">Admin Panel</a>
+            <button onclick="openLoginModal()" class="text-slate-700 hover:text-slate-900 px-4 py-2">Login</button>
+            <button onclick="openRegisterModal()" class="bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-xl shadow-md shadow-red-600/20 transition">Create Resume Free</button>
+        </div>
     </header>
 
-    <!-- ADMIN MAIN CONTENT -->
-    <main class="flex-1 max-w-7xl w-full mx-auto p-6 space-y-8">
-        
-        <!-- STATS & WIDGETS SECTION -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            
-            <!-- Widget 1: Payment Gateway Settings -->
-            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-                <h3 class="text-xs font-extrabold uppercase text-slate-400 tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-credit-card text-red-600"></i> Payment Gateway Widget
-                </h3>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Razorpay Key ID</label>
-                    <input type="text" id="adminRzpKey" class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-xs">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Custom Price for Clean PDF (₹)</label>
-                    <input type="number" id="adminCustomPrice" class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-xs">
-                </div>
-                <button onclick="savePaymentSettings()" class="w-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-2.5 rounded-xl transition">Save Payment Settings</button>
+    <!-- Hero Section -->
+    <main class="max-w-7xl mx-auto px-8 py-16 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <div class="lg:col-span-7 space-y-6">
+            <span class="bg-red-50 text-red-600 font-extrabold text-xs px-3.5 py-1.5 rounded-full border border-red-100 uppercase tracking-widest inline-block">Trusted by 100,000+ Job Seekers</span>
+            <h1 class="text-4xl lg:text-5xl font-black text-slate-900 leading-tight">
+                Create Professional ATS-Friendly Resumes in <span class="text-red-600">Seconds</span>.
+            </h1>
+            <p class="text-slate-600 font-medium text-sm leading-relaxed max-w-xl">
+                Fill in your education, 10th, 12th, diploma, graduation, experience, and instantly generate your resume. Free download with watermark, or pay custom price to unlock clean PDF instantly.
+            </p>
+            <div class="flex items-center gap-4 pt-2">
+                <button onclick="openRegisterModal()" class="bg-red-600 hover:bg-red-700 text-white font-bold text-sm px-7 py-3.5 rounded-2xl shadow-lg shadow-red-600/25 transition flex items-center gap-2">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Build My Resume Now
+                </button>
+                <a href="admin.html" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-sm px-6 py-3.5 rounded-2xl transition">
+                    Admin Control Panel
+                </a>
             </div>
-
-            <!-- Widget 2: Launch New Template -->
-            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-                <h3 class="text-xs font-extrabold uppercase text-slate-400 tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-layer-group text-blue-600"></i> Launch New Template
-                </h3>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Template Title / Name</label>
-                    <input type="text" id="newTemplateTitle" placeholder="e.g. Executive Corporate" class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-xs">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Template HTML Code / Layout</label>
-                    <input type="text" id="newTemplateCode" placeholder="Template ID or layout URL" class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-xs">
-                </div>
-                <button onclick="launchTemplate()" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-xl transition">Launch Template</button>
-            </div>
-
-            <!-- Widget 3: Global Typography Settings -->
-            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-3">
-                <h3 class="text-xs font-extrabold uppercase text-slate-400 tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-font text-emerald-600"></i> Global Typography & Style
-                </h3>
-                <div class="grid grid-cols-2 gap-2 text-xs">
-                    <div>
-                        <label class="block font-bold text-slate-600 mb-1">Heading Color</label>
-                        <input type="color" id="admHeadColor" value="#0f172a" class="w-full h-8 border rounded cursor-pointer">
-                    </div>
-                    <div>
-                        <label class="block font-bold text-slate-600 mb-1">Paragraph Color</label>
-                        <input type="color" id="admSubColor" value="#475569" class="w-full h-8 border rounded cursor-pointer">
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-2 text-xs">
-                    <div>
-                        <label class="block font-bold text-slate-600 mb-1">Head Size (px)</label>
-                        <input type="number" id="admHeadSize" value="14" class="w-full bg-slate-50 border p-2 rounded-xl">
-                    </div>
-                    <div>
-                        <label class="block font-bold text-slate-600 mb-1">Font Family</label>
-                        <select id="admFontFamily" class="w-full bg-slate-50 border p-2 rounded-xl text-xs">
-                            <option value="'Plus Jakarta Sans', sans-serif">Jakarta Sans</option>
-                            <option value="'Roboto', sans-serif">Roboto</option>
-                            <option value="'Merriweather', serif">Merriweather</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="flex gap-2 text-xs pt-1">
-                    <label><input type="checkbox" id="admBold"> Bold</label>
-                    <label><input type="checkbox" id="admItalic"> Italic</label>
-                    <label><input type="checkbox" id="admUnderline"> Underline</label>
-                </div>
-                <button onclick="saveGlobalStyling()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 rounded-xl transition">Apply to All Templates</button>
+            <div class="flex items-center gap-6 pt-4 text-xs font-bold text-slate-500">
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-emerald-600"></i> 50+ Template Formats</span>
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-emerald-600"></i> Instant Auto-Resume</span>
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-emerald-600"></i> Secure Cloud Storage</span>
             </div>
         </div>
 
-        <!-- USERS MANAGEMENT TABLE -->
-        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-            <h3 class="text-xs font-extrabold uppercase text-slate-400 tracking-wider">Registered Users & Profiles Data</h3>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs">
-                    <thead class="bg-slate-50 border-b text-slate-400 uppercase font-bold">
-                        <tr>
-                            <th class="p-3">Name</th>
-                            <th class="p-3">Email & Phone</th>
-                            <th class="p-3">Education / Experience</th>
-                            <th class="p-3">Status</th>
-                            <th class="p-3 text-right">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="adminUsersTableBody" class="divide-y divide-slate-100">
-                        <!-- Populated by JS -->
-                    </tbody>
-                </table>
+        <div class="lg:col-span-5 bg-white p-6 rounded-3xl border border-slate-200 shadow-xl space-y-4">
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex items-center justify-between">
+                <div>
+                    <h3 class="font-black text-sm text-slate-900">Live Resume Preview</h3>
+                    <p class="text-[11px] text-slate-500">Auto-generated upon registration</p>
+                </div>
+                <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2.5 py-1 rounded-lg">Active Format</span>
             </div>
+            <div class="space-y-3 text-xs border p-4 rounded-2xl bg-slate-50/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-slate-200 rounded-xl"></div>
+                    <div>
+                        <div class="font-black text-slate-900 text-sm">Rohan Kumar</div>
+                        <div class="text-red-600 font-bold text-[11px]">Software Engineer</div>
+                    </div>
+                </div>
+                <p class="text-slate-500 text-[11px]">B.Tech CS &bull; 3 Years Experience &bull; Delhi</p>
+            </div>
+            <button onclick="openRegisterModal()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl transition text-xs">Register & Edit Your Resume</button>
         </div>
     </main>
 
-    <!-- ADMIN SCRIPT -->
+    <!-- Register Modal -->
+    <div id="registerModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-xl rounded-3xl p-8 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto text-xs">
+            <div class="flex justify-between items-center border-b pb-3">
+                <div>
+                    <h2 class="font-black text-base text-slate-900">User Registration & Auto Resume Creation</h2>
+                    <p class="text-[11px] text-slate-500">Fill your complete details to generate your resume instantly</p>
+                </div>
+                <button onclick="document.getElementById('registerModal').classList.add('hidden')" class="text-lg font-bold">&times;</button>
+            </div>
+
+            <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Full Name</label>
+                        <input type="text" id="regName" class="w-full bg-slate-50 border p-2.5 rounded-xl font-bold" placeholder="Rohan Kumar" required>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Mobile Number</label>
+                        <input type="text" id="regPhone" class="w-full bg-slate-50 border p-2.5 rounded-xl" placeholder="9876543210" required>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Email ID</label>
+                        <input type="email" id="regEmail" class="w-full bg-slate-50 border p-2.5 rounded-xl" placeholder="user@gmail.com" required>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Password</label>
+                        <input type="password" id="regPassword" class="w-full bg-slate-50 border p-2.5 rounded-xl" placeholder="******" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Address</label>
+                    <input type="text" id="regAddress" class="w-full bg-slate-50 border p-2.5 rounded-xl" placeholder="Delhi, India">
+                </div>
+
+                <!-- Education fields -->
+                <div class="border-t pt-3 space-y-2">
+                    <h4 class="font-extrabold text-slate-900">Education Details</h4>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="regEdu10" placeholder="10th Passing Year & Board" class="bg-slate-50 border p-2 rounded-xl">
+                        <input type="text" id="regEdu12" placeholder="12th Passing Year & Board" class="bg-slate-50 border p-2 rounded-xl">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="regEduGrad" placeholder="Diploma/Graduation (Year, University)" class="bg-slate-50 border p-2 rounded-xl">
+                        <input type="text" id="regEduPost" placeholder="Post Graduation (Optional)" class="bg-slate-50 border p-2 rounded-xl">
+                    </div>
+                </div>
+
+                <!-- Experience fields -->
+                <div class="border-t pt-3 space-y-2">
+                    <h4 class="font-extrabold text-slate-900">Experience Details</h4>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="regCompany" placeholder="Company Name" class="bg-slate-50 border p-2 rounded-xl">
+                        <input type="text" id="regExpYears" placeholder="Years Worked (e.g. 2 Years)" class="bg-slate-50 border p-2 rounded-xl">
+                    </div>
+                    <input type="text" id="regJobRole" placeholder="Job Role / Designation" class="w-full bg-slate-50 border p-2 rounded-xl">
+                </div>
+
+                <button onclick="handleUserRegistration()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition">Complete Registration & Open Resume</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl p-8 shadow-2xl space-y-6 text-xs">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h2 class="font-black text-sm text-slate-900">User Login</h2>
+                <button onclick="document.getElementById('loginModal').classList.add('hidden')" class="text-base font-bold">&times;</button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Email ID</label>
+                    <input type="email" id="loginEmail" class="w-full bg-slate-50 border p-3 rounded-xl" placeholder="user@gmail.com">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Password</label>
+                    <input type="password" id="loginPassword" class="w-full bg-slate-50 border p-3 rounded-xl" placeholder="******">
+                </div>
+                <button onclick="handleUserLogin()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3.5 rounded-xl shadow transition">Login to My Resume</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500 font-medium">
+        &copy; 2026 MakeMyResume.com &bull; All Rights Reserved &bull; Admin & Editor Fully Integrated.
+    </footer>
+
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            loadAdminSettings();
-            renderUsersTable();
-        });
+        function openRegisterModal() { document.getElementById('registerModal').classList.remove('hidden'); }
+        function openLoginModal() { document.getElementById('loginModal').classList.remove('hidden'); }
 
-        function loadAdminSettings() {
-            document.getElementById('adminRzpKey').value = localStorage.getItem('admin_rzp_key') || 'rzp_test_key';
-            document.getElementById('adminCustomPrice').value = localStorage.getItem('admin_custom_price') || '100';
-        }
+        function handleUserRegistration() {
+            const name = document.getElementById('regName').value;
+            const phone = document.getElementById('regPhone').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const address = document.getElementById('regAddress').value;
+            
+            const edu10 = document.getElementById('regEdu10').value;
+            const edu12 = document.getElementById('regEdu12').value;
+            const eduGrad = document.getElementById('regEduGrad').value;
+            const eduPost = document.getElementById('regEduPost').value;
+            
+            const company = document.getElementById('regCompany').value;
+            const expYears = document.getElementById('regExpYears').value;
+            const jobRole = document.getElementById('regJobRole').value;
 
-        function savePaymentSettings() {
-            localStorage.setItem('admin_rzp_key', document.getElementById('adminRzpKey').value);
-            localStorage.setItem('admin_custom_price', document.getElementById('adminCustomPrice').value);
-            alert("Payment gateway settings updated successfully!");
-        }
-
-        function launchTemplate() {
-            const title = document.getElementById('newTemplateTitle').value;
-            if(!title) { alert("Enter template title!"); return; }
-            alert(`New professional template "${title}" successfully launched and added to templates collection!`);
-        }
-
-        function saveGlobalStyling() {
-            const settings = {
-                headColor: document.getElementById('admHeadColor').value,
-                subColor: document.getElementById('admSubColor').value,
-                headSize: document.getElementById('admHeadSize').value,
-                fontFamily: document.getElementById('admFontFamily').value,
-                isBold: document.getElementById('admBold').checked,
-                isItalic: document.getElementById('admItalic').checked,
-                isUnderline: document.getElementById('admUnderline').checked
-            };
-            localStorage.setItem('admin_global_styling', JSON.stringify(settings));
-            alert("Global typography settings saved and applied to all resume templates!");
-        }
-
-        function renderUsersTable() {
-            const tbody = document.getElementById('adminUsersTableBody');
-            let users = JSON.parse(localStorage.getItem('app_users') || '[]');
-            tbody.innerHTML = '';
-
-            if(users.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">No registered users found yet.</td></tr>`;
+            if(!email || !password || !name) {
+                alert("Please fill name, email and password!");
                 return;
             }
 
-            users.forEach((u, index) => {
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50">
-                        <td class="p-3 font-bold text-slate-900">${u.name}</td>
-                        <td class="p-3 text-slate-600">${u.email}<br><span class="text-[10px] text-slate-400">${u.phone}</span></td>
-                        <td class="p-3 text-slate-600">${u.grad || 'N/A'}<br><span class="text-[10px] text-slate-400">${u.company || 'Fresher'}</span></td>
-                        <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${u.paid ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">${u.paid ? 'Pro Paid' : 'Free Watermark'}</span></td>
-                        <td class="p-3 text-right">
-                            <button onclick="deleteUser(${index})" class="bg-red-50 hover:bg-red-100 text-red-600 px-2.5 py-1 rounded-lg font-bold transition">Delete</button>
-                        </td>
-                    </tr>
-                `;
-            });
+            let newUser = {
+                name, phone, email, password, address,
+                edu10, edu12, eduGrad, eduPost,
+                company, expYears, jobRole,
+                template: 'modern-blue',
+                paid: false
+            };
+
+            let users = JSON.parse(localStorage.getItem('app_users') || '[]');
+            let existing = users.find(u => u.email === email);
+            if(existing) {
+                alert("User with this email already exists! Please login.");
+                return;
+            }
+
+            users.push(newUser);
+            localStorage.setItem('app_users', JSON.stringify(users));
+            localStorage.setItem('current_logged_user', JSON.stringify(newUser));
+
+            alert("Registration successful! Your resume has been automatically created. Redirecting to editor...");
+            window.location.href = 'editor.html';
         }
 
-        function deleteUser(index) {
-            if(confirm("Are you sure you want to delete this user profile?")) {
-                let users = JSON.parse(localStorage.getItem('app_users') || '[]');
-                users.splice(index, 1);
-                localStorage.setItem('app_users', JSON.stringify(users));
-                renderUsersTable();
+        function handleUserLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            let users = JSON.parse(localStorage.getItem('app_users') || '[]');
+            let user = users.find(u => u.email === email && u.password === password);
+
+            if(user) {
+                localStorage.setItem('current_logged_user', JSON.stringify(user));
+                alert("Login successful! Redirecting to your resume dashboard...");
+                window.location.href = 'editor.html';
+            } else {
+                alert("Invalid email or password!");
             }
         }
     </script>
