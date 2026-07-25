@@ -1,1 +1,529 @@
+<!DOCTYPE html>
+<html lang="hi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MakeMyResume - Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #f8fafc; 
+            color: #0f172a; 
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .word-editor-area {
+            min-height: 250px;
+            background: #ffffff;
+            color: #0f172a;
+            border: 1px solid #e2e8f0;
+            border-radius: 0 0 12px 12px;
+            padding: 20px;
+            outline: none;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .login-backdrop {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50" oncontextmenu="return false;">
 
+    <!-- LOGIN / REGISTRATION MODAL -->
+    <div id="authOverlay" class="fixed inset-0 z-50 login-backdrop flex items-center justify-center p-4">
+        <button onclick="window.location.href='index.html'" class="fixed top-6 right-6 bg-white hover:bg-slate-100 text-slate-800 font-bold px-4 py-2.5 rounded-xl shadow-xl border border-slate-200 text-xs flex items-center gap-2 transition z-50 cursor-pointer">
+            <i class="fa-solid fa-arrow-left text-red-600"></i> Back to Website
+        </button>
+
+        <div class="bg-white border border-slate-200 shadow-2xl max-w-md w-full p-8 rounded-3xl space-y-6 relative">
+            <div class="text-center">
+                <div class="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center mx-auto text-white text-xl font-black mb-3 shadow-md">
+                    <i class="fa-solid fa-user-shield"></i>
+                </div>
+                <h2 id="authTitle" class="text-2xl font-extrabold text-slate-900">Admin Access Control</h2>
+                <p class="text-xs text-slate-500 mt-1">MakeMyResume Secure Owner System</p>
+            </div>
+
+            <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-[11px] font-extrabold uppercase text-slate-500 mb-1">Admin Email</label>
+                    <input type="email" id="authEmail" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 focus:outline-none focus:border-slate-800">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-extrabold uppercase text-slate-500 mb-1">Password</label>
+                    <input type="password" id="authPassword" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 focus:outline-none focus:border-slate-800">
+                </div>
+                <button type="submit" id="authBtn" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-extrabold py-3 rounded-xl transition text-xs shadow-md">
+                    Login to Admin Panel
+                </button>
+            </form>
+
+            <div class="text-center pt-2 border-t border-slate-100">
+                <button onclick="toggleAuthMode()" id="authToggleBtn" class="text-xs text-slate-600 hover:text-slate-900 underline font-semibold">
+                    First time Owner? Register Admin Account
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD -->
+    <div id="mainDashboard" class="hidden min-h-screen flex flex-col bg-slate-50">
+        <header class="bg-white border-b border-slate-200 px-8 py-4 sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-slate-900 rounded-xl flex items-center justify-center font-black text-white text-lg">M</div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="font-black text-slate-900 text-lg">MakeMyResume</h1>
+                        <span class="bg-red-100 text-red-600 font-extrabold text-[10px] px-2 py-0.5 rounded uppercase">ADMIN</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="window.location.href='index.html'" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 border border-slate-200 transition">
+                        <i class="fa-solid fa-house text-slate-500"></i> Back to Home
+                    </button>
+                    <button onclick="logoutAdmin()" class="bg-red-50 hover:bg-red-100 text-red-600 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 border border-red-200 transition">
+                        <i class="fa-solid fa-power-off"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-1 max-w-7xl w-full mx-auto p-6 space-y-6">
+            <!-- STATS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 flex justify-between items-center shadow-xs">
+                    <div>
+                        <p class="text-[10px] font-extrabold text-slate-400 uppercase">Total Users</p>
+                        <h3 id="statUsers" class="text-2xl font-extrabold mt-1 text-slate-900">0</h3>
+                    </div>
+                    <i class="fa-solid fa-users text-xl text-blue-500 bg-blue-50 p-3 rounded-xl"></i>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 flex justify-between items-center shadow-xs">
+                    <div>
+                        <p class="text-[10px] font-extrabold text-slate-400 uppercase">Pro Price</p>
+                        <h3 id="statPrice" class="text-2xl font-extrabold mt-1 text-slate-900">₹100</h3>
+                    </div>
+                    <i class="fa-solid fa-tag text-xl text-amber-500 bg-amber-50 p-3 rounded-xl"></i>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 flex justify-between items-center shadow-xs">
+                    <div>
+                        <p class="text-[10px] font-extrabold text-slate-400 uppercase">Pro Downloads</p>
+                        <h3 id="statDownloads" class="text-2xl font-extrabold mt-1 text-slate-900">0</h3>
+                    </div>
+                    <i class="fa-solid fa-download text-xl text-emerald-500 bg-emerald-50 p-3 rounded-xl"></i>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 flex justify-between items-center shadow-xs">
+                    <div>
+                        <p class="text-[10px] font-extrabold text-slate-400 uppercase">Total Revenue</p>
+                        <h3 id="statRevenue" class="text-2xl font-extrabold mt-1 text-slate-900">₹0</h3>
+                    </div>
+                    <i class="fa-solid fa-indian-rupee-sign text-xl text-red-500 bg-red-50 p-3 rounded-xl"></i>
+                </div>
+            </div>
+
+            <!-- CONTROLS -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-4 space-y-6">
+                    <!-- Pricing Widget -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
+                        <h3 class="text-xs font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-indian-rupee-sign text-emerald-600"></i> Set Custom Pricing</h3>
+                        <div>
+                            <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Pro Download Price (without watermark) ₹</label>
+                            <input type="number" id="priceInput" value="100" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-bold focus:outline-none focus:border-slate-800">
+                        </div>
+                        <button onclick="updatePricing()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs transition">Update Price</button>
+                    </div>
+
+                    <!-- Firebase Widget -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
+                        <h3 class="text-xs font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-fire text-orange-500"></i> Firebase Cloud Configuration</h3>
+                        <div>
+                            <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Firebase API Key</label>
+                            <input type="text" id="fbApiKey" placeholder="AIzaSy..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Firebase Project ID</label>
+                            <input type="text" id="fbProjectId" placeholder="makemyresume-app" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Firebase Auth Domain / Storage Bucket</label>
+                            <input type="text" id="fbBucket" placeholder="app.appspot.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none">
+                        </div>
+                        <button onclick="saveFirebaseKeys()" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 rounded-xl text-xs transition">Save Firebase Config</button>
+                    </div>
+
+                    <!-- Razorpay Widget -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
+                        <h3 class="text-xs font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-key text-amber-500"></i> Payment Gateway API Keys</h3>
+                        <div>
+                            <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Razorpay Key ID</label>
+                            <input type="text" id="rzpKeyId" placeholder="rzp_live_xxxx" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Razorpay Secret Key</label>
+                            <input type="password" id="rzpSecretKey" placeholder="••••••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:outline-none">
+                        </div>
+                        <button onclick="saveApiKeys()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2 rounded-xl text-xs border border-slate-200 transition">Save Payment Keys</button>
+                    </div>
+
+                    <!-- Admin Profile -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
+                        <h3 class="text-xs font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-user-gear text-blue-600"></i> Admin Credentials & Profile</h3>
+                        <div>
+                            <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Admin Email</label>
+                            <input type="email" id="ownerEmail" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Phone</label>
+                            <input type="text" id="ownerPhone" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">New Password</label>
+                            <input type="password" id="ownerPass" placeholder="Leave blank if unchanged" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs">
+                        </div>
+                        <button onclick="saveOwnerProfile()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 rounded-xl text-xs transition">Update Admin Profile</button>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-8 space-y-6">
+                    <!-- User Management -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
+                        <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                            <h3 class="text-xs font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-users-gear text-blue-600"></i> Registered Users & Complete Profiles</h3>
+                            <span id="userCountBadge" class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">0 Users</span>
+                        </div>
+                        <div class="overflow-x-auto max-h-96">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-50 text-slate-400 uppercase text-[10px] sticky top-0">
+                                    <tr>
+                                        <th class="p-2.5">User & Contact</th>
+                                        <th class="p-2.5">Education & Experience</th>
+                                        <th class="p-2.5">Password</th>
+                                        <th class="p-2.5">Status</th>
+                                        <th class="p-2.5 text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="userListTable" class="divide-y divide-slate-100 text-slate-700"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Global Template & Styling Designer (50+ Templates Launcher) -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-4 shadow-xs">
+                        <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                            <div>
+                                <h3 class="text-xs font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-wand-magic-sparkles text-purple-600"></i> Global Template & Formatting Manager (50+ Formats)</h3>
+                                <p class="text-[10px] text-slate-400">Launch new templates and apply global styles (color, font size, bold, italic) across all formats.</p>
+                            </div>
+                            <button onclick="publishTemplate()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 transition">
+                                <i class="fa-solid fa-paper-plane"></i> Launch Template
+                            </button>
+                        </div>
+
+                        <!-- Global Styling Controls -->
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <div>
+                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Global Font Family</label>
+                                <select id="globalFont" onchange="applyGlobalStyling()" class="w-full bg-white border border-slate-200 rounded-lg p-2 text-xs">
+                                    <option value="'Plus Jakarta Sans', sans-serif">Jakarta Sans</option>
+                                    <option value="'Times New Roman', serif">Times New Roman</option>
+                                    <option value="Arial, sans-serif">Arial</option>
+                                    <option value="'Courier New', monospace">Courier New</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Headline Color</label>
+                                <input type="color" id="globalHeadColor" value="#0f172a" onchange="applyGlobalStyling()" class="w-full h-8 bg-white border border-slate-200 rounded-lg cursor-pointer p-1">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Base Font Size</label>
+                                <select id="globalFontSize" onchange="applyGlobalStyling()" class="w-full bg-white border border-slate-200 rounded-lg p-2 text-xs">
+                                    <option value="12px">Compact (12px)</option>
+                                    <option value="14px" selected>Standard (14px)</option>
+                                    <option value="16px">Large (16px)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Text Alignment</label>
+                                <select id="globalAlign" onchange="applyGlobalStyling()" class="w-full bg-white border border-slate-200 rounded-lg p-2 text-xs">
+                                    <option value="left">Left</option>
+                                    <option value="justify">Justify</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Template Title / Name (e.g., Template #45 - Executive)</label>
+                                <input type="text" id="tplTitleInput" placeholder="e.g. Modern Executive Resume #1" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-1">Category</label>
+                                <input type="text" id="tplCatInput" placeholder="e.g. IT, Engineering, Management, Banking" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs">
+                            </div>
+                        </div>
+
+                        <!-- Rich Text Toolbar -->
+                        <div>
+                            <div class="bg-slate-100 border border-slate-200 rounded-t-xl p-2 flex flex-wrap gap-1 text-xs">
+                                <button onclick="execCmd('bold')" class="p-1.5 px-2 bg-white border rounded font-bold">B</button>
+                                <button onclick="execCmd('italic')" class="p-1.5 px-2 bg-white border rounded italic">I</button>
+                                <button onclick="execCmd('underline')" class="p-1.5 px-2 bg-white border rounded underline">U</button>
+                                <div class="h-4 w-[1px] bg-slate-300 mx-1 self-center"></div>
+                                <button onclick="execCmd('insertUnorderedList')" class="p-1.5 bg-white border rounded"><i class="fa-solid fa-list-ul"></i></button>
+                                <button onclick="execCmd('formatBlock', '<h1>')" class="p-1 bg-white border rounded font-bold">H1</button>
+                                <button onclick="execCmd('formatBlock', '<h2>')" class="p-1 bg-white border rounded font-bold">H2</button>
+                            </div>
+                            <div id="wordEditor" class="word-editor-area" contenteditable="true">
+                                <h1 style="font-size: 20px; font-weight: bold;">{{FULL_NAME}}</h1>
+                                <p>{{EMAIL}} | {{PHONE}} | {{LOCATION}}</p>
+                                <hr style="margin: 10px 0;">
+                                <h3 style="font-weight: bold;">PROFESSIONAL EXPERIENCE</h3>
+                                <p><strong>{{COMPANY_NAME}}</strong> - {{JOB_ROLE}} ({{EXPERIENCE_YEARS}} Years)</p>
+                            </div>
+                        </div>
+
+                        <div class="pt-2">
+                            <h4 class="text-xs font-bold text-slate-900 mb-2">Active Launch Templates Library</h4>
+                            <div id="templateListGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-48 overflow-y-auto"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- SCRIPT -->
+    <script>
+        let isRegisterMode = false;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            initDefaults();
+            checkAuth();
+        });
+
+        function toggleAuthMode() {
+            isRegisterMode = !isRegisterMode;
+            document.getElementById('authTitle').innerText = isRegisterMode ? "Register Owner Account" : "Admin Access Control";
+            document.getElementById('authBtn').innerText = isRegisterMode ? "Create Admin Credentials" : "Login to Admin Panel";
+            document.getElementById('authToggleBtn').innerText = isRegisterMode ? "Already Registered? Login" : "First time Owner? Register Admin Account";
+        }
+
+        function handleAuthSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('authEmail').value;
+            const pass = document.getElementById('authPassword').value;
+
+            if (isRegisterMode) {
+                localStorage.setItem("app_admin", JSON.stringify({ email, pass, phone: "+91 7000164080" }));
+                alert("Admin Registered Successfully! Please Login.");
+                toggleAuthMode();
+            } else {
+                const admin = JSON.parse(localStorage.getItem("app_admin") || '{"email":"sunilmathur361@gmail.com","pass":"admin123"}');
+                if (email === admin.email && pass === admin.pass) {
+                    sessionStorage.setItem("is_admin", "true");
+                    checkAuth();
+                } else {
+                    alert("Incorrect Email or Password!");
+                }
+            }
+        }
+
+        function checkAuth() {
+            if (sessionStorage.getItem("is_admin") === "true") {
+                document.getElementById('authOverlay').classList.add('hidden');
+                document.getElementById('mainDashboard').classList.remove('hidden');
+                loadData();
+            } else {
+                document.getElementById('authOverlay').classList.remove('hidden');
+                document.getElementById('mainDashboard').classList.add('hidden');
+            }
+        }
+
+        function logoutAdmin() {
+            sessionStorage.removeItem("is_admin");
+            checkAuth();
+        }
+
+        function initDefaults() {
+            if (!localStorage.getItem('app_users')) {
+                const defaultUsers = [
+                    { 
+                        name: "Sunil Mathur", email: "sunil.mathur@gmail.com", phone: "+91 7000164080", address: "Bhopal, MP", pass: "sunil12026",
+                        edu: "Graduation (B.Tech) - 2022, RGPV University", exp: "TechCorp - 2 Years - Software Engineer", downloads: 2, paid: true, photo: "" 
+                    }
+                ];
+                localStorage.setItem('app_users', JSON.stringify(defaultUsers));
+            }
+            if (!localStorage.getItem('app_templates')) {
+                // Initialize with dummy templates up to 50 entries representation
+                let initialTpls = [];
+                for(let i=1; i<=50; i++) {
+                    initialTpls.push({
+                        title: `Professional Resume Template #${i}`,
+                        category: i <= 15 ? "IT & Software" : i <= 30 ? "Management" : "Engineering & Core",
+                        htmlContent: `<h1 style="font-size:22px; font-weight:bold;">{{FULL_NAME}}</h1><p>{{EMAIL}} | {{PHONE}} | {{LOCATION}}</p><hr><h3 style="font-weight:bold;">SUMMARY</h3><p>{{SUMMARY}}</p>`
+                    });
+                }
+                localStorage.setItem('app_templates', JSON.stringify(initialTpls));
+            }
+        }
+
+        function loadData() {
+            document.getElementById('priceInput').value = localStorage.getItem('app_pro_price') || '100';
+            document.getElementById('statPrice').innerText = `₹${localStorage.getItem('app_pro_price') || '100'}`;
+            
+            document.getElementById('fbApiKey').value = localStorage.getItem('app_fb_key') || '';
+            document.getElementById('fbProjectId').value = localStorage.getItem('app_fb_project') || '';
+            document.getElementById('fbBucket').value = localStorage.getItem('app_fb_bucket') || '';
+
+            document.getElementById('rzpKeyId').value = localStorage.getItem('app_rzp_key') || '';
+            document.getElementById('rzpSecretKey').value = localStorage.getItem('app_rzp_secret') || '';
+
+            const admin = JSON.parse(localStorage.getItem("app_admin") || '{"email":"sunilmathur361@gmail.com","phone":"+91 7000164080"}');
+            document.getElementById('ownerEmail').value = admin.email || '';
+            document.getElementById('ownerPhone').value = admin.phone || '';
+
+            renderUsers();
+            renderTemplateList();
+        }
+
+        function updatePricing() {
+            const val = document.getElementById('priceInput').value;
+            localStorage.setItem('app_pro_price', val);
+            document.getElementById('statPrice').innerText = `₹${val}`;
+            alert("Custom Pro Price Updated Successfully!");
+        }
+
+        function saveFirebaseKeys() {
+            localStorage.setItem('app_fb_key', document.getElementById('fbApiKey').value);
+            localStorage.setItem('app_fb_project', document.getElementById('fbProjectId').value);
+            localStorage.setItem('app_fb_bucket', document.getElementById('fbBucket').value);
+            alert("Firebase Cloud Configuration Saved Successfully!");
+        }
+
+        function saveApiKeys() {
+            localStorage.setItem('app_rzp_key', document.getElementById('rzpKeyId').value);
+            localStorage.setItem('app_rzp_secret', document.getElementById('rzpSecretKey').value);
+            alert("Razorpay API Keys Saved Successfully!");
+        }
+
+        function saveOwnerProfile() {
+            let admin = JSON.parse(localStorage.getItem("app_admin") || '{}');
+            admin.email = document.getElementById('ownerEmail').value;
+            admin.phone = document.getElementById('ownerPhone').value;
+            const pass = document.getElementById('ownerPass').value;
+            if(pass) admin.pass = pass;
+            localStorage.setItem("app_admin", JSON.stringify(admin));
+            alert("Admin Profile Updated Successfully!");
+        }
+
+        function renderUsers() {
+            const users = JSON.parse(localStorage.getItem('app_users') || '[]');
+            const table = document.getElementById('userListTable');
+            document.getElementById('userCountBadge').innerText = `${users.length} Users`;
+            document.getElementById('statUsers').innerText = users.length;
+
+            let totalDownloads = 0;
+            users.forEach(u => totalDownloads += (u.downloads || 0));
+            document.getElementById('statDownloads').innerText = totalDownloads;
+            const price = parseInt(localStorage.getItem('app_pro_price') || '100');
+            document.getElementById('statRevenue').innerText = `₹${totalDownloads * price}`;
+
+            table.innerHTML = '';
+            users.forEach((u, i) => {
+                table.innerHTML += `
+                    <tr>
+                        <td class="p-2.5">
+                            <strong class="text-slate-900">${u.name || 'User'}</strong><br>
+                            <span class="text-blue-600">${u.email}</span><br>
+                            <span class="text-[10px] text-slate-400">${u.phone} | ${u.address || ''}</span>
+                        </td>
+                        <td class="p-2.5">
+                            <span class="text-[11px] font-bold">Edu:</span> ${u.edu || 'N/A'}<br>
+                            <span class="text-[11px] font-bold">Exp:</span> ${u.exp || 'Fresher'}
+                        </td>
+                        <td class="p-2.5 font-mono text-amber-600 font-bold">${u.pass}</td>
+                        <td class="p-2.5">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${u.paid ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'}">
+                                ${u.paid ? 'Pro Paid' : 'Free / Watermark'}
+                            </span>
+                        </td>
+                        <td class="p-2.5 text-right space-x-1">
+                            <button onclick="deleteUser(${i})" class="text-red-600 hover:underline font-bold text-xs">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function deleteUser(i) {
+            if(confirm("Remove this user profile?")) {
+                let users = JSON.parse(localStorage.getItem('app_users') || '[]');
+                users.splice(i, 1);
+                localStorage.setItem('app_users', JSON.stringify(users));
+                renderUsers();
+            }
+        }
+
+        function execCmd(cmd, val = null) {
+            document.execCommand(cmd, false, val);
+        }
+
+        function applyGlobalStyling() {
+            const font = document.getElementById('globalFont').value;
+            const color = document.getElementById('globalHeadColor').value;
+            const size = document.getElementById('globalFontSize').value;
+            const align = document.getElementById('globalAlign').value;
+
+            const stylingRules = { font, color, size, align };
+            localStorage.setItem('app_global_styling', JSON.stringify(stylingRules));
+        }
+
+        function publishTemplate() {
+            const title = document.getElementById('tplTitleInput').value || 'New Custom Resume Template';
+            const category = document.getElementById('tplCatInput').value || 'Professional';
+            const htmlContent = document.getElementById('wordEditor').innerHTML;
+
+            let tpls = JSON.parse(localStorage.getItem('app_templates') || '[]');
+            tpls.unshift({ title, category, htmlContent });
+            localStorage.setItem('app_templates', JSON.stringify(tpls));
+            alert("New Resume Template Launched Live (Total: " + tpls.length + ")");
+            renderTemplateList();
+        }
+
+        function renderTemplateList() {
+            let tpls = JSON.parse(localStorage.getItem('app_templates') || '[]');
+            const grid = document.getElementById('templateListGrid');
+            grid.innerHTML = '';
+            tpls.slice(0, 10).forEach((t, i) => {
+                grid.innerHTML += `
+                    <div class="bg-slate-50 border p-2.5 rounded-xl flex justify-between items-center text-xs">
+                        <div>
+                            <p class="font-bold text-slate-900">${t.title}</p>
+                            <span class="text-[9px] text-slate-400 uppercase font-bold">${t.category}</span>
+                        </div>
+                        <button onclick="removeTpl(${i})" class="text-red-600 font-bold">Remove</button>
+                    </div>
+                `;
+            });
+        }
+
+        function removeTpl(i) {
+            let tpls = JSON.parse(localStorage.getItem('app_templates') || '[]');
+            tpls.splice(i, 1);
+            localStorage.setItem('app_templates', JSON.stringify(tpls));
+            renderTemplateList();
+        }
+    </script>
+</body>
+</html>
