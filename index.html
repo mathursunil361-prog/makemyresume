@@ -3,66 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MakeMyResume - Complete Pro Builder</title>
+    <title id="siteMetaTitle">MakeMyResume - Create, Impress. Succeed.</title>
     <style>
         :root {
-            --primary: #e53935;
-            --primary-dark: #c62828;
-            --bg-light: #fdfdfd;
-            --border-color: #dcdcdc;
-            --text-main: #111111;
+            --primary: #ff3b30;
+            --primary-dark: #d32f2f;
+            --bg-light: #ffffff;
+            --border-color: #e5e7eb;
+            --text-main: #111827;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         body { background: var(--bg-light); color: var(--text-main); line-height: 1.5; }
 
         /* Navbar */
-        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 40px; background: #fff; border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 1000; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 48px; background: #fff; border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 1000; }
         .logo { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: bold; cursor: pointer; }
-        .logo span { background: #ffebee; color: var(--primary); padding: 4px 8px; border-radius: 6px; }
-        nav { display: flex; gap: 20px; align-items: center; }
-        nav a { text-decoration: none; color: #333; font-size: 14px; font-weight: 500; cursor: pointer; }
+        .logo span { background: #fee2e2; color: var(--primary); padding: 6px 10px; border-radius: 8px; font-size: 16px; }
+        .logo small { display: block; font-size: 11px; color: #6b7280; font-weight: normal; }
+        nav { display: flex; gap: 24px; align-items: center; }
+        nav a { text-decoration: none; color: #4b5563; font-size: 14px; font-weight: 500; cursor: pointer; }
         nav a:hover { color: var(--primary); }
-        .nav-right { display: flex; gap: 10px; align-items: center; }
-        .btn { padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; border: none; font-size: 14px; }
-        .btn-text { background: transparent; color: #333; }
+        .nav-right { display: flex; gap: 12px; align-items: center; }
+        .btn { padding: 9px 18px; border-radius: 8px; cursor: pointer; font-weight: 600; border: none; font-size: 14px; transition: 0.2s; }
+        .btn-text { background: transparent; color: #374151; }
         .btn-primary { background: var(--primary); color: #fff; }
         .btn-primary:hover { background: var(--primary-dark); }
-        .btn-outline { background: #fff; border: 1px solid #ccc; color: #333; }
+        .btn-outline { background: #fff; border: 1px solid #d1d5db; color: #374151; }
 
         .app-view { display: none; }
         .app-view.active-view { display: block; }
 
-        /* Hero */
-        .hero { display: flex; align-items: center; justify-content: space-between; padding: 60px 40px; background: #fff; border-bottom: 1px solid var(--border-color); }
-        .hero-content { max-width: 600px; }
-        .badge { background: #e3f2fd; color: #1565c0; padding: 6px 12px; border-radius: 4px; font-size: 11px; font-weight: 700; display: inline-block; margin-bottom: 20px; }
-        .hero h1 { font-size: 40px; margin-bottom: 20px; line-height: 1.2; font-weight: 800; }
-        .hero p { color: #666; margin-bottom: 25px; font-size: 16px; }
+        /* Hero Section (Exact Match to Image) */
+        .hero { display: flex; align-items: center; justify-content: space-between; padding: 60px 48px; background: #fff; gap: 40px; }
+        .hero-content { max-width: 580px; }
+        .badge { background: #eff6ff; color: #2563eb; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-block; margin-bottom: 20px; }
+        .hero h1 { font-size: 48px; margin-bottom: 20px; line-height: 1.15; font-weight: 800; color: #111; }
+        .hero p { color: #4b5563; margin-bottom: 28px; font-size: 16px; }
+        .hero-images { display: flex; gap: 15px; align-items: center; }
+        .hero-mockup { width: 320px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); border: 1px solid #e5e7eb; }
 
-        /* Templates Grid */
-        .templates-section { padding: 50px 40px; text-align: center; background: #fff; }
-        .templates-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 15px; margin-top: 25px; }
-        .template-card { background: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; cursor: pointer; transition: 0.2s; text-align: center; }
-        .template-card:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.06); }
-        .template-thumb { height: 140px; background: #f8f9fa; border-radius: 6px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #444; font-size: 12px; border: 1px solid #e0e0e0; }
+        /* Features Bar */
+        .features-bar { display: grid; grid-template-columns: repeat(6, 1fr); gap: 20px; padding: 30px 48px; background: #f9fafb; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); text-align: center; }
+        .feature-item h4 { font-size: 13px; font-weight: 700; margin-bottom: 4px; color: #111; }
+        .feature-item p { font-size: 11px; color: #6b7280; }
+
+        /* Templates Section */
+        .templates-section { padding: 60px 48px; text-align: center; background: #fff; }
+        .templates-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; margin-top: 30px; }
+        .template-card { background: #fff; border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; cursor: pointer; transition: 0.2s; text-align: center; }
+        .template-card:hover { border-color: var(--primary); transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .template-thumb { height: 160px; background: #f3f4f6; border-radius: 6px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #374151; font-size: 12px; border: 1px solid #e5e7eb; }
+
+        /* All Templates Grid View (50 items) */
+        .all-templates-container { padding: 40px 48px; }
+        .all-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 20px; }
 
         /* Editor Layout */
-        .editor-container { display: flex; height: calc(100vh - 70px); overflow: hidden; background: #f1f3f5; }
-        .editor-sidebar { width: 450px; background: #fff; border-right: 1px solid var(--border-color); padding: 20px; overflow-y: auto; }
+        .editor-container { display: flex; height: calc(100vh - 70px); overflow: hidden; background: #f3f4f6; }
+        .editor-sidebar { width: 460px; background: #fff; border-right: 1px solid var(--border-color); padding: 20px; overflow-y: auto; }
         .editor-preview { flex: 1; padding: 30px; display: flex; justify-content: center; overflow-y: auto; }
-        .form-section-title { font-size: 11px; font-weight: bold; color: var(--primary); margin: 15px 0 8px; border-bottom: 1px solid #eee; padding-bottom: 4px; text-transform: uppercase; }
+        .form-section-title { font-size: 11px; font-weight: bold; color: var(--primary); margin: 15px 0 8px; border-bottom: 1px solid #e5e7eb; padding-bottom: 4px; text-transform: uppercase; }
         .input-group { margin-bottom: 10px; }
-        .input-group label { display: block; font-size: 11px; font-weight: 600; margin-bottom: 3px; color: #444; }
-        .input-group input, .input-group textarea, .input-group select { width: 100%; padding: 7px 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; }
-        .dynamic-row { display: flex; gap: 5px; margin-bottom: 6px; align-items: center; }
+        .input-group label { display: block; font-size: 11px; font-weight: 600; margin-bottom: 3px; color: #374151; }
+        .input-group input, .input-group textarea, .input-group select { width: 100%; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 12px; }
+        .dynamic-row { display: flex; gap: 6px; margin-bottom: 6px; align-items: center; }
 
         /* Formatting Toolbar */
-        .toolbar { display: flex; gap: 5px; background: #f1f3f5; padding: 6px; border-radius: 4px; margin-bottom: 10px; align-items: center; flex-wrap: wrap; }
-        .toolbar button, .toolbar select { padding: 3px 6px; font-size: 11px; background: #fff; border: 1px solid #ccc; cursor: pointer; border-radius: 3px; }
+        .toolbar { display: flex; gap: 6px; background: #f9fafb; padding: 8px; border-radius: 6px; margin-bottom: 12px; align-items: center; flex-wrap: wrap; border: 1px solid #e5e7eb; }
+        .toolbar button, .toolbar select { padding: 4px 8px; font-size: 11px; background: #fff; border: 1px solid #d1d5db; cursor: pointer; border-radius: 4px; }
+        .toolbar button:hover { background: #f3f4f6; }
 
         /* Resume Sheet */
-        .resume-sheet { background: #fff; width: 750px; min-height: 1050px; padding: 45px; box-shadow: 0 0 20px rgba(0,0,0,0.08); position: relative; color: #111; }
-        .resume-header { display: flex; gap: 20px; align-items: flex-start; border-bottom: 2px solid #222; padding-bottom: 15px; margin-bottom: 20px; }
+        .resume-sheet { background: #fff; width: 750px; min-height: 1050px; padding: 45px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: relative; color: #111; }
+        .resume-header { display: flex; gap: 20px; align-items: flex-start; border-bottom: 2px solid #111; padding-bottom: 15px; margin-bottom: 20px; }
         .resume-avatar { width: 95px; height: 115px; border: 1px solid #333; background: #fafafa; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #666; overflow: hidden; flex-shrink: 0; }
         .resume-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .res-title-block h1 { font-size: 18px; font-weight: bold; text-transform: uppercase; margin-bottom: 4px; }
@@ -76,14 +89,14 @@
 
         .res-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
         .res-table th, .res-table td { border: 1px solid #333; padding: 5px 8px; font-size: 10.5px; text-align: left; }
-        .res-table th { background: #f2f2f2; font-weight: bold; }
+        .res-table th { background: #f3f4f6; font-weight: bold; }
 
         /* Modals */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 2000; }
-        .modal-box { background: #fff; width: 460px; padding: 30px; border-radius: 10px; position: relative; max-height: 90vh; overflow-y: auto; }
-        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 18px; cursor: pointer; color: #777; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 2000; }
+        .modal-box { background: #fff; width: 480px; padding: 30px; border-radius: 12px; position: relative; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 20px; cursor: pointer; color: #6b7280; }
 
-        /* FIXED PRINT PREVIEW CSS */
+        /* Print Preview Config */
         @media print {
             body * { visibility: hidden !important; }
             #activeResumeTemplate, #activeResumeTemplate * { visibility: visible !important; }
@@ -98,17 +111,17 @@
     <header class="navbar">
         <div class="logo" onclick="switchView('home-view')">
             <span>📄</span> 
-            <div><strong>MakeMyResume</strong><small style="font-size:10px; color:#666; display:block;">Professional Format</small></div>
+            <div><strong id="siteBrandName">MakeMyResume</strong><small id="siteBrandTag">Create, Impress. Succeed.</small></div>
         </div>
         <nav>
             <a onclick="switchView('home-view')" class="active">Home</a>
-            <a onclick="scrollToSection('templates-sec')">Templates (50+)</a>
+            <a onclick="openAllTemplatesView()">Templates (50+)</a>
             <a onclick="scrollToSection('pricing-sec')">Pricing</a>
+            <a onclick="switchView('admin-login-view')">Admin Panel</a>
         </nav>
         <div class="nav-right">
-            <button class="btn btn-outline" style="background:#222; color:#fff;" onclick="openModal('adminLoginModal')">Admin Panel</button>
             <button class="btn btn-text" onclick="openModal('loginModal')">Log In</button>
-            <button class="btn btn-primary" onclick="openModal('registerModal')">Register</button>
+            <button class="btn btn-primary" onclick="openModal('registerModal')">Get Started</button>
         </div>
     </header>
 
@@ -116,39 +129,76 @@
     <div id="home-view" class="app-view active-view">
         <section class="hero">
             <div class="hero-content">
-                <span class="badge">✨ ADVANCED RESUME BUILDER</span>
-                <h1>Create, Customize & Download Professional Resumes Instantly</h1>
-                <p>Build directly without mandatory registration. Data auto-saves to your profile. Preview with watermark for free, or pay via Razorpay to download watermark-free PDF.</p>
+                <span class="badge">✨ AI POWERED RESUME BUILDER</span>
+                <h1>Create Your Professional Resume That Gets You Hired</h1>
+                <p>Choose from 50+ ATS-friendly templates, customize in minutes, and download your resume in PDF.</p>
                 <div style="display: flex; gap: 15px;">
-                    <button class="btn btn-primary" style="padding: 12px 24px; font-size:15px;" onclick="switchView('editor-view')">Create Resume Now →</button>
-                    <button class="btn btn-outline" style="padding: 12px 24px; font-size:15px;" onclick="scrollToSection('templates-sec')">View Templates</button>
+                    <button class="btn btn-primary" style="padding: 12px 24px; font-size:15px;" onclick="switchView('editor-view')">Create My Resume →</button>
+                    <button class="btn btn-outline" style="padding: 12px 24px; font-size:15px;" onclick="openAllTemplatesView()">View Templates</button>
                 </div>
+            </div>
+            <div class="hero-images">
+                <img src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=500&auto=format&fit=crop&q=60" class="hero-mockup" alt="Resume Preview">
             </div>
         </section>
 
-        <!-- Templates Slide Section (6 in slide, 50 in view all) -->
+        <!-- Features Bar -->
+        <div class="features-bar">
+            <div class="feature-item"><h4>ATS Friendly</h4><p>Optimized resumes</p></div>
+            <div class="feature-item"><h4>Pro Templates</h4><p>Modern layouts</p></div>
+            <div class="feature-item"><h4>Instant Download</h4><p>PDF format</p></div>
+            <div class="feature-item"><h4>Easy to Use</h4><p>Simple steps</p></div>
+            <div class="feature-item"><h4>Secure & Private</h4><p>Data is safe</p></div>
+            <div class="feature-item"><h4>Expert Approved</h4><p>HR vetted</p></div>
+        </div>
+
+        <!-- Templates Slide Section (6 templates) -->
         <section class="templates-section" id="templates-sec">
-            <h2>Resume Template Formats</h2>
-            <p style="color:#666; font-size:13px;">Select any format to load directly into the live editor</p>
+            <h2>Professional Resume Templates</h2>
+            <p style="color:#6b7280; font-size:14px; margin-top:5px;">Choose from our collection of ATS-friendly template formats</p>
             <div class="templates-grid" id="homeTemplatesGrid"></div>
+            <button class="btn btn-outline" style="margin-top:30px;" onclick="openAllTemplatesView()">View All 50 Templates →</button>
         </section>
 
         <!-- Pricing Section -->
-        <section class="pricing-section" id="pricing-sec" style="padding:50px 40px; background:#f8f9fa; text-align:center;">
-            <h2>Pricing & Download</h2>
-            <div style="background:#fff; max-width:380px; margin:20px auto; padding:25px; border-radius:8px; border:1px solid var(--border-color);">
-                <h3>Pro PDF Download</h3>
-                <h1 style="color:var(--primary); margin:12px 0;">₹100</h1>
-                <p style="font-size:12px; color:#666; margin-bottom:15px;">Watermark-free export with Razorpay integration</p>
-                <button class="btn btn-primary" style="width:100%;" onclick="triggerProPayment()">Pay & Download Pro</button>
+        <section class="pricing-section" id="pricing-sec" style="padding:60px 48px; background:#f9fafb; text-align:center;">
+            <h2>Simple Pricing</h2>
+            <p style="color:#6b7280; margin-top:5px;">Choose the plan that's right for you</p>
+            <div style="display:flex; justify-content:center; gap:20px; margin-top:30px;">
+                <div style="background:#fff; width:300px; padding:25px; border-radius:12px; border:1px solid var(--border-color);">
+                    <h3>Free</h3>
+                    <h1 style="color:#111; margin:15px 0;">₹0</h1>
+                    <p style="font-size:12px; color:#666; margin-bottom:20px;">Watermark preview access</p>
+                    <button class="btn btn-outline" style="width:100%;" onclick="switchView('editor-view')">Get Started</button>
+                </div>
+                <div style="background:#fff; width:300px; padding:25px; border-radius:12px; border:2px solid var(--primary); position:relative;">
+                    <span style="position:absolute; top:-12px; left:50%; transform:translateX(-50%); background:var(--primary); color:#fff; font-size:10px; padding:3px 10px; border-radius:10px; font-weight:bold;">POPULAR</span>
+                    <h3>Pro Download</h3>
+                    <h1 style="color:var(--primary); margin:15px 0;" id="pricingDisplayVal">₹100</h1>
+                    <p style="font-size:12px; color:#666; margin-bottom:20px;">Watermark-free PDF export</p>
+                    <button class="btn btn-primary" style="width:100%;" onclick="triggerProPayment()">Pay & Download</button>
+                </div>
             </div>
         </section>
     </div>
 
+    <!-- ALL 50 TEMPLATES VIEW -->
+    <div id="all-templates-view" class="app-view">
+        <div class="all-templates-container">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h2>All 50 Professional Templates</h2>
+                <button class="btn btn-outline" onclick="switchView('home-view')">← Back to Home</button>
+            </div>
+            <div class="all-grid" id="allTemplatesGrid"></div>
+        </div>
+    </div>
+
     <!-- EDITOR VIEW -->
     <div id="editor-view" class="app-view">
-        <div style="background:#fff; padding:10px 30px; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
-            <strong>Resume Editor & Target Field Formatting</strong>
+        <div style="background:#fff; padding:12px 30px; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <strong id="activeTemplateIndicator">Active Format: Standard Professional</strong>
+            </div>
             <div style="display:flex; gap:10px;">
                 <button class="btn btn-outline" onclick="switchView('home-view')">Home</button>
                 <button class="btn btn-outline" onclick="previewWatermarkPDF()">Free Preview (Watermark)</button>
@@ -157,10 +207,10 @@
         </div>
 
         <div class="editor-container">
-            <!-- Sidebar controls with specific active input styling toolbar -->
+            <!-- Sidebar with live formatting toolbar targeting the active field -->
             <div class="editor-sidebar">
-                <h3 style="font-size:11px; font-weight:bold; margin-bottom:5px;">Target Box Formatting Toolbar</h3>
-                <p style="font-size:10px; color:#666; margin-bottom:8px;">Click inside any input/textarea below and use this toolbar to format that specific text:</p>
+                <h3 style="font-size:12px; font-weight:bold; margin-bottom:4px;">Target Text Box Formatting Toolbar</h3>
+                <p style="font-size:10px; color:#6b7280; margin-bottom:8px;">Click inside any input box below and use toolbar to format its font size, style, or color:</p>
                 
                 <div class="toolbar">
                     <select id="toolFontSize" onchange="applyActiveInputStyle('fontSize', this.value)">
@@ -169,11 +219,12 @@
                         <option value="12px">12px</option>
                         <option value="14px">14px</option>
                         <option value="16px">16px</option>
+                        <option value="18px">18px</option>
                     </select>
                     <button onclick="applyActiveInputStyle('bold', '')" title="Bold"><b>B</b></button>
                     <button onclick="applyActiveInputStyle('italic', '')" title="Italic"><i>I</i></button>
                     <button onclick="applyActiveInputStyle('underline', '')" title="Underline"><u>U</u></button>
-                    <input type="color" id="toolColor" title="Text Color" onchange="applyActiveInputStyle('color', this.value)" style="width:24px; height:24px; border:none; cursor:pointer;">
+                    <input type="color" id="toolColor" title="Text Color" onchange="applyActiveInputStyle('color', this.value)" style="width:26px; height:26px; border:none; cursor:pointer;">
                 </div>
 
                 <div class="input-group"><label>Upload Photo</label><input type="file" accept="image/*" onchange="loadPhotoPreview(event)"></div>
@@ -196,27 +247,29 @@
 
                 <div class="form-section-title">Career Objective (Pre-filled)</div>
                 <div class="input-group">
-                    <textarea class="formatable-input" id="edObjective" rows="3" oninput="syncResume()" onfocus="setActiveInput(this)">Seeking a challenging position in a reputed organization where I can learn new skills, expand my knowledge, and leverage my learning’s.</textarea>
+                    <textarea class="formatable-input" id="edObjective" rows="3" oninput="syncResume()" onfocus="setActiveInput(this)">Seeking a challenging position in a reputed organization where I can learn new skills, expand my knowledge, and leverage my learning’s. To get an opportunity where I can make the best of my potential and contribute to the organization's growth.</textarea>
                 </div>
 
-                <div class="form-section-title">Education & Qualification</div>
+                <div class="form-section-title">Education Details</div>
                 <div id="editorEduRows">
                     <div class="dynamic-row">
                         <input type="text" value="10th" style="width:30%;">
-                        <input type="text" value="2016" style="width:25%;">
-                        <input type="text" value="CG Board" style="width:45%;">
+                        <input type="text" value="2016" style="width:20%;">
+                        <input type="text" value="CG Board" style="width:30%;">
+                        <input type="text" value="85%" style="width:20%;">
                     </div>
                     <div class="dynamic-row">
                         <input type="text" value="12th" style="width:30%;">
-                        <input type="text" value="2019" style="width:25%;">
-                        <input type="text" value="CG Board" style="width:45%;">
+                        <input type="text" value="2019" style="width:20%;">
+                        <input type="text" value="CG Board" style="width:30%;">
+                        <input type="text" value="78%" style="width:20%;">
                     </div>
                 </div>
-                <button class="btn btn-outline" style="width:100%; font-size:11px; padding:4px; margin-top:5px;" onclick="addEduRow()">+ Add Education Row</button>
+                <button class="btn btn-outline" style="width:100%; font-size:11px; padding:4px; margin-top:5px;" onclick="addEduRow()">+ Add Education</button>
 
                 <div class="form-section-title">Work Experience</div>
                 <div class="input-group">
-                    <input type="text" class="formatable-input" id="edExp" value="Computer Operator at District Office (2 Years)" oninput="syncResume()" onfocus="setActiveInput(this)">
+                    <input type="text" class="formatable-input" id="edExp" value="Computer Operator at District Office - 2 Years" oninput="syncResume()" onfocus="setActiveInput(this)">
                 </div>
 
                 <button class="btn btn-primary" style="width:100%; margin-top:15px;" onclick="saveAndAutoRegister()">Save to Profile & Register</button>
@@ -225,7 +278,7 @@
             <!-- Preview Sheet -->
             <div class="editor-preview">
                 <div class="resume-sheet" id="activeResumeTemplate" style="position:relative;">
-                    <div id="watermarkLayer" style="display:none; position:absolute; top:40%; left:15%; font-size:35px; color:rgba(229,57,53,0.18); transform:rotate(-30deg); font-weight:bold; pointer-events:none; z-index:10; text-align:center;">WATERMARK PREVIEW<br>PAY TO DOWNLOAD</div>
+                    <div id="watermarkLayer" style="display:none; position:absolute; top:40%; left:12%; font-size:38px; color:rgba(255,59,48,0.18); transform:rotate(-30deg); font-weight:bold; pointer-events:none; z-index:10; text-align:center;">WATERMARK PREVIEW<br>PAY TO DOWNLOAD</div>
 
                     <div class="resume-header">
                         <div class="resume-avatar" id="resPhotoBox">Photo</div>
@@ -252,19 +305,19 @@
                     </div>
 
                     <div class="res-section-title">Career objective :</div>
-                    <p class="res-text" id="resViewObjective">Seeking a challenging position in a reputed organization where I can learn new skills, expand my knowledge, and leverage my learning’s.</p>
+                    <p class="res-text" id="resViewObjective">Seeking a challenging position in a reputed organization where I can learn new skills, expand my knowledge, and leverage my learning’s. To get an opportunity where I can make the best of my potential and contribute to the organization's growth.</p>
 
                     <div class="res-section-title">Qualification :</div>
                     <table class="res-table">
-                        <thead><tr><th>Education</th><th>Passing Year</th><th>Name of Institution</th></tr></thead>
+                        <thead><tr><th>Education</th><th>Passing Year</th><th>Name of Institution</th><th>Percentage</th></tr></thead>
                         <tbody id="resEduTableBody">
-                            <tr><td>10th</td><td>2016</td><td>CG Board</td></tr>
-                            <tr><td>12th</td><td>2019</td><td>CG Board</td></tr>
+                            <tr><td>10th</td><td>2016</td><td>CG Board</td><td>85%</td></tr>
+                            <tr><td>12th</td><td>2019</td><td>CG Board</td><td>78%</td></tr>
                         </tbody>
                     </table>
 
                     <div class="res-section-title">Experience :</div>
-                    <p class="res-text" id="resViewExp">• Computer Operator at District Office (2 Years)</p>
+                    <p class="res-text" id="resViewExp">• Computer Operator at District Office - 2 Years</p>
                 </div>
             </div>
         </div>
@@ -272,46 +325,84 @@
 
     <!-- PROFILE VIEW -->
     <div id="profile-view" class="app-view">
-        <div style="max-width:800px; margin:40px auto; background:#fff; padding:30px; border-radius:8px; border:1px solid var(--border-color);">
-            <h2>User Profile & Saved Resume</h2>
-            <p style="color:#666; margin-top:5px;" id="profEmailDisplay">user@gmail.com</p>
-            <div style="display:flex; gap:15px; margin-top:20px;">
+        <div style="max-width:800px; margin:40px auto; background:#fff; padding:35px; border-radius:12px; border:1px solid var(--border-color);">
+            <h2>User Account Profile</h2>
+            <p style="color:#6b7280; margin-top:5px;" id="profileDisplayEmail">user@gmail.com</p>
+            <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:15px; margin:25px 0;">
+                <div style="background:#f9fafb; padding:15px; border-radius:8px; border:1px solid var(--border-color);"><small>Saved Resumes</small><h3>1 Active</h3></div>
+                <div style="background:#f9fafb; padding:15px; border-radius:8px; border:1px solid var(--border-color);"><small>Total Downloads</small><h3 id="userProfileDownloads">0</h3></div>
+                <div style="background:#f9fafb; padding:15px; border-radius:8px; border:1px solid var(--border-color);"><small>Status</small><h3 style="color:green;">Verified</h3></div>
+                <div style="background:#f9fafb; padding:15px; border-radius:8px; border:1px solid var(--border-color);"><small>New Resume</small><button class="btn btn-primary" style="padding:4px 8px; font-size:11px; margin-top:5px;" onclick="switchView('editor-view')">Create New</button></div>
+            </div>
+            <div style="display:flex; gap:15px;">
                 <button class="btn btn-primary" onclick="switchView('editor-view')">Update Resume</button>
-                <button class="btn btn-outline" onclick="switchView('home-view')" style="background:#222; color:#fff;">Logout</button>
+                <button class="btn btn-outline" onclick="switchView('home-view')" style="background:#111; color:#fff;">Logout</button>
             </div>
         </div>
     </div>
 
-    <!-- ADMIN PANEL VIEW -->
-    <div id="admin-view" class="app-view">
-        <div style="max-width:950px; margin:40px auto; background:#fff; padding:30px; border-radius:8px; border:1px solid var(--border-color);">
-            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding-bottom:12px; margin-bottom:20px;">
+    <!-- ADMIN LOGIN VIEW -->
+    <div id="admin-login-view" class="app-view">
+        <div style="max-width:420px; margin:80px auto; background:#fff; padding:35px; border-radius:12px; border:1px solid var(--border-color); box-shadow:0 10px 25px rgba(0,0,0,0.05);">
+            <h2>Admin Login</h2>
+            <p style="color:#6b7280; font-size:13px; margin-bottom:20px;">Enter credentials to manage site controls</p>
+            <div class="input-group"><label>Admin Email</label><input type="text" id="admLoginEmail" value="admin@makemyresume.com"></div>
+            <div class="input-group"><label>Password</label><input type="password" id="admLoginPass" placeholder="Enter password"></div>
+            <button class="btn btn-primary" style="width:100%; margin-top:15px;" onclick="performAdminLogin()">Login to Dashboard</button>
+            <button class="btn btn-outline" style="width:100%; margin-top:10px;" onclick="switchView('home-view')">Back to Home</button>
+        </div>
+    </div>
+
+    <!-- ADMIN PANEL DASHBOARD VIEW -->
+    <div id="admin-dashboard-view" class="app-view">
+        <div style="max-width:1100px; margin:40px auto; background:#fff; padding:35px; border-radius:12px; border:1px solid var(--border-color);">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e5e7eb; padding-bottom:15px; margin-bottom:25px;">
                 <h2>Admin Control Dashboard</h2>
                 <button class="btn btn-outline" onclick="switchView('home-view')">Admin Logout</button>
             </div>
 
-            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:15px; margin-bottom:25px;">
-                <div style="background:#f8f9fa; padding:15px; border-radius:6px;"><small>Total Users</small><h2 id="admTotalUsers">0</h2></div>
-                <div style="background:#f8f9fa; padding:15px; border-radius:6px;"><small>Pro Downloads</small><h2 id="admTotalDownloads">0</h2></div>
-                <div style="background:#f8f9fa; padding:15px; border-radius:6px;"><small>Revenue</small><h2 id="admTotalRevenue">₹0</h2></div>
+            <!-- Stats Widgets -->
+            <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:15px; margin-bottom:30px;">
+                <div style="background:#f9fafb; padding:18px; border-radius:8px; border:1px solid #e5e7eb;"><small>Total Visits</small><h2 id="admTotalVisits">1,245</h2></div>
+                <div style="background:#f9fafb; padding:18px; border-radius:8px; border:1px solid #e5e7eb;"><small>Registered Users</small><h2 id="admTotalUsers">0</h2></div>
+                <div style="background:#f9fafb; padding:18px; border-radius:8px; border:1px solid #e5e7eb;"><small>Pro Downloads</small><h2 id="admTotalDownloads">0</h2></div>
+                <div style="background:#f9fafb; padding:18px; border-radius:8px; border:1px solid #e5e7eb;"><small>Total Revenue</small><h2 id="admTotalRevenue">₹0</h2></div>
             </div>
 
-            <!-- Admin Registration / Update Section -->
-            <div style="background:#f9f9f9; padding:20px; border-radius:6px; border:1px solid #ddd; margin-bottom:25px;">
-                <h3>Register / Manage Admins</h3>
+            <!-- Site Controls & Gateways Widgets -->
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-bottom:30px;">
+                <div style="background:#f9fafb; padding:20px; border-radius:8px; border:1px solid #e5e7eb;">
+                    <h3>Site Name & Branding Control</h3>
+                    <div class="input-group" style="margin-top:10px;"><label>Brand Name</label><input type="text" id="cfgBrandName" value="MakeMyResume"></div>
+                    <div class="input-group"><label>Tagline</label><input type="text" id="cfgTagline" value="Create, Impress. Succeed."></div>
+                    <div class="input-group"><label>Pro Download Price (₹)</label><input type="number" id="cfgPrice" value="100"></div>
+                    <button class="btn btn-primary" style="margin-top:10px;" onclick="updateSiteBranding()">Save Branding & Price</button>
+                </div>
+                <div style="background:#f9fafb; padding:20px; border-radius:8px; border:1px solid #e5e7eb;">
+                    <h3>Gateway & Firebase Integrations</h3>
+                    <div class="input-group" style="margin-top:10px;"><label>Razorpay Key ID</label><input type="text" id="cfgRazorpay" value="rzp_live_samplekey12345"></div>
+                    <div class="input-group"><label>Firebase API Config</label><input type="text" id="cfgFirebase" value="https://makemyresume-default-rtdb.firebaseio.com"></div>
+                    <button class="btn btn-primary" style="margin-top:10px;" onclick="alert('Integration widgets saved successfully!')">Save Integrations</button>
+                </div>
+            </div>
+
+            <!-- Admin Accounts Management -->
+            <div style="background:#f9fafb; padding:20px; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:30px;">
+                <h3>Admin Registration & Management</h3>
                 <div style="display:flex; gap:10px; margin-top:10px;">
-                    <input type="text" id="newAdminEmail" placeholder="Admin Email" style="padding:6px; border:1px solid #ccc; border-radius:4px; flex:1;">
-                    <input type="password" id="newAdminPass" placeholder="Admin Password" style="padding:6px; border:1px solid #ccc; border-radius:4px; flex:1;">
+                    <input type="text" id="newAdminEmail" placeholder="New Admin Email" style="padding:7px; border:1px solid #ccc; border-radius:4px; flex:1;">
+                    <input type="password" id="newAdminPass" placeholder="Password" style="padding:7px; border:1px solid #ccc; border-radius:4px; flex:1;">
                     <button class="btn btn-primary" onclick="registerNewAdmin()">Add Admin</button>
                 </div>
-                <ul id="adminListUl" style="margin-top:10px; font-size:12px; padding-left:20px;"></ul>
+                <ul id="adminListUl" style="margin-top:12px; font-size:12px; padding-left:20px;"></ul>
             </div>
 
+            <!-- Registered Users Table -->
             <h3>Registered Users Management</h3>
             <table class="res-table" style="margin-top:10px;">
-                <thead><tr><th>Name</th><th>Email / Phone</th><th>Action</th></tr></thead>
+                <thead><tr><th>Name</th><th>Email / Phone</th><th>Actions</th></tr></thead>
                 <tbody id="admUsersTable">
-                    <tr><td colspan="3" style="text-align:center;">No users found.</td></tr>
+                    <tr><td colspan="3" style="text-align:center;">No users registered yet.</td></tr>
                 </tbody>
             </table>
         </div>
@@ -322,20 +413,9 @@
         <div class="modal-box">
             <span class="close-modal" onclick="closeModal('loginModal')">&times;</span>
             <h3>Login with Email / Phone & Password</h3>
-            <div class="input-group" style="margin-top:15px;"><label>Email or Phone</label><input type="text" id="loginId"></div>
+            <div class="input-group" style="margin-top:15px;"><label>Email or Phone Number</label><input type="text" id="loginId"></div>
             <div class="input-group"><label>Password</label><input type="password" id="loginPass"></div>
             <button class="btn btn-primary" style="width:100%; margin-top:15px;" onclick="performLogin()">Login</button>
-        </div>
-    </div>
-
-    <!-- Admin Login Modal (Fixed: Password blank by default) -->
-    <div id="adminLoginModal" class="modal-overlay">
-        <div class="modal-box">
-            <span class="close-modal" onclick="closeModal('adminLoginModal')">&times;</span>
-            <h3>Admin Panel Login</h3>
-            <div class="input-group" style="margin-top:15px;"><label>Admin Email</label><input type="text" id="admUser" value="admin@makemyresume.com"></div>
-            <div class="input-group"><label>Password</label><input type="password" id="admPass" placeholder="Enter admin password"></div>
-            <button class="btn btn-primary" style="width:100%; margin-top:15px;" onclick="performAdminLogin()">Login as Admin</button>
         </div>
     </div>
 
@@ -353,13 +433,18 @@
     </div>
 
     <script>
-        let appState = JSON.parse(localStorage.getItem('mmr_complete_state')) || {
-            price: 100, downloads: 0, revenue: 0, 
-            users: [], admins: [{email: "admin@makemyresume.com", pass: "admin123"}], 
+        let appState = JSON.parse(localStorage.getItem('mmr_final_state')) || {
+            brandName: "MakeMyResume",
+            tagline: "Create, Impress. Succeed.",
+            price: 100, 
+            downloads: 0, 
+            revenue: 0, 
+            users: [], 
+            admins: [{email: "admin@makemyresume.com", pass: "admin123"}], 
             currentUser: null
         };
 
-        // Active input tracker for specific formatting toolbar
+        // Active input tracking for sidebar toolbar styling
         let currentActiveInput = null;
         function setActiveInput(el) { currentActiveInput = el; }
 
@@ -375,22 +460,42 @@
             if(prop === 'color') currentActiveInput.style.color = val;
         }
 
-        // Render template slides
-        const templatesGrid = document.getElementById("homeTemplatesGrid");
+        // Render Home Slide Templates (6 templates)
+        const homeGrid = document.getElementById("homeTemplatesGrid");
         for(let i=1; i<=6; i++) {
-            templatesGrid.innerHTML += `
-                <div class="template-card" onclick="switchView('editor-view')">
-                    <div class="template-thumb">Format #${i}</div>
-                    <strong style="font-size:12px;">Template #${i}</strong>
+            homeGrid.innerHTML += `
+                <div class="template-card" onclick="selectTemplateAndOpen(${i})">
+                    <div class="template-thumb">Template #${i}</div>
+                    <strong style="font-size:12px;">Format Style #${i}</strong>
                 </div>
             `;
+        }
+
+        // Render All 50 Templates Grid
+        function openAllTemplatesView() {
+            switchView('all-templates-view');
+            const allGrid = document.getElementById("allTemplatesGrid");
+            allGrid.innerHTML = "";
+            for(let i=1; i<=50; i++) {
+                allGrid.innerHTML += `
+                    <div class="template-card" onclick="selectTemplateAndOpen(${i})">
+                        <div class="template-thumb" style="height:130px;">Template #${i}</div>
+                        <strong style="font-size:12px;">Professional #${i}</strong>
+                    </div>
+                `;
+            }
+        }
+
+        function selectTemplateAndOpen(id) {
+            document.getElementById("activeTemplateIndicator").innerText = `Active Format: Professional Template #${id}`;
+            switchView('editor-view');
         }
 
         function switchView(id) {
             document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active-view'));
             document.getElementById(id).classList.add('active-view');
             window.scrollTo(0,0);
-            if(id === 'admin-view') loadAdminDashboard();
+            if(id === 'admin-dashboard-view') loadAdminDashboard();
         }
 
         function scrollToSection(id) {
@@ -432,8 +537,9 @@
             container.innerHTML += `
                 <div class="dynamic-row">
                     <input type="text" placeholder="Course" style="width:30%;">
-                    <input type="text" placeholder="Year" style="width:25%;">
-                    <input type="text" placeholder="University" style="width:45%;">
+                    <input type="text" placeholder="Year" style="width:20%;">
+                    <input type="text" placeholder="University" style="width:30%;">
+                    <input type="text" placeholder="%" style="width:20%;">
                 </div>
             `;
         }
@@ -446,7 +552,7 @@
                 appState.users.push({ name, email, phone, password: "123" });
             }
             appState.currentUser = email;
-            localStorage.setItem('mmr_complete_state', JSON.stringify(appState));
+            localStorage.setItem('mmr_final_state', JSON.stringify(appState));
             alert("Resume saved & profile auto-registered successfully!");
             switchView('profile-view');
         }
@@ -458,16 +564,17 @@
         }
 
         function triggerProPayment() {
-            let pay = confirm(`Razorpay Payment Gateway: Pay ₹${appState.price} to download Pro PDF without watermark?`);
+            let rzpKey = document.getElementById("cfgRazorpay") ? document.getElementById("cfgRazorpay").value : "rzp_live_sample";
+            let pay = confirm(`Razorpay Gateway (${rzpKey}): Pay ₹${appState.price} to download Pro PDF without watermark?`);
             if(pay) {
                 appState.downloads++;
                 appState.revenue += Number(appState.price);
-                localStorage.setItem('mmr_complete_state', JSON.stringify(appState));
+                localStorage.setItem('mmr_final_state', JSON.stringify(appState));
                 alert("Payment successful! Watermark removed.");
                 document.getElementById("watermarkLayer").style.display = "none";
                 window.print();
             } else {
-                alert("Payment Gateway currently unavailable or cancelled. Showing free preview with watermark.");
+                alert("Payment gateway unavailable or cancelled. Showing free preview with watermark.");
                 previewWatermarkPDF();
             }
         }
@@ -479,7 +586,7 @@
             let password = document.getElementById("regPass").value;
             appState.users.push({ name, email, phone, password });
             appState.currentUser = email;
-            localStorage.setItem('mmr_complete_state', JSON.stringify(appState));
+            localStorage.setItem('mmr_final_state', JSON.stringify(appState));
             closeModal('registerModal');
             alert("Registration successful!");
             switchView('profile-view');
@@ -499,12 +606,11 @@
         }
 
         function performAdminLogin() {
-            let u = document.getElementById("admUser").value;
-            let p = document.getElementById("admPass").value;
+            let u = document.getElementById("admLoginEmail").value;
+            let p = document.getElementById("admLoginPass").value;
             let adminFound = appState.admins.find(adm => adm.email === u && adm.pass === p);
             if(adminFound) {
-                closeModal('adminLoginModal');
-                switchView('admin-view');
+                switchView('admin-dashboard-view');
             } else {
                 alert("Invalid Admin credentials!");
             }
@@ -515,7 +621,7 @@
             let pass = document.getElementById("newAdminPass").value;
             if(email && pass) {
                 appState.admins.push({ email, pass });
-                localStorage.setItem('mmr_complete_state', JSON.stringify(appState));
+                localStorage.setItem('mmr_final_state', JSON.stringify(appState));
                 loadAdminDashboard();
                 alert("New Admin registered successfully!");
             }
@@ -524,14 +630,25 @@
         function removeAdmin(index) {
             if(appState.admins.length <= 1) { alert("At least one admin must remain!"); return; }
             appState.admins.splice(index, 1);
-            localStorage.setItem('mmr_complete_state', JSON.stringify(appState));
+            localStorage.setItem('mmr_final_state', JSON.stringify(appState));
             loadAdminDashboard();
         }
 
         function deleteUser(index) {
             appState.users.splice(index, 1);
-            localStorage.setItem('mmr_complete_state', JSON.stringify(appState));
+            localStorage.setItem('mmr_final_state', JSON.stringify(appState));
             loadAdminDashboard();
+        }
+
+        function updateSiteBranding() {
+            appState.brandName = document.getElementById("cfgBrandName").value;
+            appState.tagline = document.getElementById("cfgTagline").value;
+            appState.price = document.getElementById("cfgPrice").value;
+            localStorage.setItem('mmr_final_state', JSON.stringify(appState));
+            document.getElementById("siteBrandName").innerText = appState.brandName;
+            document.getElementById("siteBrandTag").innerText = appState.tagline;
+            document.getElementById("pricingDisplayVal").innerText = "₹" + appState.price;
+            alert("Branding and Pricing updated successfully!");
         }
 
         function loadAdminDashboard() {
