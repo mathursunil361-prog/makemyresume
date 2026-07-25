@@ -1,1 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MakeMyResume - Live Editor</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f8f9fa; }
+        .editor-body { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        .editor-header { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 10px 20px; border-bottom: 1px solid #ddd; }
+        .editor-container { display: flex; flex: 1; overflow: hidden; }
+        .sidebar-controls { width: 350px; background: #f8f9fa; border-right: 1px solid #ddd; padding: 20px; overflow-y: auto; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 5px; }
+        .form-group input, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .preview-canvas-container { flex: 1; background: #e9ecef; display: flex; justify-content: center; align-items: center; overflow-y: auto; padding: 20px; }
+        .resume-sheet { background: #fff; width: 750px; min-height: 1050px; padding: 40px; box-shadow: 0 0 15px rgba(0,0,0,0.1); position: relative; box-sizing: border-box; }
+        .resume-header-row { display: flex; gap: 20px; align-items: center; }
+        .res-photo-box { width: 90px; height: 110px; border: 1px dashed #999; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #777; background: #f9f9f9; }
+        .res-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .res-table th, .res-table td { border: 1px solid #333; padding: 6px 10px; font-size: 13px; text-align: left; }
+        .btn-free { background: #6c757d; color: #fff; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; }
+        .btn-pro { background: #28a745; color: #fff; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        @media print {
+            body * { visibility: hidden; }
+            #activeResumeTemplate, #activeResumeTemplate * { visibility: visible; }
+            #activeResumeTemplate { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; padding: 0; }
+        }
+    </style>
+</head>
+<body class="editor-body">
+    <header class="editor-header">
+        <div class="logo"><strong>MakeMyResume</strong></div>
+        <div>
+            <label><strong>Select Template (50+ Available):</strong></label>
+            <select id="templateDropdown" onchange="changeTemplateFormat()">
+                <option value="1">Template #1 - Govt & Formal Table Layout</option>
+                <option value="2">Modern Executive Format</option>
+                <option value="3">Clean Professional Green</option>
+            </select>
+        </div>
+        <div>
+            <button onclick="location.href='admin.html'">Admin Panel</button>
+            <button class="btn-free" onclick="downloadPDF('free')">Free PDF (Watermark)</button>
+            <button class="btn-pro" onclick="checkAuthAndDownload()">Pro PDF (<span id="navPriceText">₹100</span>)</button>
+        </div>
+    </header>
 
+    <div class="editor-container">
+        <div class="sidebar-controls">
+            <h3>DATA CONTROLS</h3>
+            <div class="form-group"><label>Upload Photo</label><input type="file" accept="image/*" onchange="loadPhoto(event)"></div>
+            <div class="form-group"><label>Full Name</label><input type="text" id="inpName" value="SUNIL KUMAR MATHUR" oninput="updateResume()"></div>
+            <div class="form-group"><label>Email</label><input type="email" id="inpEmail" value="mathursunil361@gmail.com" oninput="updateResume()"></div>
+            <div class="form-group"><label>Mobile Number</label><input type="text" id="inpPhone" value="7000164080" oninput="updateResume()"></div>
+            <div class="form-group"><label>Address</label><textarea id="inpAddress" oninput="updateResume()">Housing Board Colony Berla Road Bemetara Chhattisgarh</textarea></div>
+            <div class="form-group"><label>Career Objective (Default Fixed)</label><textarea id="inpObjective" oninput="updateResume()">Seeking a challenging position in a reputed organization where I can learn new skills, expand my knowledge, and leverage my learning’s. To get an opportunity where I can make the best of my potential and contribute to the organization's growth.</textarea></div>
+        </div>
+
+        <div class="preview-canvas-container">
+            <div class="resume-sheet" id="activeResumeTemplate">
+                <div class="resume-header-row">
+                    <div class="res-photo-box" id="resPhotoBox">Photo</div>
+                    <div class="res-info-box">
+                        <h2 id="resName">SUNIL KUMAR MATHUR</h2>
+                        <p id="resAddressText">Housing Board Colony Berla Road Bemetara Chhattisgarh</p>
+                        <p>Email: <span id="resEmailText">mathursunil361@gmail.com</span> | Contact: <span id="resPhoneText">7000164080</span></p>
+                    </div>
+                </div>
+                <hr>
+                <div class="resume-section">
+                    <h4>Career objective :</h4>
+                    <p id="resObjectiveText">Seeking a challenging position in a reputed organization where I can learn new skills, expand my knowledge, and leverage my learning’s. To get an opportunity where I can make the best of my potential and contribute to the organization's growth.</p>
+                </div>
+                <div class="resume-section">
+                    <h4>Qualification :</h4>
+                    <table class="res-table">
+                        <tr><th>Education</th><th>Passing Year</th><th>Name of Institution</th></tr>
+                        <tr><td>10th</td><td>2016</td><td>CG Board</td></tr>
+                        <tr><td>12th</td><td>2019</td><td>CG Board</td></tr>
+                        <tr><td>BCA</td><td>2022</td><td>Durg University Chhattisgarh</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let settings = JSON.parse(localStorage.getItem('mmr_settings')) || { price: 100, proDownloads: 0, revenue: 0 };
+        document.getElementById("navPriceText").innerText = "₹" + settings.price;
+
+        // Auto populate if logged in user exists
+        let loggedEmail = localStorage.getItem("mmr_logged_user");
+        let users = JSON.parse(localStorage.getItem('mmr_users')) || [];
+        let currentUser = users.find(u => u.email === loggedEmail);
+        if(currentUser) {
+            document.getElementById("inpName").value = currentUser.name || "SUNIL KUMAR MATHUR";
+            document.getElementById("inpEmail").value = currentUser.email;
+            document.getElementById("inpPhone").value = currentUser.phone || "7000164080";
+            document.getElementById("inpAddress").value = currentUser.address || "Bemetara Chhattisgarh";
+            updateResume();
+        }
+
+        function updateResume() {
+            document.getElementById("resName").innerText = document.getElementById("inpName").value;
+            document.getElementById("resEmailText").innerText = document.getElementById("inpEmail").value;
+            document.getElementById("resPhoneText").innerText = document.getElementById("inpPhone").value;
+            document.getElementById("resAddressText").innerText = document.getElementById("inpAddress").value;
+            document.getElementById("resObjectiveText").innerText = document.getElementById("inpObjective").value;
+        }
+
+        function loadPhoto(event) {
+            let reader = new FileReader();
+            reader.onload = function(){
+                document.getElementById("resPhotoBox").innerHTML = `<img src="${reader.result}" style="width:100%; height:100%; object-fit:cover;">`;
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        function changeTemplateFormat() {
+            let val = document.getElementById("templateDropdown").value;
+            alert("Switched to Template #" + val + " with default Objective & Formats loaded!");
+        }
+
+        function checkAuthAndDownload() {
+            if(!localStorage.getItem("mmr_logged_user")) {
+                alert("Authentication Required! Please register or login before downloading your resume.");
+                location.href = "index.html";
+                return;
+            }
+            let pay = confirm(`Pay ₹${settings.price} via Payment Gateway to download watermark-free Pro PDF?`);
+            if(pay) {
+                settings.proDownloads++;
+                settings.revenue += Number(settings.price);
+                localStorage.setItem('mmr_settings', JSON.stringify(settings));
+                alert("Payment Successful! Opening clean print window...");
+                window.print();
+            }
+        }
+
+        function downloadPDF(type) {
+            let sheet = document.getElementById("activeResumeTemplate");
+            if(type === 'free' && !document.getElementById("wm")) {
+                let wm = document.createElement("div");
+                wm.id = "wm";
+                wm.innerText = "MAKEMYRESUME FREE WATERMARK EDITION";
+                wm.style.cssText = "position:absolute; top:45%; left:5%; font-size:32px; color:rgba(255,0,0,0.15); transform:rotate(-30deg); font-weight:bold; pointer-events:none;";
+                sheet.appendChild(wm);
+            }
+            window.print();
+        }
+    </script>
+</body>
+</html>
