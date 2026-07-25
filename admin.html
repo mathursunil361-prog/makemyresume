@@ -1,1 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MakeMyResume - Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="admin-body">
+    <header class="admin-header">
+        <div class="logo">MakeMyResume <span class="admin-badge">ADMIN</span></div>
+        <div class="admin-nav-actions">
+            <button onclick="location.href='editor.html'">Open Editor</button>
+            <button class="btn-logout" onclick="adminLogout()">Logout</button>
+        </div>
+    </header>
 
+    <div class="admin-dashboard">
+        <!-- Top Stats Widgets -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <small>TOTAL REGISTERED USERS</small>
+                <h2 id="totalUsersCount">0</h2>
+            </div>
+            <div class="stat-card">
+                <small>PRO PRICING (CURRENT)</small>
+                <h2 id="currentDisplayPrice">₹100</h2>
+            </div>
+            <div class="stat-card">
+                <small>TOTAL PRO DOWNLOADS</small>
+                <h2 id="totalProDownloads">0</h2>
+            </div>
+            <div class="stat-card">
+                <small>ESTIMATED REVENUE</small>
+                <h2 id="totalRevenue">₹0</h2>
+            </div>
+        </div>
+
+        <!-- Controls Grid -->
+        <div class="admin-controls-grid">
+            <!-- Custom Pricing Widget -->
+            <div class="admin-card">
+                <h3>Set Custom Pricing</h3>
+                <label>Pro Download Price (₹)</label>
+                <input type="number" id="customPriceInput" value="100">
+                <button class="btn-save" onclick="updateCustomPrice()">Update Price</button>
+            </div>
+
+            <!-- Payment Gateway API Keys Widget -->
+            <div class="admin-card">
+                <h3>Payment Gateway API Keys</h3>
+                <label>Razorpay Key ID</label>
+                <input type="text" id="razorpayKey" placeholder="rzp_live_xxxxxxxx">
+                <label>Razorpay Secret Key</label>
+                <input type="password" id="razorpaySecret" placeholder="••••••••••••">
+                <button class="btn-save" onclick="saveApiCredentials()">Save API Credentials</button>
+            </div>
+
+            <!-- Global Typography & Formatting Widget -->
+            <div class="admin-card">
+                <h3>Global Template Typography Styling</h3>
+                <label>Headline Font Size & Color</label>
+                <div class="inline-inputs">
+                    <input type="text" id="adminHeadSize" placeholder="22px">
+                    <input type="color" id="adminHeadColor" value="#000000">
+                </div>
+                <label>Paragraph Font Size & Color</label>
+                <div class="inline-inputs">
+                    <input type="text" id="adminPSize" placeholder="14px">
+                    <input type="color" id="adminPColor" value="#333333">
+                </div>
+                <button class="btn-save" onclick="applyGlobalTypography()">Apply to All Templates</button>
+            </div>
+        </div>
+
+        <!-- Registered Users Management Table -->
+        <div class="admin-card full-width">
+            <h3>Registered Users Management</h3>
+            <table class="admin-table">
+                <thead>
+                    <tr><th>User Details</th><th>Mobile / Location</th><th>Downloads</th><th>Actions</th></tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    <tr><td colspan="4" style="text-align:center;">No registered users found yet.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
